@@ -285,10 +285,10 @@ kbd {
 .lista li button::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
+  left: 7px;
+  top: 17px;
+  width: 7px;
+  height: 7px;
   background: var(--gris);
 }
 .lista li button.n-rojo::before {
@@ -462,8 +462,8 @@ main {
   background: #fff;
   color: var(--sia-ink);
   border: 1px solid var(--sia-control);
-  border-top: 4px solid var(--gris);
-  box-shadow: 0 8px 24px #1d1f2024;
+  border-top: 2px solid var(--gris);
+  box-shadow: 0 4px 16px #1d1f2010;
 }
 .ficha.nivel-rojo {
   border-top-color: var(--rojo);
