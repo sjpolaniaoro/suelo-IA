@@ -6,5 +6,6 @@ Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest Reto Inno
 
 - Especificación: [`docs/spec.md`](docs/spec.md)
 - Plan de tareas: [`docs/plan-de-tareas.md`](docs/plan-de-tareas.md)
+- Plan de desarrollo (arquitectura por capas, despliegue y roadmap): [`docs/plan-de-desarrollo.md`](docs/plan-de-desarrollo.md)
 
 Estado: en construcción (v1).
