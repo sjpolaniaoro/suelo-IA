@@ -6,3 +6,11 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+data/sintetico/
+
+# DATOS SINTÉTICOS DE PRUEBA: no se publican. Cuando el pipeline corra con los
+# insumos reales del sector 02, quite estas dos líneas y suba los datos derivados.
+web/public/data/
+api/data/*.geojson
+api/data/*.json
+.claude/

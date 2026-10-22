@@ -1,0 +1,56 @@
+# Parámetros de Suelo-IA v1. Los umbrales viven aquí, no en el código.
+
+sector:
+  zona: "01"      # 01 = urbano
+  sector: "02"    # piloto
+
+# Cifras de control del spec (sección 2). Si no coinciden, el pipeline se detiene.
+control:
+  predios_habitacionales_no_ph: 4111
+  predios_sin_area_construida: 1064
+  terrenos_sector: 4889
+  tasa_cruce_minima: 0.90      # por debajo se detiene (spec, sección 5)
+  tasa_cruce_esperada: 0.965
+
+alertas:
+  A1:
+    area_huella_min_m2: 20
+    confianza_min: 0.70
+    puntos: 60
+  A2:
+    factor_area: 1.2
+    puntos: 30
+  A3:
+    umbral_log: 0.6931471805599453   # ln(2)
+    min_predios_manzana: 10
+    puntos: 10
+  ajuste_huella:
+    max_puntos: 10           # suma por área de huella detectada (escala hasta 200 m²)
+    area_tope_m2: 200
+
+confianza:
+  huella_media_min: 0.75
+  terreno_min_m2: 30
+
+alturas:
+  metros_por_piso: 3
+  altura_sin_construccion_m: 0.5
+  altura_huella_sin_registro_m: 3
+
+salida:
+  tamano_maximo_mb: 15
+  tolerancia_simplificar_m: 0.5
+  decimales_coordenadas: 6
+
+# Columnas que nunca deben aparecer en los insumos (datos personales).
+prohibidas:
+  - nombre
+  - propietario
+  - documento
+  - cedula
+  - cédula
+  - telefono
+  - teléfono
+  - correo
+  - email
+  - celular

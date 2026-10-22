@@ -1,0 +1,13 @@
+# Blueprint de Render (plan gratuito) para la API de Suelo-IA.
+services:
+  - type: web
+    name: suelo-ia-api
+    runtime: python
+    plan: free
+    rootDir: api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ALLOWED_ORIGIN
+        sync: false   # dominio de Vercel, por ejemplo https://suelo-ia.vercel.app
