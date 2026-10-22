@@ -15,6 +15,9 @@ Estado: v1 con datos reales del sector 02 (corrida del 22-oct-2026). El pipeline
 - API (Render, plan gratuito; el primer pedido puede tardar ~50 s en despertar): https://suelo-ia-api.onrender.com
 - El mapa funciona sin la API: usa los archivos de `web/public/data/` y avisa "Modo sin conexión a la API" si no responde.
 
+## Uso del mapa
+El panel sigue el proceso de gestión de cada predio: **1 Detectados → 2 Por revisar → 3 Revisados → 4 Confirmados** (la barra avanza con cada veredicto). La clasificación se filtra por prioridad (alta, media, baja) y por tipo de alerta (A1, A2, A3). La ficha guía tres pasos: **qué se detectó**, **verificar en imagen** (satélite o Street View) y **decidir** (confirmado, descartado o no concluyente). Atajos: `C` confirmar, `D` descartar, `N` no concluyente, `S` siguiente sin revisar, `J`/`K` mover, `Esc` cerrar.
+
 ## Cómo correrlo
 
 ```bash
