@@ -11,7 +11,7 @@ Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest Reto Inno
 Estado: v1 con datos reales del sector 02 (corrida del 22-oct-2026). El pipeline reproduce todas las cifras de control del spec y genera `web/public/data/` y `api/data/` (resultados en `resumen.json`: 7.329 predios dibujados, 268 sin geometría, A1 = 807, A2 = 414, A3 = 90). Son alertas para priorizar revisión, no hallazgos confirmados.
 
 ## Demo en línea
-- Mapa 3D (Vercel): https://suelo-ia-knwnic.vercel.app
+- Landing y mapa 3D (Vercel): https://suelo-ia-knwnic.vercel.app (la landing está en `/` y el mapa en `/app/`, p. ej. `/app/?predio=NÚMERO` abre la ficha de un predio)
 - API (Render, plan gratuito; el primer pedido puede tardar ~50 s en despertar): https://suelo-ia-api.onrender.com
 - El mapa funciona sin la API: usa los archivos de `web/public/data/` y avisa "Modo sin conexión a la API" si no responde.
 

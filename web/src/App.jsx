@@ -128,7 +128,7 @@ export default function App() {
       <section className={`panel ${panel ? "" : "oculto"}`}>
         <header>
           <h1>Suelo-IA</h1>
-          <p>Priorización de revisión catastral · Neiva · sector 02</p>
+          <p>Priorización de revisión catastral · Neiva · sector 02 · <a href="/">Inicio</a></p>
         </header>
 
         {r && (

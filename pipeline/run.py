@@ -119,6 +119,7 @@ def main(argv=None) -> int:
     print(f"  filas {r1.attrs['filas_crudas']:,}; predios únicos {r1.attrs['predios_unicos']:,}")
     sec = registro1.recortar_sector(r1, zona, sector)
     hab = registro1.habitacionales_no_ph(sec)
+    urbano = registro1.habitacionales_no_ph(r1[r1["zona"] == zona])
     verificar("habitacionales no PH", len(hab), ctl["predios_habitacionales_no_ph"], estricto)
     verificar("sin área construida", int((hab["area_construida_reg"] == 0).sum()),
               ctl["predios_sin_area_construida"], estricto)
@@ -193,6 +194,12 @@ def main(argv=None) -> int:
         "tasa_cruce": round(tasa, 4),
         "habitacionales_no_ph": int(len(hab)),
         "sin_area_construida": int((hab["area_construida_reg"] == 0).sum()),
+        "contexto_urbano": {
+            "predios_registro": int(r1.attrs["predios_unicos"]),
+            "predios_urbanos": int((r1["zona"] == zona).sum()),
+            "habitacionales_no_ph": int(len(urbano)),
+            "sin_area_construida": int((urbano["area_construida_reg"] == 0).sum()),
+        },
         "alertas": {k: int(geo[k].sum()) for k in ("A1", "A2", "A3")},
         "predios_con_alerta": int((geo["puntaje"] > 0).sum()),
         "predios_rojos": int((geo["nivel"] == "rojo").sum()),
