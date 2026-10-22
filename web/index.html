@@ -3,9 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      Suelo-IA · Un mapa para orientar la revisión catastral de Neiva
-    </title>
+    <title>Suelo-IA · Del territorio a una revisión con evidencia</title>
     <meta
       name="description"
       content="Explora el sector urbano 02 de Neiva. Registro catastral, cartografía y huellas de edificaciones para priorizar revisión humana, con razones y fuentes."
@@ -14,7 +12,7 @@
     <meta property="og:title" content="Suelo-IA · Inteligencia territorial" />
     <meta
       property="og:description"
-      content="Un mapa para orientar la revisión catastral de Neiva. Piloto del sector 02, con datos abiertos y revisión humana."
+      content="Detecta posibles diferencias entre el registro y el territorio. Explora el piloto de Neiva con razones, fuentes y revisión humana."
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,85 +41,142 @@
       </button>
       <nav id="navegacion" aria-label="Principal">
         <a href="#alertas">Alertas</a><a href="#metodo">Método</a
-        ><a href="#fuentes">Fuentes</a>
+        ><a href="#piloto">Piloto</a><a href="#fuentes">Fuentes</a>
       </nav>
-      <a class="sia-button sia-header-cta" href="/app/"
-        >Abrir el mapa <span aria-hidden="true">↗</span></a
+      <a
+        class="sia-button sia-header-cta"
+        href="/app/"
+        aria-label="Abrir el mapa"
+        ><span class="sia-header-text">Abrir el mapa</span>
+        <span aria-hidden="true">↗</span></a
       >
     </header>
     <main id="contenido">
       <section class="sia-cover" aria-labelledby="titulo">
         <div class="sia-cover-copy">
-          <p class="sia-label">
-            <span class="sia-mark" aria-hidden="true"></span> Cartografía para
-            la revisión humana
+          <p class="sia-label sia-plancha">
+            Piloto territorial <span aria-hidden="true"></span> Neiva · Sector
+            02
           </p>
           <h1 id="titulo">
-            Un mapa para orientar la revisión catastral de Neiva.
+            Detecta posibles diferencias
+            <em>entre el registro y el territorio.</em>
           </h1>
           <p class="sia-lead">
-            El registro dice una cosa. El territorio puede contar otra. Cruza
-            los datos y encuentra dónde conviene mirar con más atención.
+            Cruza el registro catastral, la cartografía y las huellas de
+            edificaciones. Encuentra qué predios conviene revisar primero, con
+            sus razones y fuentes.
           </p>
           <div class="sia-cover-actions">
             <a class="sia-button" href="/app/"
-              >Explorar el sector 02 <span aria-hidden="true">↗</span></a
-            ><a class="sia-text-link" href="#ficha">Ver una ficha de ejemplo</a>
+              >Explorar el mapa <span aria-hidden="true">↗</span></a
+            ><a class="sia-text-link" href="#piloto"
+              >Solicitar un piloto <span aria-hidden="true">→</span></a
+            >
           </div>
+          <ul class="sia-roles" aria-label="Para los equipos del territorio">
+            <li>
+              <strong>Gestión Catastral</strong
+              ><span>Prioriza la revisión predial</span>
+            </li>
+            <li>
+              <strong>Hacienda</strong
+              ><span>Consulta señales con contexto</span>
+            </li>
+            <li>
+              <strong>Planeación</strong
+              ><span>Contrasta registro y territorio</span>
+            </li>
+          </ul>
           <p class="sia-disclaimer">
             Herramienta independiente, no oficial.<br />Alertas para priorizar
             revisión; no son hallazgos confirmados.
           </p>
-          <div class="sia-cover-index">
-            <span>Piloto territorial</span
-            ><span>Registro + cartografía + huellas</span>
-          </div>
         </div>
-        <figure class="sia-plan">
+        <figure class="sia-plan sia-frame">
           <div class="sia-plan-top">
-            <span>Neiva / Sector 02</span><span>Vista de contexto</span>
+            <span
+              ><i class="sia-live-mark" aria-hidden="true"></i> Neiva / Sector
+              02</span
+            ><span>Vista 3D del piloto</span>
           </div>
-          <img
-            src="/img/plano-sector02.svg"
-            width="1000"
-            height="820"
-            fetchpriority="high"
-            alt="Vista cenital de las parcelas del sector urbano 02 de Neiva. El azul oscuro destaca el predio de ejemplo, no su prioridad."
-          />
+          <div class="sia-plan-media">
+            <img
+              src="/img/sector02-3d.webp"
+              width="1280"
+              height="1050"
+              fetchpriority="high"
+              alt="Captura real del mapa 3D del sector 02 de Neiva. Los predios se distinguen por prioridad alta en rojo, media en naranja y baja en amarillo; las alturas son de referencia."
+            />
+            <a
+              class="sia-map-invite"
+              href="/app/"
+              aria-label="Explorar este mapa en 3D"
+              ><span aria-hidden="true">↗</span> Abrir mapa interactivo</a
+            >
+            <a class="sia-map-evidence" href="/app/" data-example-link hidden>
+              <span class="sia-alert-code">A1</span>
+              <span
+                ><small>Una señal para verificar</small
+                ><strong
+                  ><span data-example-area></span> m² de huella
+                  detectada</strong
+                ><span
+                  >Sin área construida registrada
+                  <b aria-hidden="true">↗</b></span
+                ></span
+              >
+            </a>
+          </div>
           <figcaption>
-            <span><i aria-hidden="true"></i> Cartografía predial real</span
-            ><span>Fuente: Alcaldía de Neiva</span>
+            <span
+              >Cartografía: Alcaldía de Neiva · Huellas: Open Buildings</span
+            >
+            <span>Alturas de referencia</span>
           </figcaption>
         </figure>
       </section>
       <section class="sia-stat-band" aria-label="Cifras del piloto">
-        <dl class="sia-stats" aria-busy="true">
-          <div>
-            <dt>Predios en el mapa</dt>
-            <dd data-stat="predios_con_geometria">Cargando…</dd>
+        <div class="sia-band-in">
+          <div class="sia-band-heading">
+            <p class="sia-label">Del dato a la decisión humana</p>
+            <h2>
+              <span data-stat="predios_con_geometria">7.329</span> predios en el
+              mapa.<br /><span>Una lista para orientar la revisión.</span>
+            </h2>
           </div>
-          <div>
-            <dt>Con al menos una alerta</dt>
-            <dd data-stat="predios_con_alerta">Cargando…</dd>
-          </div>
-          <div>
-            <dt>Cruce con la cartografía</dt>
-            <dd data-stat="tasa_cruce">Cargando…</dd>
-          </div>
-          <div class="sia-stat-date">
-            <dt>Fecha de procesamiento</dt>
-            <dd data-stat="generado">Cargando…</dd>
-          </div>
-        </dl>
-        <p id="cifras-estado" class="sia-footnote" role="status">
-          Activa JavaScript para consultar las cifras del resumen del piloto.
-        </p>
-        <noscript
-          ><p class="sia-footnote">
-            Activa JavaScript para consultar las cifras y la ficha de ejemplo.
-            Puedes abrir el mapa desde el enlace superior.
-          </p></noscript
-        >
+          <dl class="sia-stats" aria-busy="false">
+            <div>
+              <dt>Con al menos una alerta</dt>
+              <dd data-stat="predios_con_alerta">1.285</dd>
+            </div>
+            <div>
+              <dt>A1 · Posible construcción no registrada</dt>
+              <dd data-stat="A1">807</dd>
+            </div>
+            <div>
+              <dt>A2 · Posible área subregistrada</dt>
+              <dd data-stat="A2">414</dd>
+            </div>
+            <div>
+              <dt>A3 · Avalúo atípico</dt>
+              <dd data-stat="A3">90</dd>
+            </div>
+          </dl>
+          <p id="cifras-estado" class="sia-footnote" role="status">
+            Cifras del resumen del piloto; se actualizan al cargar la página.
+          </p>
+          <p class="sia-footnote">
+            Los tipos de alerta pueden solaparse. Procesado:
+            <span data-stat="generado">22 de octubre de 2026</span>.
+          </p>
+          <noscript
+            ><p class="sia-footnote">
+              Las cifras corresponden al resumen incluido en esta versión.
+              Activa JavaScript para consultar la ficha de ejemplo.
+            </p></noscript
+          >
+        </div>
       </section>
       <section
         class="sia-example sia-section"
@@ -208,7 +263,7 @@
             </p>
           </div>
           <div class="sia-alert-count">
-            <strong data-stat="A1">Cargando…</strong><span>predios con A1</span>
+            <strong data-stat="A1">807</strong><span>predios con A1</span>
           </div>
         </div>
         <div class="sia-alert-row">
@@ -222,7 +277,7 @@
             </p>
           </div>
           <div class="sia-alert-count">
-            <strong data-stat="A2">Cargando…</strong><span>predios con A2</span>
+            <strong data-stat="A2">414</strong><span>predios con A2</span>
           </div>
         </div>
         <div class="sia-alert-row">
@@ -235,7 +290,7 @@
             </p>
           </div>
           <div class="sia-alert-count">
-            <strong data-stat="A3">Cargando…</strong><span>predios con A3</span>
+            <strong data-stat="A3">90</strong><span>predios con A3</span>
           </div>
         </div>
         <p class="sia-footnote">
@@ -373,6 +428,119 @@
           </div>
         </dl>
       </section>
+      <section
+        class="sia-pilot sia-section"
+        id="piloto"
+        aria-labelledby="piloto-titulo"
+      >
+        <div>
+          <p class="sia-label">El siguiente territorio</p>
+          <h2 id="piloto-titulo">Lleva Suelo-IA<br />a tu municipio.</h2>
+          <p>
+            Un piloto empieza por un sector y los datos disponibles. Cuéntanos
+            qué necesitas revisar para definir el alcance.
+          </p>
+          <ul class="sia-pilot-needs">
+            <li>Municipio y sector de interés</li>
+            <li>Registro y cartografía disponibles</li>
+            <li>Equipo y objetivo de la revisión</li>
+          </ul>
+        </div>
+        <div class="sia-pilot-contact" id="piloto-contacto">
+          <form
+            id="solicitud-piloto"
+            data-destino="sebastianjpolaniao@gmail.com,juanpabloescamilla@gmail.com,guillermoacmk@gmail.com"
+            aria-label="Solicitud de piloto"
+            hidden
+          >
+            <div class="sia-form-grid">
+              <label for="piloto-entidad"
+                >Entidad<input
+                  id="piloto-entidad"
+                  name="entidad"
+                  autocomplete="organization"
+                  maxlength="160"
+                  required
+              /></label>
+              <label for="piloto-municipio"
+                >Municipio<input
+                  id="piloto-municipio"
+                  name="municipio"
+                  maxlength="100"
+                  required
+              /></label>
+              <label for="piloto-cargo"
+                >Cargo<input
+                  id="piloto-cargo"
+                  name="cargo"
+                  autocomplete="organization-title"
+                  maxlength="100"
+                  required
+              /></label>
+              <label for="piloto-correo"
+                >Correo de contacto<input
+                  id="piloto-correo"
+                  name="correo"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="254"
+                  required
+              /></label>
+              <label class="sia-form-wide" for="piloto-comentario"
+                >¿Qué te gustaría revisar? <span>(opcional)</span
+                ><textarea
+                  id="piloto-comentario"
+                  name="comentario"
+                  rows="3"
+                  maxlength="2000"
+                ></textarea>
+              </label>
+            </div>
+            <p class="sia-footnote" id="piloto-ayuda">
+              Se abrirá tu aplicación de correo con la solicitud preparada.
+              Revisa el mensaje y envíalo allí. Los datos no se guardan en este
+              sitio.
+            </p>
+            <div class="sia-form-actions">
+              <button
+                class="sia-button"
+                type="submit"
+                aria-describedby="piloto-ayuda"
+              >
+                Preparar correo <span aria-hidden="true">↗</span></button
+              ><button class="sia-copy" type="button" id="piloto-copiar">
+                Copiar solicitud
+              </button>
+            </div>
+            <p class="sia-form-status" id="piloto-estado" role="status"></p>
+            <a class="sia-text-link" id="piloto-abrir" hidden
+              >Abrir aplicación de correo <span aria-hidden="true">↗</span></a
+            >
+            <div id="piloto-borrador" hidden>
+              <label for="piloto-texto"
+                >Solicitud preparada para copiar<textarea
+                  id="piloto-texto"
+                  rows="7"
+                  readonly
+                ></textarea>
+              </label>
+              <p class="sia-footnote">
+                Destinatarios: sebastianjpolaniao@gmail.com,
+                juanpabloescamilla@gmail.com y guillermoacmk@gmail.com.
+              </p>
+            </div>
+          </form>
+          <noscript
+            ><h3>Conversemos sobre tu municipio.</h3>
+            <p>Escríbenos con la entidad, el sector y los datos disponibles.</p>
+            <a
+              class="sia-button"
+              href="mailto:sebastianjpolaniao@gmail.com,juanpabloescamilla@gmail.com,guillermoacmk@gmail.com?subject=Solicitud%20de%20piloto%20Suelo-IA"
+              >Escribir al equipo <span aria-hidden="true">↗</span></a
+            ></noscript
+          >
+        </div>
+      </section>
       <section class="sia-faq sia-section" aria-labelledby="preguntas-titulo">
         <div>
           <p class="sia-label">Antes de revisar</p>
@@ -427,7 +595,7 @@
           <h2>Empieza por el mapa.<br />Continúa con la evidencia.</h2>
         </div>
         <a class="sia-button" href="/app/"
-          >Abrir el mapa del piloto <span aria-hidden="true">↗</span></a
+          >Explorar el mapa <span aria-hidden="true">↗</span></a
         >
       </section>
     </main>

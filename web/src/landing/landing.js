@@ -4,7 +4,7 @@ const base = import.meta.env.BASE_URL;
 const number = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 });
 const date = new Intl.DateTimeFormat("es-CO", {
   day: "numeric",
-  month: "short",
+  month: "long",
   year: "numeric",
   timeZone: "America/Bogota",
 });
@@ -15,6 +15,7 @@ async function json(path) {
   return response.json();
 }
 async function mostrarCifras() {
+  $(".sia-stats").setAttribute("aria-busy", "true");
   $("#cifras-estado").textContent = "Leyendo el resumen del piloto.";
   try {
     const r = await json("data/resumen.json");
@@ -67,7 +68,68 @@ function mostrarEjemplo() {
     base + "app/?predio=" + encodeURIComponent(ejemplo.npn);
   $("#ejemplo-contenido").hidden = false;
   $("#ejemplo-estado").hidden = true;
+  document.querySelectorAll("[data-example-link]").forEach((el) => {
+    el.href = base + "app/?predio=" + encodeURIComponent(ejemplo.npn);
+    el.hidden = false;
+  });
+  $("[data-example-area]").textContent = number.format(ejemplo.area_huella);
 }
+const form = $("#solicitud-piloto");
+form.hidden = false;
+function prepararSolicitud() {
+  if (!form.reportValidity()) return null;
+  const fields = new FormData(form);
+  const municipio = fields.get("municipio").trim();
+  const subject = "Solicitud de piloto Suelo-IA – " + municipio;
+  const body = [
+    "Hola, equipo de Suelo-IA.",
+    "",
+    ...[
+      ["Entidad", "entidad"],
+      ["Municipio", "municipio"],
+      ["Cargo", "cargo"],
+      ["Correo de contacto", "correo"],
+      ["Qué queremos revisar", "comentario"],
+    ].map(
+      ([label, key]) =>
+        label + ": " + (fields.get(key).trim() || "Sin comentario"),
+    ),
+  ].join("\n");
+  $("#piloto-texto").value = subject + "\n\n" + body;
+  $("#piloto-borrador").hidden = false;
+  return (
+    "mailto:" +
+    form.dataset.destino +
+    "?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" +
+    encodeURIComponent(body)
+  );
+}
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const href = prepararSolicitud();
+  if (!href) return;
+  $("#piloto-estado").textContent =
+    "Solicitud preparada. Revísala y envíala desde tu aplicación de correo. Si no se abre, puedes copiar el texto de abajo.";
+  const enlace = $("#piloto-abrir");
+  enlace.href = href;
+  enlace.hidden = false;
+  enlace.click();
+});
+$("#piloto-copiar").addEventListener("click", async () => {
+  if (!prepararSolicitud()) return;
+  try {
+    await navigator.clipboard.writeText($("#piloto-texto").value);
+    $("#piloto-estado").textContent =
+      "Solicitud copiada. Pégala en un correo para el equipo de Suelo-IA.";
+  } catch {
+    $("#piloto-estado").textContent =
+      "Puedes seleccionar y copiar el texto de la solicitud preparada que aparece abajo.";
+    $("#piloto-texto").focus();
+    $("#piloto-texto").select();
+  }
+});
 const menu = $(".sia-menu"),
   nav = $("#navegacion");
 menu.hidden = false;

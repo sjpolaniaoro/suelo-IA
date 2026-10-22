@@ -6,8 +6,14 @@
   --sia-muted: #5d5d60;
   --sia-accent: #416180;
   --sia-accent-hover: #2c455d;
+  --sia-accent-900: #1d2d3d;
+  --sia-accent-600: #597ea3;
+  --sia-accent-300: #b5d9fd;
+  --sia-accent-200: #d6ebff;
   --sia-soft: #e6edf3;
   --sia-line: #d4d4d7;
+  --sia-line-strong: #98989b;
+  --sia-grid: color-mix(in srgb, var(--sia-accent) 6%, transparent);
   --sia-control: #77777b;
   --sia-heading: "Barlow Condensed", "Arial Narrow", sans-serif;
   --sia-body: "Barlow", system-ui, sans-serif;
