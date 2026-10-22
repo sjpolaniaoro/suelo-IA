@@ -1,6 +1,6 @@
 """Conexión a las fuentes abiertas. Cada descarga es explícita (subcomando).
 
-    python -m pipeline.fuentes unidad-espacial   # Terrenos y Unidad de Construcción (Drive abierto)
+    python -m pipeline.fuentes unidad-espacial   # Terrenos y Construccion (Drive abierto)
     python -m pipeline.fuentes open-buildings    # huellas de Open Buildings v3 para Neiva
 
 Si la descarga falla (cuota de Drive, red), copie los archivos a data/raw/ a mano;
@@ -21,7 +21,7 @@ RAW = RAIZ / "data" / "raw"
 
 # Carpeta pública de datos abiertos de la Dirección de Gestión Catastral (Anexo 2, sección 2).
 DRIVE_CARPETA = "1rDuzwkfyFtRMeWYA2_xqqPWMjvKDs67g"
-CAPAS = ("Terrenos", "Unidad de Construccion")
+CAPAS = ("Terrenos", "Construccion")
 
 TILES = "https://openbuildings-public-dot-gweb-research.uw.r.appspot.com/public/tiles.geojson"
 # Rectángulo de Neiva (spec, tarea 2).

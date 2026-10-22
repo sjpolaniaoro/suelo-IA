@@ -59,6 +59,7 @@ def a_geojson(gdf: gpd.GeoDataFrame, props: list[str], decimales: int, toleranci
     g = gdf.copy()
     if tolerancia:
         g["geometry"] = g.geometry.simplify(tolerancia, preserve_topology=True)
+    g["geometry"] = shapely.force_2d(g.geometry.values)
     g = g.to_crs(cartografia.CRS_WEB)
     g["geometry"] = shapely.set_precision(g.geometry.values, 10.0 ** -decimales)
     feats = []
@@ -101,7 +102,7 @@ def main(argv=None) -> int:
     p.add_argument("--config", default=str(RAIZ / "pipeline" / "config.yaml"))
     p.add_argument("--registro", default=str(RAW / "CATASTRAL_REGISTRO1_20250505.xlsx"))
     p.add_argument("--terrenos", default=str(RAW / "Unidad_Espacial" / "Terrenos.shp"))
-    p.add_argument("--construcciones", default=str(RAW / "Unidad_Espacial" / "Unidad de Construccion.shp"))
+    p.add_argument("--construcciones", default=str(RAW / "Unidad_Espacial" / "Construccion.shp"))
     p.add_argument("--huellas", default=str(RAW / "open_buildings_neiva.csv"))
     p.add_argument("--salida-web", default=str(RAIZ / "web" / "public" / "data"))
     p.add_argument("--salida-api", default=str(RAIZ / "api" / "data"))
