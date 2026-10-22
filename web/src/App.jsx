@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Mapa, { COLORES } from "./Mapa.jsx";
 import Ficha from "./Ficha.jsx";
-import { apiDisponible, cargarSector, fichaDesdeApi } from "./datos.js";
+import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import { aCsv, desdeCsv, descargar, guardar, leer } from "./revisiones.js";
 
 const FILTROS = [
@@ -19,7 +19,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [api, setApi] = useState(null); // null = comprobando
   const [filtro, setFiltro] = useState("todas");
-  const [sel, setSel] = useState(null);
+  const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
   const [ficha, setFicha] = useState(null);
   const [revisiones, setRevisiones] = useState(leer);
   const [guardadoOk, setGuardadoOk] = useState(true);
@@ -41,6 +41,30 @@ export default function App() {
   }, [datos, filtro]);
 
   const elegir = useCallback((npn) => setSel(npn), []);
+
+  // Enlace compartible: ?predio=número abre la ficha directamente.
+  useEffect(() => {
+    const u = new URL(window.location.href);
+    if (sel) u.searchParams.set("predio", sel);
+    else u.searchParams.delete("predio");
+    window.history.replaceState(null, "", u);
+  }, [sel]);
+
+  const centro = useMemo(() => {
+    const f = datos?.predios.features.find((x) => x.properties.npn === sel);
+    if (!f?.geometry) return null;
+    const [[x0, y0], [x1, y1]] = limites({ features: [f] });
+    return { lat: (y0 + y1) / 2, lon: (x0 + x1) / 2 };
+  }, [datos, sel]);
+
+  // Cola de revisión: avanza al siguiente predio de la lista que aún no tiene veredicto.
+  const pendientes = lista.filter((p) => !revisiones[p.npn]);
+  const progreso = { hechos: lista.length - pendientes.length, total: lista.length };
+  const siguiente = () => {
+    const i = lista.findIndex((p) => p.npn === sel);
+    const sig = [...lista.slice(i + 1), ...lista.slice(0, i + 1)].find((p) => !revisiones[p.npn] && p.npn !== sel);
+    if (sig) setSel(sig.npn);
+  };
 
   useEffect(() => {
     if (!sel || !datos) return setFicha(null);
@@ -134,6 +158,11 @@ export default function App() {
           ))}
         </div>
 
+        {lista.length > 0 && (
+          <p className="progreso" aria-live="polite">
+            Revisados en la lista: <b>{progreso.hechos}</b> de {progreso.total}
+          </p>
+        )}
         <ol className="lista" aria-label="Predios priorizados">
           {lista.map((p) => (
             <li key={p.npn}>
@@ -169,6 +198,9 @@ export default function App() {
             revision={revisiones[ficha.npn]}
             onRevisar={revisar}
             onCerrar={() => setSel(null)}
+            centro={centro}
+            progreso={progreso}
+            onSiguiente={siguiente}
             manifiesto={datos?.manifiesto}
             hayEvidencia={hayEvidencia}
           />

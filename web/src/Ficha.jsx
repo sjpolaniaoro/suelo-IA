@@ -7,7 +7,10 @@ const ESTADOS = [
   ["no_concluyente", "No concluyente"],
 ];
 
-export default function Ficha({ p, revision, onRevisar, onCerrar, manifiesto, hayEvidencia }) {
+export default function Ficha({ p, revision, onRevisar, onCerrar, onSiguiente, progreso, centro, manifiesto, hayEvidencia }) {
+  const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
+  const calle = centro && `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}`;
+  const copiar = () => navigator.clipboard?.writeText(window.location.href).catch(() => {});
   return (
     <aside className="ficha" aria-label="Ficha del predio">
       <button className="cerrar" onClick={onCerrar} aria-label="Cerrar ficha">×</button>
@@ -42,6 +45,17 @@ export default function Ficha({ p, revision, onRevisar, onCerrar, manifiesto, ha
         {manifiesto?.generado && <li>Datos generados el {manifiesto.generado.slice(0, 10)}.</li>}
       </ul>
 
+      {centro && (
+        <>
+          <h3>Verificar en imagen</h3>
+          <div className="enlaces">
+            <a href={satelite} target="_blank" rel="noopener noreferrer">Satélite ↗</a>
+            <a href={calle} target="_blank" rel="noopener noreferrer">Street View ↗</a>
+            <button onClick={copiar}>Copiar enlace</button>
+          </div>
+        </>
+      )}
+
       <h3>Registrar revisión</h3>
       <div className="revision">
         {ESTADOS.map(([k, t]) => (
@@ -51,6 +65,11 @@ export default function Ficha({ p, revision, onRevisar, onCerrar, manifiesto, ha
         ))}
       </div>
       {revision && <p className="nota">Marcado como «{revision.estado}» el {revision.fecha.slice(0, 10)}.</p>}
+      {progreso?.total > 0 && (
+        <button className="siguiente" onClick={onSiguiente} disabled={progreso.hechos >= progreso.total}>
+          Siguiente sin revisar → <span>{progreso.hechos} de {progreso.total} revisados</span>
+        </button>
+      )}
       <p className="aviso">Salida indicativa: prioriza qué verificar. No modifica avalúos ni genera cobros.</p>
     </aside>
   );

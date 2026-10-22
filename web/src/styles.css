@@ -61,6 +61,14 @@ main { position: relative; min-width: 0; }
 .nota { font-size: 12px; color: var(--suave); }
 .ficha .aviso { margin: 10px 0 0; }
 
+.enlaces { display: flex; gap: 6px; flex-wrap: wrap; }
+.enlaces a, .enlaces button { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--acento); text-decoration: none; font-size: 13px; }
+.enlaces a:hover, .enlaces button:hover { background: var(--fondo); }
+.siguiente { width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px; border: 0; background: var(--acento); color: #fff; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
+.siguiente span { font-weight: 400; opacity: .85; font-size: 12px; }
+.siguiente:disabled { opacity: .5; cursor: default; }
+.progreso { margin: 0; padding: 4px 16px; font-size: 12px; color: var(--suave); }
+
 .vacio { max-width: 520px; margin: 15vh auto; padding: 0 16px; }
 
 @media (max-width: 800px) {
