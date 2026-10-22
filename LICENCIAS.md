@@ -8,7 +8,7 @@
 | Mapa base | ODbL | © OpenStreetMap contributors, OpenFreeMap, OpenMapTiles |
 
 ## Código propio
-Pendiente de acordar entre los autores (MIT o Apache 2.0, ver Anexo 2, sección 13). Hasta entonces el repositorio no declara licencia de código. La documentación se propone bajo CC BY 4.0.
+Licencia MIT, ver [`LICENSE`](LICENSE). Los datos de terceros de la tabla anterior conservan sus propias licencias y no quedan cubiertos por la MIT. La documentación se propone bajo CC BY 4.0.
 
 ## Dependencias
 Todas de código abierto (MIT, BSD o Apache 2.0): pandas, geopandas, shapely, pyproj, numpy; FastAPI, React, deck.gl, MapLibre GL, Vite.

@@ -20,3 +20,6 @@ El Anexo describe las alturas de Open Buildings 2.5D Temporal (2016-2023) como p
 
 ## 4. Sección 7: indicadores que ya se pueden calcular
 Con la muestra de `docs/validacion/muestra.csv` (50 predios de mayor puntaje y 20 de control sin alerta) se calculan precisión, exhaustividad y F1 con `python -m pipeline.validacion metricas ARCHIVO`. Hasta que una persona revise los 70 predios, la tabla debe seguir diciendo «meta inicial por validar». La integridad de fichas y la cobertura del piloto sí se pueden reportar ya: 7.329 de 7.597 predios del Registro 1 en el sector con ficha revisable (96,5 %), con 268 excluidos por no cruzar con un terreno.
+
+## 5. Sección 13: licencia
+El repositorio queda con licencia MIT para el código (archivo `LICENSE`, con los tres integrantes como titulares del derecho de autor). Sustituir el hueco «[Definir titularidad, licencia y alcance de publicación con todos los autores]» por esa decisión una vez los tres autores la confirmen, y verificar que coincida con el Anexo 3.

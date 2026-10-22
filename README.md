@@ -38,6 +38,7 @@ Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 rea
 ## Pendiente
 - Completar el Anexo 2 con los textos de [`docs/anexo2-ajustes.md`](docs/anexo2-ajustes.md).
 - Revisar con imagen o visita los 70 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`) y calcular precisión, exhaustividad y F1: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.
-- Definir la licencia del código (ver [`LICENCIAS.md`](LICENCIAS.md)).
+
+Licencia del código: MIT ([`LICENSE`](LICENSE)); datos de terceros según [`LICENCIAS.md`](LICENCIAS.md).
 
 Las salidas son indicativas: priorizan qué verificar y no modifican avalúos ni generan cobros.
