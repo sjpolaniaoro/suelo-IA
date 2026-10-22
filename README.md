@@ -10,6 +10,11 @@ Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest Reto Inno
 
 Estado: v1 con datos reales del sector 02 (corrida del 22-oct-2026). El pipeline reproduce todas las cifras de control del spec y genera `web/public/data/` y `api/data/` (resultados en `resumen.json`: 7.329 predios dibujados, 268 sin geometría, A1 = 807, A2 = 414, A3 = 90). Son alertas para priorizar revisión, no hallazgos confirmados.
 
+## Demo en línea
+- Mapa 3D (Vercel): https://suelo-ia-knwnic.vercel.app
+- API (Render, plan gratuito; el primer pedido puede tardar ~50 s en despertar): https://suelo-ia-api.onrender.com
+- El mapa funciona sin la API: usa los archivos de `web/public/data/` y avisa "Modo sin conexión a la API" si no responde.
+
 ## Cómo correrlo
 
 ```bash
@@ -31,7 +36,7 @@ Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 rea
 `pipeline/` datos (Python) · `web/` mapa 3D (React, deck.gl, MapLibre; Vercel) · `api/` FastAPI (Render, plan gratuito; `render.yaml`) · `notebooks/` extracción de Open Buildings · `tests/` pruebas.
 
 ## Pendiente
-- Desplegar en Vercel (`web/`) y Render (`render.yaml`) y completar las URL en el Anexo 2, sección 6.
+- Completar las URL de la demo y de la API en el Anexo 2, sección 6.
 - Validar 50 predios con imagen o visita para precisión, exhaustividad y F1 (Anexo 2, sección 7).
 - Definir la licencia del código (ver [`LICENCIAS.md`](LICENCIAS.md)).
 
