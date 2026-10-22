@@ -40,7 +40,7 @@ Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 rea
 
 ## Pendiente
 - Completar el Anexo 2 con los textos de [`docs/anexo2-ajustes.md`](docs/anexo2-ajustes.md).
-- Revisar con imagen o visita los 70 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`) y calcular precisión, exhaustividad y F1: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.
+- Revisar con imagen o visita los 240 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`; si el tiempo no alcanza, los primeros 50 de cada grupo ya son una muestra aleatoria válida) y calcular precisión, exhaustividad y F1 estimados: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.
 
 Licencia del código: MIT ([`LICENSE`](LICENSE)); datos de terceros según [`LICENCIAS.md`](LICENCIAS.md).
 
