@@ -1,315 +1,481 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suelo-IA — Prioriza qué predios revisar en el catastro de Neiva</title>
-<meta name="description" content="Suelo-IA cruza el registro catastral de Neiva con huellas de edificaciones detectadas por visión computacional y prioriza qué predios revisar, con razones, fuentes y mapa 3D. Herramienta independiente, no oficial.">
-<meta property="og:title" content="Suelo-IA — Catastro de Neiva, de la sospecha a la visita">
-<meta property="og:description" content="Mapa 3D del sector 02 con alertas explicables por predio. Datos abiertos, supervisión humana, código abierto.">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Ccircle cx='22' cy='22' r='20' fill='%23122232'/%3E%3Crect x='11' y='14' width='9' height='8' fill='none' stroke='%23B9C6D2'/%3E%3Crect x='23' y='20' width='10' height='11' fill='%233FCB93'/%3E%3Crect x='12' y='25' width='8' height='6' fill='none' stroke='%23B9C6D2'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-</head>
-<body class="landing" data-perfil="catastro">
-
-<a class="saltar" href="#contenido">Saltar al contenido</a>
-
-<header class="nav" id="nav">
-  <div class="nav-in">
-    <a class="marca" href="#inicio" aria-label="Suelo-IA, inicio">
-      <svg viewBox="0 0 44 44" aria-hidden="true" class="marca-logo">
-        <circle cx="22" cy="22" r="20" fill="none" stroke="#B9C6D2" stroke-width="1.5"/>
-        <rect x="10" y="13" width="10" height="9" fill="none" stroke="#B9C6D2"/>
-        <rect x="11" y="26" width="9" height="6" fill="none" stroke="#B9C6D2"/>
-        <rect x="24" y="19" width="10" height="13" fill="#3FCB93"/>
-        <line class="sweep" x1="22" y1="22" x2="22" y2="3" stroke="#3FCB93" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span>Suelo-IA</span>
-    </a>
-    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú">
-      <span></span><span></span><span></span>
-    </button>
-    <nav class="nav-menu" id="nav-menu" aria-label="Principal">
-      <a href="#problema">El problema</a>
-      <a href="#como-funciona">Cómo funciona</a>
-      <a href="#para-quien">Para quién</a>
-      <a href="#confianza">Confianza</a>
-      <a href="#faq">Preguntas</a>
-      <a class="btn btn-primario" href="/app/">Abrir el mapa</a>
-    </nav>
-  </div>
-</header>
-
-<main id="contenido">
-
-<!-- ============ HERO ============ -->
-<section class="hero" id="inicio">
-  <div class="hero-in">
-    <div class="hero-texto">
-      <p class="eyebrow"><span class="punto-vivo" aria-hidden="true"></span> Datos abiertos de Neiva · Herramienta independiente, no oficial</p>
-      <h1>Llega primero a los predios donde el catastro no coincide con lo construido.</h1>
-      <p class="hero-sub">Suelo-IA cruza el registro catastral con huellas de edificaciones detectadas por visión computacional y te entrega una lista corta y explicada de dónde mirar primero, con mapa 3D, fuentes y fechas.</p>
-
-      <div class="hero-ctas">
-        <a class="btn btn-primario btn-grande" href="/app/">Explorar el sector 02 →</a>
-        <a class="btn btn-claro btn-grande" href="#como-funciona">Ver cómo funciona</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Suelo-IA · Un mapa para orientar la revisión catastral de Neiva
+    </title>
+    <meta
+      name="description"
+      content="Explora el sector urbano 02 de Neiva. Registro catastral, cartografía y huellas de edificaciones para priorizar revisión humana, con razones y fuentes."
+    />
+    <meta name="theme-color" content="#f2f2f3" />
+    <meta property="og:title" content="Suelo-IA · Inteligencia territorial" />
+    <meta
+      property="og:description"
+      content="Un mapa para orientar la revisión catastral de Neiva. Piloto del sector 02, con datos abiertos y revisión humana."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="sia-landing">
+    <a class="sia-skip" href="#contenido">Saltar al contenido</a>
+    <header class="sia-header">
+      <a class="sia-brand" href="/" aria-label="Suelo-IA, inicio"
+        ><img src="/favicon.svg" width="42" height="42" alt="" /><span
+          >Suelo-IA<small>Inteligencia territorial</small></span
+        ></a
+      >
+      <span class="sia-location">Neiva, Huila<br />Sector urbano 02</span>
+      <button
+        class="sia-menu"
+        aria-controls="navegacion"
+        aria-expanded="false"
+        hidden
+      >
+        Menú
+      </button>
+      <nav id="navegacion" aria-label="Principal">
+        <a href="#alertas">Alertas</a><a href="#metodo">Método</a
+        ><a href="#fuentes">Fuentes</a>
+      </nav>
+      <a class="sia-button sia-header-cta" href="/app/"
+        >Abrir el mapa <span aria-hidden="true">↗</span></a
+      >
+    </header>
+    <main id="contenido">
+      <section class="sia-cover" aria-labelledby="titulo">
+        <div class="sia-cover-copy">
+          <p class="sia-label">
+            <span class="sia-mark" aria-hidden="true"></span> Cartografía para
+            la revisión humana
+          </p>
+          <h1 id="titulo">
+            Un mapa para orientar la revisión catastral de Neiva.
+          </h1>
+          <p class="sia-lead">
+            El registro dice una cosa. El territorio puede contar otra. Cruza
+            los datos y encuentra dónde conviene mirar con más atención.
+          </p>
+          <div class="sia-cover-actions">
+            <a class="sia-button" href="/app/"
+              >Explorar el sector 02 <span aria-hidden="true">↗</span></a
+            ><a class="sia-text-link" href="#ficha">Ver una ficha de ejemplo</a>
+          </div>
+          <p class="sia-disclaimer">
+            Herramienta independiente, no oficial.<br />Alertas para priorizar
+            revisión; no son hallazgos confirmados.
+          </p>
+          <div class="sia-cover-index">
+            <span>Piloto territorial</span
+            ><span>Registro + cartografía + huellas</span>
+          </div>
+        </div>
+        <figure class="sia-plan">
+          <div class="sia-plan-top">
+            <span>Neiva / Sector 02</span><span>Vista de contexto</span>
+          </div>
+          <img
+            src="/img/plano-sector02.svg"
+            width="1000"
+            height="820"
+            fetchpriority="high"
+            alt="Vista cenital de las parcelas del sector urbano 02 de Neiva. El azul oscuro destaca el predio de ejemplo, no su prioridad."
+          />
+          <figcaption>
+            <span><i aria-hidden="true"></i> Cartografía predial real</span
+            ><span>Fuente: Alcaldía de Neiva</span>
+          </figcaption>
+        </figure>
+      </section>
+      <section class="sia-stat-band" aria-label="Cifras del piloto">
+        <dl class="sia-stats" aria-busy="true">
+          <div>
+            <dt>Predios en el mapa</dt>
+            <dd data-stat="predios_con_geometria">Cargando…</dd>
+          </div>
+          <div>
+            <dt>Con al menos una alerta</dt>
+            <dd data-stat="predios_con_alerta">Cargando…</dd>
+          </div>
+          <div>
+            <dt>Cruce con la cartografía</dt>
+            <dd data-stat="tasa_cruce">Cargando…</dd>
+          </div>
+          <div class="sia-stat-date">
+            <dt>Fecha de procesamiento</dt>
+            <dd data-stat="generado">Cargando…</dd>
+          </div>
+        </dl>
+        <p id="cifras-estado" class="sia-footnote" role="status">
+          Activa JavaScript para consultar las cifras del resumen del piloto.
+        </p>
+        <noscript
+          ><p class="sia-footnote">
+            Activa JavaScript para consultar las cifras y la ficha de ejemplo.
+            Puedes abrir el mapa desde el enlace superior.
+          </p></noscript
+        >
+      </section>
+      <section
+        class="sia-example sia-section"
+        id="ficha"
+        aria-labelledby="ficha-titulo"
+      >
+        <div class="sia-section-intro">
+          <p class="sia-label">Del territorio a la evidencia</p>
+          <h2 id="ficha-titulo">Cada predio,<br />una razón para revisar.</h2>
+          <p>
+            Lo que está registrado frente a lo que se observa. Una ficha reúne
+            la señal, sus fuentes y el contexto para que una persona decida.
+          </p>
+          <p class="sia-audience">
+            Para equipos de Gestión Catastral, Hacienda y Planeación.
+          </p>
+        </div>
+        <article
+          class="sia-example-sheet"
+          aria-label="Ejemplo real de una ficha de predio"
+        >
+          <div class="sia-sheet-heading">
+            <span>Ficha de revisión / ejemplo real</span
+            ><span class="sia-alert-code">A1</span>
+          </div>
+          <div class="sia-example-content" id="ejemplo-contenido" hidden>
+            <h3 id="ejemplo-direccion"></h3>
+            <p class="sia-npn" id="ejemplo-npn"></p>
+            <dl class="sia-comparison">
+              <div>
+                <dt>Área construida registrada</dt>
+                <dd>
+                  <span id="ejemplo-registro"></span
+                  ><small>m² / Registro catastral</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Huella detectada</dt>
+                <dd>
+                  <span id="ejemplo-huella"></span
+                  ><small>m² / Open Buildings</small>
+                </dd>
+              </div>
+            </dl>
+            <p class="sia-reason" id="ejemplo-razon"></p>
+            <div class="sia-sheet-bottom">
+              <span id="ejemplo-confianza"></span
+              ><a class="sia-text-link" id="ejemplo-enlace" href="/app/"
+                >Abrir esta ficha <span aria-hidden="true">↗</span></a
+              >
+            </div>
+            <p class="sia-footnote">
+              La huella es una señal para verificar; no equivale al área
+              construida total. Este ejemplo no registra un veredicto.
+            </p>
+          </div>
+          <p id="ejemplo-estado" class="sia-example-status" role="status">
+            Activa JavaScript para consultar el ejemplo del piloto.
+          </p>
+        </article>
+      </section>
+      <section
+        class="sia-alerts sia-section"
+        id="alertas"
+        aria-labelledby="alertas-titulo"
+      >
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Leyenda de lectura</p>
+            <h2 id="alertas-titulo">Tres señales. Una revisión pendiente.</h2>
+          </div>
+          <p>
+            Los códigos identifican reglas, no niveles de prioridad. Un predio
+            puede tener más de una alerta.
+          </p>
+        </div>
+        <div class="sia-alert-row">
+          <span class="sia-alert-code">A1</span>
+          <div>
+            <h3>Posible construcción no registrada</h3>
+            <p>
+              Una huella de edificación donde el registro no indica área
+              construida, en predios habitacionales sin propiedad horizontal.
+            </p>
+          </div>
+          <div class="sia-alert-count">
+            <strong data-stat="A1">Cargando…</strong><span>predios con A1</span>
+          </div>
+        </div>
+        <div class="sia-alert-row">
+          <span class="sia-alert-code">A2</span>
+          <div>
+            <h3>Posible área subregistrada</h3>
+            <p>
+              El área de las huellas supera el área construida registrada en
+              predios sin propiedad horizontal. Las fechas y las mediciones
+              requieren contraste.
+            </p>
+          </div>
+          <div class="sia-alert-count">
+            <strong data-stat="A2">Cargando…</strong><span>predios con A2</span>
+          </div>
+        </div>
+        <div class="sia-alert-row">
+          <span class="sia-alert-code">A3</span>
+          <div>
+            <h3>Avalúo atípico</h3>
+            <p>
+              Una diferencia estadística respecto a predios comparables de la
+              manzana. No estima un nuevo avalúo ni calcula impuestos.
+            </p>
+          </div>
+          <div class="sia-alert-count">
+            <strong data-stat="A3">Cargando…</strong><span>predios con A3</span>
+          </div>
+        </div>
+        <p class="sia-footnote">
+          Reglas y umbrales documentados en la
+          <a
+            href="https://github.com/sjpolaniaoro/suelo-IA/blob/main/docs/spec.md"
+            >especificación del proyecto</a
+          >. Los conteos pueden solaparse.
+        </p>
+      </section>
+      <section
+        class="sia-method sia-section"
+        id="metodo"
+        aria-labelledby="metodo-titulo"
+      >
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Método de trabajo</p>
+            <h2 id="metodo-titulo">
+              De fuentes separadas<br />a una revisión con contexto.
+            </h2>
+          </div>
+          <p>
+            Un recorrido trazable. Los datos orientan; la verificación y las
+            actuaciones corresponden a las personas y a la autoridad catastral.
+          </p>
+        </div>
+        <ol class="sia-method-steps">
+          <li>
+            <span>01</span>
+            <h3>Reunir</h3>
+            <p>
+              Registro catastral, cartografía predial y huellas de
+              edificaciones.
+            </p>
+          </li>
+          <li>
+            <span>02</span>
+            <h3>Cruzar</h3>
+            <p>
+              Relacionar el registro con el terreno y la evidencia espacial.
+            </p>
+          </li>
+          <li>
+            <span>03</span>
+            <h3>Priorizar</h3>
+            <p>Aplicar las reglas y conservar las razones de cada alerta.</p>
+          </li>
+          <li>
+            <span>04</span>
+            <h3>Consultar</h3>
+            <p>Explorar el mapa y leer lo registrado frente a lo observado.</p>
+          </li>
+          <li>
+            <span>05</span>
+            <h3>Verificar</h3>
+            <p>Contrastar, registrar una revisión y exportar el trabajo.</p>
+          </li>
+        </ol>
+      </section>
+      <section class="sia-notes sia-section" aria-labelledby="notas-titulo">
+        <div>
+          <p class="sia-label">Notas de uso</p>
+          <h2 id="notas-titulo">Leer también<br />los límites.</h2>
+        </div>
+        <div class="sia-notes-list">
+          <div>
+            <h3>Fuentes con fechas distintas</h3>
+            <p>
+              El registro y las huellas pueden representar momentos diferentes.
+              Una alerta necesita verificación.
+            </p>
+          </div>
+          <div>
+            <h3>La precisión está en validación</h3>
+            <p>
+              No se presentan métricas de desempeño como resultados confirmados.
+              <a
+                href="https://github.com/sjpolaniaoro/suelo-IA/tree/main/docs/validacion"
+                >Consultar la validación</a
+              >.
+            </p>
+          </div>
+          <div>
+            <h3>Alturas de referencia</h3>
+            <p>
+              La vista 3D usa los pisos de la cartografía y puede mostrar
+              alturas ilustrativas. No mide la altura actual desde satélite.
+            </p>
+          </div>
+          <div>
+            <h3>Trabajo en tu navegador</h3>
+            <p>
+              Las revisiones se guardan localmente y se exportan a CSV. El mapa
+              utiliza datos incluidos aunque la API no responda.
+            </p>
+          </div>
+          <div>
+            <h3>Datos del predio</h3>
+            <p>
+              El pipeline excluye nombres, documentos y contactos. Si aparecen
+              columnas de datos personales, se detiene.
+            </p>
+          </div>
+          <div>
+            <h3>Decisión humana</h3>
+            <p>
+              Suelo-IA no modifica el catastro, no emite nuevos avalúos y no
+              genera cobros.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="sia-scope sia-section" aria-labelledby="alcance-titulo">
+        <div>
+          <p class="sia-label">Alcance del piloto</p>
+          <h2 id="alcance-titulo">
+            Empezar por un sector.<br />Verificar antes de ampliar.
+          </h2>
+        </div>
+        <dl>
+          <div>
+            <dt>Disponible</dt>
+            <dd>
+              Sector urbano 02, mapa 3D, alertas A1–A3, ficha y exportación de
+              revisiones.
+            </dd>
+          </div>
+          <div>
+            <dt>Previsto</dt>
+            <dd>
+              Ampliación de cobertura, serie temporal y consulta normativa. Son
+              desarrollos futuros, no funciones del piloto actual.
+            </dd>
+          </div>
+        </dl>
+      </section>
+      <section class="sia-faq sia-section" aria-labelledby="preguntas-titulo">
+        <div>
+          <p class="sia-label">Antes de revisar</p>
+          <h2 id="preguntas-titulo">Preguntas del trabajo de campo.</h2>
+        </div>
+        <div>
+          <details>
+            <summary>¿Una alerta confirma una diferencia catastral?</summary>
+            <p>
+              No. Es una señal para priorizar una revisión. Debe contrastarse
+              con las fuentes, imágenes o una visita; no sustituye la actuación
+              de la autoridad catastral.
+            </p>
+          </details>
+          <details>
+            <summary>¿Cómo se validan los resultados?</summary>
+            <p>
+              El proyecto tiene una muestra de validación pendiente de revisión
+              humana. Se documentarán las métricas cuando esa revisión permita
+              calcularlas; no se garantiza precisión antes de medirla.
+            </p>
+          </details>
+          <details>
+            <summary>¿Dónde quedan mis revisiones?</summary>
+            <p>
+              En el almacenamiento de tu navegador. Puedes exportarlas e
+              importarlas como CSV. Si el navegador impide guardar, el mapa te
+              avisa y permite exportar antes de cerrar.
+            </p>
+          </details>
+          <details>
+            <summary>¿Qué pasa si la API no responde?</summary>
+            <p>
+              El mapa lee los archivos incluidos con la página y muestra el
+              aviso de modo sin API. Las teselas del mapa base, las fuentes y
+              los enlaces de imágenes sí pueden necesitar internet.
+            </p>
+          </details>
+          <details>
+            <summary>¿Puedo consultar otros sectores?</summary>
+            <p>
+              La versión actual cubre el sector urbano 02 de Neiva. La
+              ampliación de cobertura está prevista y depende de la
+              disponibilidad y calidad de los datos.
+            </p>
+          </details>
+        </div>
+      </section>
+      <section class="sia-closing">
+        <div>
+          <p class="sia-label">El territorio, a la vista</p>
+          <h2>Empieza por el mapa.<br />Continúa con la evidencia.</h2>
+        </div>
+        <a class="sia-button" href="/app/"
+          >Abrir el mapa del piloto <span aria-hidden="true">↗</span></a
+        >
+      </section>
+    </main>
+    <footer class="sia-footer" id="fuentes">
+      <div class="sia-footer-brand">
+        <a class="sia-brand" href="/"
+          ><img src="/favicon.svg" width="42" height="42" alt="" /><span
+            >Suelo-IA<small>Inteligencia territorial</small></span
+          ></a
+        >
+        <p>
+          Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest
+          Reto Innova.
+        </p>
       </div>
-
-      <p class="contador-vivo" id="contador-vivo" hidden>
-        <span class="punto-vivo" aria-hidden="true"></span>
-        <span>Piloto en vivo: <strong data-k="predios_con_geometria">0</strong> predios en el mapa, <strong data-k="predios_con_alerta">0</strong> con alerta de revisión (datos generados el <span data-k="fecha">hoy</span>).</span>
+      <dl>
+        <div>
+          <dt>Ámbito</dt>
+          <dd>Neiva / sector urbano 02</dd>
+        </div>
+        <div>
+          <dt>Registro catastral</dt>
+          <dd id="vigencia">Consultar manifiesto</dd>
+        </div>
+        <div>
+          <dt>Fuentes y licencias</dt>
+          <dd>
+            Registro 1 y cartografía: Alcaldía de Neiva, Gestión Catastral.
+            Huellas: Open Buildings v3, Google Research (CC BY 4.0 u ODbL).<br /><a
+              href="https://github.com/sjpolaniaoro/suelo-IA/blob/main/LICENCIAS.md"
+              >Consultar atribuciones</a
+            >
+          </dd>
+        </div>
+        <div>
+          <dt>Código abierto</dt>
+          <dd>
+            <a href="https://github.com/sjpolaniaoro/suelo-IA"
+              >GitHub / licencia MIT</a
+            >
+          </dd>
+        </div>
+      </dl>
+      <p class="sia-footer-legal">
+        Herramienta independiente, no oficial. Salidas indicativas sujetas a
+        revisión humana. No sustituye los actos de la autoridad catastral.
       </p>
-    </div>
-
-    <div class="hero-radar" aria-hidden="true">
-      <svg viewBox="0 0 400 400" id="radar-svg">
-        <defs>
-          <radialGradient id="rg-fondo" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#1B3A52"/>
-            <stop offset="100%" stop-color="#122232"/>
-          </radialGradient>
-          <linearGradient id="rg-barrido" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#3FCB93" stop-opacity="0"/>
-            <stop offset="100%" stop-color="#3FCB93" stop-opacity=".4"/>
-          </linearGradient>
-          <clipPath id="rg-recorte"><circle cx="200" cy="200" r="188"/></clipPath>
-        </defs>
-        <circle cx="200" cy="200" r="190" fill="url(#rg-fondo)" stroke="#31465A"/>
-        <g clip-path="url(#rg-recorte)" id="radar-predios"></g>
-        <circle cx="200" cy="200" r="140" fill="none" stroke="#31465A" stroke-opacity=".7"/>
-        <circle cx="200" cy="200" r="90" fill="none" stroke="#31465A" stroke-opacity=".7"/>
-        <g class="radar-barrido">
-          <path d="M200 200 L200 10 A190 190 0 0 0 65.6 65.6 Z" fill="url(#rg-barrido)"/>
-          <line x1="200" y1="200" x2="200" y2="10" stroke="#3FCB93" stroke-width="2.5" stroke-linecap="round"/>
-        </g>
-        <circle cx="200" cy="200" r="4" fill="#3FCB93"/>
-      </svg>
-      <div class="radar-tooltip" id="radar-tooltip" hidden></div>
-      <p class="radar-nota">Ilustración del barrido sobre un sector (no a escala)</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CIFRAS ============ -->
-<section class="beneficios" aria-label="Cifras del piloto">
-  <div class="contenedor">
-    <ul class="beneficios-grid">
-      <li class="beneficio">
-        <span class="beneficio-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V9l6-4v16M9 21V12l6-3v12M15 21V7l6 3v11M3 21h18"/></svg></span>
-        <h3 class="cifra" data-k="predios_con_geometria">—</h3>
-        <p>predios dibujados en el mapa 3D del sector urbano 02 de Neiva.</p>
-      </li>
-      <li class="beneficio">
-        <span class="beneficio-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-        <h3 class="cifra" data-k="predios_con_alerta">—</h3>
-        <p>predios con al menos una alerta, ordenados por puntaje de prioridad.</p>
-      </li>
-      <li class="beneficio">
-        <span class="beneficio-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
-        <h3 class="cifra" data-k="pct_cruce">—</h3>
-        <p>de los predios del registro se cruzan con su terreno en la cartografía.</p>
-      </li>
-      <li class="beneficio">
-        <span class="beneficio-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>
-        <h3 class="cifra">100 %</h3>
-        <p>de las alertas traen sus razones por escrito. Una persona decide qué hacer.</p>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ PROBLEMA ============ -->
-<section class="seccion" id="problema">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow eyebrow-oscuro">El problema</p>
-      <h2>Las fuentes existen y son públicas. Nadie las cruza.</h2>
-      <p>El registro catastral, la cartografía predial y las imágenes viven separados, con fechas distintas, y verificar exige visitas de campo costosas. El resultado: decisiones de recaudo y ordenamiento con información incompleta.</p>
-    </header>
-    <div class="problema-grid">
-      <div class="problema-cifra aparecer">
-        <p class="pc-num" data-k="ctx_sin_area">—</p>
-        <p class="pc-texto">predios urbanos habitacionales, sin propiedad horizontal, figuran con <strong>área construida igual a cero</strong>, de <span data-k="ctx_hab">—</span> (<strong data-k="ctx_pct">—</strong>).</p>
-      </div>
-      <div class="problema-cifra aparecer" style="--i:1">
-        <p class="pc-num" data-k="sec_sin_area">—</p>
-        <p class="pc-texto">en el <strong>sector 02</strong> (<span data-k="sec_pct">—</span> de <span data-k="sec_hab">—</span>), la mayor proporción entre los sectores urbanos.</p>
-      </div>
-      <aside class="problema-nota aparecer" style="--i:2">
-        <h3>Ojo: una cifra no es un hallazgo</h3>
-        <p>Algunos serán lotes vacíos y otros, construcciones no registradas. Suelo-IA no los acusa: <strong>señala dónde verificar primero</strong> y por qué.</p>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CÓMO FUNCIONA ============ -->
-<section class="seccion seccion-suave" id="como-funciona">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow eyebrow-oscuro">Cómo funciona</p>
-      <h2>De los datos abiertos a la visita de campo, en cinco pasos</h2>
-      <p>Cada paso alimenta al siguiente. Elige uno para ver qué hace, qué datos usa y qué obtienes.</p>
-    </header>
-
-    <div class="flujo aparecer">
-      <ol class="flujo-pasos" id="flujo-pasos" role="tablist" aria-label="Pasos de Suelo-IA"></ol>
-    </div>
-
-    <div class="flujo-detalle aparecer" id="flujo-detalle" role="tabpanel">
-      <div class="flujo-info" id="flujo-info"></div>
-      <div class="flujo-mock" id="flujo-mock"></div>
-    </div>
-    <p class="flujo-ayuda">Avanza solo cada 6 segundos · se detiene cuando pasas el cursor o eliges un paso. Las maquetas son ilustrativas.</p>
-  </div>
-</section>
-
-<!-- ============ PARA QUIÉN ============ -->
-<section class="seccion" id="para-quien">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow eyebrow-oscuro">Para quién es</p>
-      <h2>Un solo mapa para quien revisa y para quien decide</h2>
-    </header>
-    <div class="pathway-tabs" role="tablist" aria-label="Perfil" id="pathway-tabs">
-      <button type="button" role="tab" data-perfil="catastro" aria-selected="true">Gestión Catastral y Hacienda</button>
-      <button type="button" role="tab" data-perfil="planeacion" aria-selected="false">Planeación y control</button>
-    </div>
-    <div class="pathway" id="pathway" role="tabpanel"></div>
-  </div>
-</section>
-
-<!-- ============ CONFIANZA ============ -->
-<section class="seccion seccion-oscura" id="confianza">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow">Confianza por diseño</p>
-      <h2>Prioriza, explica y deja la decisión en manos humanas</h2>
-    </header>
-    <div class="privacidad-grid">
-      <article class="aparecer">
-        <h3>Sin datos personales</h3>
-        <p>El Registro 1 no trae nombres ni documentos y el proceso se detiene con un error explícito si aparece alguna columna con datos personales. Lo que ves es del predio, no de la persona.</p>
-      </article>
-      <article class="aparecer">
-        <h3>Cada alerta, con su razón</h3>
-        <p>Cada predio muestra qué se registró, qué se observó, la confianza de la detección y las fuentes con su fecha. Si falta un dato, se muestra como faltante y no como cero.</p>
-      </article>
-      <article class="aparecer">
-        <h3>No cobra ni valora</h3>
-        <p>Las salidas son indicativas. Suelo-IA no calcula impuestos, no emite avalúos ni modifica el registro: prioriza revisiones que la autoridad catastral tramita con su procedimiento.</p>
-      </article>
-      <article class="aparecer">
-        <h3>Código abierto, datos con licencia</h3>
-        <p>El código es MIT y está en GitHub. Las huellas de Open Buildings son CC BY 4.0 u ODbL, y el registro y la cartografía son datos abiertos de la Alcaldía de Neiva.</p>
-      </article>
-      <article class="aparecer">
-        <h3>Tu trabajo se queda en tu navegador</h3>
-        <p>Las revisiones que marcas se guardan en tu navegador y se exportan a CSV. No hay cuentas ni base de datos con tus decisiones.</p>
-      </article>
-      <article class="aparecer">
-        <h3>Funciona aunque la API duerma</h3>
-        <p>El mapa trae sus datos incluidos. Si el servicio de consulta está dormido, te avisa y sigue funcionando sin bloquearte.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============ RUTA ============ -->
-<section class="seccion" id="ruta">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow eyebrow-oscuro">Lo que sigue</p>
-      <h2>Empieza con un sector y crece donde la calidad lo permita</h2>
-      <p>Estamos definiendo el esquema de licenciamiento y acompañamiento. Mientras tanto, el piloto está abierto para explorar.</p>
-    </header>
-    <div class="planes-grid">
-      <article class="plan plan-destacado aparecer">
-        <span class="plan-estado plan-ok">Disponible hoy</span>
-        <h3>Piloto del sector 02</h3>
-        <p class="plan-para">Para explorar el método con datos reales.</p>
-        <ul>
-          <li>Mapa 3D con alertas A1, A2 y A3</li>
-          <li>Ficha por predio con fuentes y fechas</li>
-          <li>Registro de revisión y exportación a CSV</li>
-          <li>Verificación en satélite y Street View</li>
-        </ul>
-        <a class="btn btn-primario" href="/app/">Abrir el mapa</a>
-      </article>
-      <article class="plan aparecer" style="--i:1">
-        <span class="plan-estado">Próximo</span>
-        <h3>Más sectores y serie temporal</h3>
-        <p class="plan-para">Para ampliar la cobertura y ver cómo crece la ciudad.</p>
-        <ul>
-          <li>Ampliación gradual por barrios y comunas</li>
-          <li>Construcciones nuevas entre 2016 y 2023</li>
-          <li>Consulta normativa del POT con fuentes citadas</li>
-        </ul>
-        <p class="plan-precio"><span class="plan-precio-vacio">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-      </article>
-      <article class="plan aparecer" style="--i:2">
-        <span class="plan-estado">Planeado</span>
-        <h3>Servicio periódico</h3>
-        <p class="plan-para">Para que el catastro no vuelva a desactualizarse.</p>
-        <ul>
-          <li>Detección anual de construcciones nuevas</li>
-          <li>Integración con los sistemas de la entidad</li>
-          <li>Capacitación, soporte y actualización</li>
-        </ul>
-        <p class="plan-precio"><span class="plan-precio-vacio">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FAQ ============ -->
-<section class="seccion seccion-suave" id="faq">
-  <div class="contenedor contenedor-estrecho">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow eyebrow-oscuro">Preguntas frecuentes</p>
-      <h2>Lo que más nos preguntan</h2>
-    </header>
-    <div class="faq" id="faq-lista"></div>
-  </div>
-</section>
-
-<!-- ============ CTA FINAL ============ -->
-<section class="seccion seccion-oscura cta-final" id="contacto">
-  <div class="contenedor">
-    <header class="seccion-cabeza aparecer">
-      <p class="eyebrow">Pruébalo</p>
-      <h2>Abre el mapa, elige un predio rojo y mira por qué está marcado</h2>
-      <p>Funciona en el celular. Sin cuentas, sin instalar nada.</p>
-    </header>
-    <div class="hero-ctas aparecer">
-      <a class="btn btn-primario btn-grande" href="/app/">Explorar el sector 02 →</a>
-      <a class="btn btn-claro btn-grande" href="https://github.com/sjpolaniaoro/suelo-IA" target="_blank" rel="noopener noreferrer">Ver el código en GitHub ↗</a>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer class="pie">
-  <div class="contenedor pie-in">
-    <div>
-      <strong>Suelo-IA</strong> · inteligencia territorial para el catastro de Neiva
-      <p>Herramienta independiente, no oficial. Sus salidas son indicativas y no sustituyen los actos de la autoridad catastral. Datos: Registro 1 y cartografía predial de la Alcaldía de Neiva (Gestión Catastral, vigencia 2025); huellas de edificaciones Open Buildings v3 (Google Research, CC BY 4.0 u ODbL); mapa base © OpenStreetMap. Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest Reto Innova.</p>
-    </div>
-    <nav class="pie-links" aria-label="Pie de página">
-      <a href="/app/">Abrir el mapa</a>
-      <a href="https://github.com/sjpolaniaoro/suelo-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href="#faq">Preguntas</a>
-    </nav>
-  </div>
-</footer>
-
-<div class="barra-movil">
-  <a class="btn btn-primario" href="/app/">Abrir el mapa</a>
-</div>
-
-<script type="module" src="/src/landing/landing.js"></script>
-</body>
+    </footer>
+    <script type="module" src="/src/landing/landing.js"></script>
+  </body>
 </html>

@@ -31,6 +31,7 @@ export default function Ficha({
           <button onClick={() => onMover(1)} disabled={!posicion?.ok} aria-label="Predio siguiente" title="Siguiente (J)">›</button>
           <button className="cerrar" onClick={onCerrar} aria-label="Cerrar ficha" title="Cerrar (Esc)">×</button>
         </div>
+        <p className="ficha-rotulo">Hoja de revisión predial</p>
         <h2>{p.direccion || "Sin dirección"}</h2>
         <p className="npn">{p.npn}</p>
         <div className="chips">
@@ -76,7 +77,7 @@ export default function Ficha({
           <div className="paso-cab"><span className="paso-num">{hecho ? "✓" : "3"}</span><h3>Decidir</h3></div>
           <div className="veredictos">
             {VEREDICTOS.map((v) => (
-              <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
+              <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} aria-pressed={revision?.estado === v.k} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
                 {v.t}<kbd>{v.tecla}</kbd>
               </button>
             ))}

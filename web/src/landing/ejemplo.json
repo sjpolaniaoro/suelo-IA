@@ -1,0 +1,10 @@
+{
+  "npn": "410010102000000010004000000000",
+  "direccion": "C 25A 1 145",
+  "area_construida_reg": 0,
+  "area_huella": 34.06124114066566,
+  "confianza": "normal",
+  "razon": "Huella detectada de 34 m², sin área construida registrada.",
+  "vigencia": "2025-01-01",
+  "generado_desde_sha256": "382c8f3375d1f91abe4844bb519eab10bbe85bb8cd006ed7309f08d59ee3c31d"
+}

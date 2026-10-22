@@ -7,7 +7,7 @@ import { limites } from "./datos.js";
 
 maplibregl.setWorkerUrl(workerUrl);
 
-// Prioridad (clasificación) y estado de gestión (proceso) comparten tema con la landing.
+// Colores funcionales conservados: prioridad y estado de revisión, independientes de la marca.
 export const COLORES = {
   rojo: [229, 72, 77],
   naranja: [244, 140, 6],
@@ -71,13 +71,22 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
         lineas.push(p.puntaje > 0 ? `Prioridad ${p.nivel === "rojo" ? "alta" : p.nivel === "naranja" ? "media" : "baja"} · puntaje ${p.puntaje}` : "Sin alerta");
         return {
           html: lineas.join("<br>"),
-          style: { background: "#0C1824", color: "#fff", fontSize: "12px", padding: "6px 10px", borderRadius: "8px", fontFamily: "IBM Plex Sans, system-ui, sans-serif" },
+          style: { background: "var(--sia-surface)", color: "var(--sia-ink)", border: "1px solid var(--sia-control)", fontSize: "13px", padding: "8px 12px", borderRadius: "3px", fontFamily: "var(--sia-body)" },
         };
       },
     });
-    m.addControl(overlay.current);
+    // MapLibre puede no tener proyección mientras carga el estilo remoto o su respaldo.
+    // deck.gl consulta esa proyección al añadir el control: esperar evita romper la ficha.
+    const agregarOverlay = () => m.addControl(overlay.current);
+    if (m.isStyleLoaded()) agregarOverlay();
+    else m.once("style.load", agregarOverlay);
     mapa.current = m;
-    return () => m.remove();
+    return () => {
+      m.off("style.load", agregarOverlay);
+      m.remove();
+      mapa.current = null;
+      overlay.current = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -125,7 +134,11 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
         })
       );
     }
-    overlay.current.setProps({ layers: capas });
+    const m = mapa.current;
+    const aplicarCapas = () => overlay.current?.setProps({ layers: capas });
+    if (m?.isStyleLoaded()) aplicarCapas();
+    else m?.once("style.load", aplicarCapas);
+    return () => m?.off("style.load", aplicarCapas);
   }, [predios, huellas, filtros, estados, seleccionado, onSeleccion, vista]);
 
   useEffect(() => {
@@ -149,8 +162,8 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
       <div ref={contenedor} className="mapa" role="application" aria-label="Mapa 3D del sector 02" />
       <div className="mapa-controles" role="group" aria-label="Vista del mapa">
         <div className="segmento">
-          <button className={vista === "3d" ? "on" : ""} onClick={() => cambiarVista("3d")}>3D</button>
-          <button className={vista === "2d" ? "on" : ""} onClick={() => cambiarVista("2d")}>Cenital</button>
+          <button className={vista === "3d" ? "on" : ""} aria-pressed={vista === "3d"} onClick={() => cambiarVista("3d")}>3D</button>
+          <button className={vista === "2d" ? "on" : ""} aria-pressed={vista === "2d"} onClick={() => cambiarVista("2d")}>Cenital</button>
         </div>
         <button className="pildora" onClick={recentrar}>Ver todo el sector</button>
       </div>

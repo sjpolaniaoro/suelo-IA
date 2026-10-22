@@ -1,0 +1,15 @@
+/* Identidad compartida de la portada y la mesa de revisión. */
+:root {
+  --sia-paper: #f2f2f3;
+  --sia-surface: #fff;
+  --sia-ink: #1d1f20;
+  --sia-muted: #5d5d60;
+  --sia-accent: #416180;
+  --sia-accent-hover: #2c455d;
+  --sia-soft: #e6edf3;
+  --sia-line: #d4d4d7;
+  --sia-control: #77777b;
+  --sia-heading: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --sia-body: "Barlow", system-ui, sans-serif;
+  --sia-radius: 3px;
+}

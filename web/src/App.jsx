@@ -230,13 +230,7 @@ export default function App() {
       <section className={`panel ${panel ? "" : "oculto"}`}>
         <header className="panel-cab">
           <a className="marca" href="/" aria-label="Suelo-IA, volver al inicio">
-            <svg viewBox="0 0 44 44" aria-hidden="true" className="marca-logo">
-              <circle cx="22" cy="22" r="20" fill="none" stroke="#B9C6D2" strokeWidth="1.5" />
-              <rect x="10" y="13" width="10" height="9" fill="none" stroke="#B9C6D2" />
-              <rect x="11" y="26" width="9" height="6" fill="none" stroke="#B9C6D2" />
-              <rect x="24" y="19" width="10" height="13" fill="#3FCB93" />
-              <line className="sweep" x1="22" y1="22" x2="22" y2="3" stroke="#3FCB93" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <img src="/favicon.svg" width="36" height="36" alt="" className="marca-logo" />
             <span>Suelo-IA</span>
           </a>
           <span className="sector">Sector 02 · Neiva</span>
