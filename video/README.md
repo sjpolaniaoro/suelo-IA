@@ -29,11 +29,21 @@ Los textos están en `compositions/*.html` (una escena por archivo). La URL del 
 
 ## Sonido
 
-Solo efectos de sonido (Pixabay, licencia en `assets/sfx/CREDITS.md`); no tiene música de fondo. Para agregarla, copie un archivo con licencia a `assets/music/` y añada en `index.html`, dentro de `#root`:
+- Narración en español con la voz local Kokoro «ef_dora» (`npx hyperframes tts`, sin servicios externos). El guion, con el segundo en que entra cada frase, está en `assets/voz/guion.tsv`; cada frase es un archivo en `assets/voz/`.
+- Efectos de sonido de Pixabay (licencia en `assets/sfx/CREDITS.md`).
+- Sin música de fondo. Para agregarla, copie un archivo con licencia a `assets/music/` y añada en `index.html`, dentro de `#root`:
 
 ```html
-<audio id="musica" class="clip" src="assets/music/pista.mp3" data-start="0" data-duration="90" data-track-index="20" data-volume="0.35" data-fade-out="1.5"></audio>
+<audio id="musica" class="clip" src="assets/music/pista.mp3" data-start="0" data-duration="90" data-track-index="20" data-volume="0.15" data-fade-out="1.5"></audio>
 ```
+
+- Después de renderizar, el audio del MP4 se normalizó a unos −15 LUFS:
+
+```bash
+ffmpeg -i renders/suelo-ia-90s.mp4 -c:v copy -af "loudnorm=I=-15:TP=-1.5:LRA=11" -ar 48000 -c:a aac -b:a 192k salida.mp4
+```
+
+Para cambiar una frase: edite `assets/voz/guion.tsv`, regenere el archivo con `npx hyperframes tts "texto" -v ef_dora -l es -s 1.05 -o assets/voz/vNN.wav` (requiere `pip install kokoro-onnx soundfile`) y ajuste `data-start`/`data-duration` de `#voz-vNN` en `index.html`.
 
 ## Créditos
 

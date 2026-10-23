@@ -3,7 +3,7 @@
 ## Decisiones creativas
 
 - Se construyó «Una cifra aterriza» (`STORYLINES.md`, A). No se construyeron B («Un día de un funcionario de Catastro») ni C («Lo registrado contra lo observado», pantalla dividida).
-- Sin voz en off (no se pidió); los títulos y el propio texto de la interfaz cargan el mensaje.
+- Narración en español con la voz local Kokoro «ef_dora», elegida por el equipo tras escuchar una muestra; la voz complementa los títulos sin leerlos palabra por palabra.
 - Sin música: en este entorno no había fuente de música con licencia (sin HeyGen ni modelo local). Hay efectos de sonido en cada acción visible. El README explica cómo agregar una pista.
 - La URL de la demo es la del README del repo (`suelo-ia-knwnic.vercel.app`).
 
@@ -11,7 +11,7 @@
 
 - `npx hyperframes check`: sin errores.
 - Se revisaron cuadros en 0, 4, 8, 12, 15, 19, 23, 25, 30, 35, 42, 45, 49, 53, 58, 62, 67, 72, 78, 82, 85 y 88,5 s.
-- El sonido se midió, no se escuchó.
+- El sonido se midió, no se escuchó: −15,5 LUFS integrados y pico de −1,4 dBFS tras normalizar; la voz se ubicó frase por frase sin solapes.
 
 ## Advertencias que se dejaron a propósito
 
