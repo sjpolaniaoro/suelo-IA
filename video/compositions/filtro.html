@@ -1,0 +1,55 @@
+<template>
+  <style>
+    @font-face { font-family: "Barlow"; font-weight: 500; src: url("assets/fonts/Barlow-500.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-700.woff2") format("woff2"); }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #e9ecf0; font-family: "Barlow", sans-serif; color: #1d1f20; }
+    #fi-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+    #fi-cam img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #fi-cursor { position: absolute; left: 0; top: 0; width: 64px; height: 92px; z-index: 5; }
+    #fi-cursor svg { width: 64px; height: 92px; }
+    .tarjeta { position: absolute; background: #f2f2f3; border: 2px solid #1d1f20; border-radius: 3px; padding: 34px 44px 38px; box-shadow: 0 18px 40px rgba(29, 31, 32, 0.14); }
+    #fi-t { left: 1060px; top: 300px; width: 780px; }
+    #fi-n { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 170px; line-height: 0.95; color: #c9363b; }
+    #fi-l { margin-top: 8px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 64px; line-height: 1.05; }
+    #fi-d { margin-top: 22px; font-size: 32px; line-height: 1.3; color: #5d5d60; }
+  </style>
+  <div id="root" data-composition-id="filtro" data-width="1920" data-height="1080">
+    <div id="fi-cam">
+      <img id="fi-a" src="assets/img/02-mapa.webp" alt="Panel de filtros antes del clic" />
+      <img id="fi-b" src="assets/img/03-filtro-a1.webp" alt="Panel con el filtro A1 activo" />
+      <img id="fi-c" src="assets/img/04-ficha.webp" alt="Primer predio de la lista seleccionado" />
+    </div>
+    <div id="fi-t" class="tarjeta" data-hold>
+      <div id="fi-n">807</div>
+      <div id="fi-l">posibles construcciones no registradas</div>
+      <div id="fi-d">Alerta A1: habitacional, 0&nbsp;m² en el registro y huella detectada.</div>
+    </div>
+    <div id="fi-cursor">
+      <svg viewBox="0 0 40 58" aria-hidden="true"><path d="M2 2 L2 48 L13 37 L21 55 L29 51 L21 34 L36 34 Z" fill="#1d1f20" stroke="#fff" stroke-width="3" stroke-linejoin="round" /></svg>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // Escala 2.4 de la captura: punto (px, py) en pantalla = (x + px * 2.4, y + py * 2.4)
+    gsap.set("#fi-b, #fi-c", { opacity: 0 });
+    tl.fromTo("#fi-cam", { scale: 2.4, x: 80, y: 40 }, { scale: 2.4, x: 80, y: -330, duration: 1.1, ease: "power2.inOut" }, 0.15);
+    // El cursor va al botón A1 (139, 413 en la captura) y hace clic
+    tl.fromTo("#fi-cursor", { x: 1500, y: 1150 }, { x: 410, y: 660, duration: 1.0, ease: "expo.out" }, 0.8);
+    tl.to("#fi-cursor", { scale: 0.85, duration: 0.06, ease: "power2.in", transformOrigin: "0 0" }, 1.97);
+    tl.to("#fi-cursor", { scale: 1, duration: 0.12, ease: "power2.out" }, 2.03);
+    tl.set("#fi-b", { opacity: 1 }, 2.03);
+    tl.fromTo("#fi-t", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, 2.85);
+    tl.fromTo("#fi-n, #fi-l, #fi-d", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.25, ease: "power2.out" }, 3.0);
+    // Baja a la lista ordenada por prioridad y elige el primero
+    tl.to("#fi-t", { opacity: 0, x: 40, filter: "blur(8px)", duration: 0.25, ease: "power3.in" }, 6.6);
+    tl.to("#fi-cam", { y: -842, duration: 1.0, ease: "power2.inOut" }, 6.6);
+    tl.to("#fi-cursor", { x: 600, y: 556, duration: 0.7, ease: "expo.out" }, 7.3);
+    tl.to("#fi-cursor", { scale: 0.85, duration: 0.06, ease: "power2.in", transformOrigin: "0 0" }, 7.97);
+    tl.to("#fi-cursor", { scale: 1, duration: 0.12, ease: "power2.out" }, 8.03);
+    tl.set("#fi-c", { opacity: 1 }, 8.03);
+    tl.to("#fi-cursor", { opacity: 0, duration: 0.2 }, 9.0);
+    // Zoom a través del predio hacia el mapa
+    tl.to("#fi-cam", { scale: 7, x: -780, y: -3492, filter: "blur(10px)", duration: 0.6, ease: "power3.in" }, 10.4);
+    window.__timelines["filtro"] = tl;
+  </script>
+</template>

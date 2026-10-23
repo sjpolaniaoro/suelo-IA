@@ -1,0 +1,38 @@
+<template>
+  <style>
+    @font-face { font-family: "Barlow"; font-weight: 500; src: url("assets/fonts/Barlow-500.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-700.woff2") format("woff2"); }
+    #root { position: absolute; inset: 0; background: #e9ecf0; overflow: hidden; font-family: "Barlow", sans-serif; color: #1d1f20; }
+    #g-orbita { position: absolute; left: 560px; top: 40px; width: 1920px; height: 1080px; object-fit: cover; }
+    #g-panel { position: absolute; left: 0; top: 0; width: 860px; height: 1080px; background: #f2f2f3; border-right: 2px solid #1d1f20; }
+    #g-num { position: absolute; left: 120px; top: 170px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 300px; line-height: 1; letter-spacing: -0.01em; }
+    #g-l1, #g-l2 { position: absolute; left: 124px; font-size: 60px; font-weight: 500; line-height: 1.1; }
+    #g-l1 { top: 500px; }
+    #g-l2 { top: 576px; }
+    .g-w { display: inline-block; }
+    .rojo { color: #c9363b; }
+    #g-src { position: absolute; left: 124px; top: 900px; width: 640px; font-size: 28px; line-height: 1.35; color: #5d5d60; }
+    #g-q { position: absolute; left: 120px; top: 330px; width: 680px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 120px; line-height: 1.02; letter-spacing: -0.01em; }
+  </style>
+  <div id="root" data-composition-id="gancho" data-width="1920" data-height="1080">
+    <video id="g-orbita" class="clip" src="assets/video/orbita-sector02.mp4" muted playsinline data-start="0" data-duration="10" data-playback-rate="0.5" data-track-index="0" data-layout-allow-overflow></video>
+    <div id="g-panel">
+      <div id="g-num">14.562</div>
+      <div id="g-l1"><span class="g-w">predios</span> <span class="g-w">urbanos</span> <span class="g-w">de</span> <span class="g-w">Neiva</span></div>
+      <div id="g-l2"><span class="g-w">figuran</span> <span class="g-w">con</span> <span class="g-w rojo">0&nbsp;m²</span> <span class="g-w">construidos</span></div>
+      <div id="g-src">Registro 1 de Neiva, vigencia 2025. Predios habitacionales fuera de propiedad horizontal.</div>
+      <div id="g-q"><span class="g-w">¿Lote</span> <span class="g-w">vacío</span> <span class="g-w">o</span> <span class="g-w">construcción</span> <span class="g-w">sin</span> <span class="g-w">registrar?</span></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // El número ya está en el cuadro 0: es la miniatura del video.
+    tl.fromTo("#g-l1 .g-w, #g-l2 .g-w", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.067, ease: "power2.out" }, 0.3);
+    tl.fromTo("#g-src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.4);
+    gsap.set("#g-q .g-w", { opacity: 0 });
+    tl.to("#g-num, #g-l1, #g-l2, #g-src", { opacity: 0, filter: "blur(10px)", duration: 0.25, ease: "power3.in" }, 5.8);
+    tl.fromTo("#g-q .g-w", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.08, ease: "power2.out" }, 6.15);
+    tl.to("#g-q", { x: -80, opacity: 0, filter: "blur(12px)", duration: 0.3, ease: "power3.in" }, 9.65);
+    window.__timelines["gancho"] = tl;
+  </script>
+</template>

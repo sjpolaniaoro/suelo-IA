@@ -1,0 +1,4 @@
+.hyperframes/
+.media/
+renders/*
+!renders/suelo-ia-90s.mp4

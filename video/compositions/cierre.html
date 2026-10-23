@@ -1,0 +1,43 @@
+<template>
+  <style>
+    @font-face { font-family: "Barlow"; font-weight: 500; src: url("assets/fonts/Barlow-500.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow"; font-weight: 600; src: url("assets/fonts/Barlow-600.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-700.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; font-family: "Barlow", sans-serif; color: #1d1f20;
+      background-color: #f2f2f3;
+      background-image: linear-gradient(rgba(65, 97, 128, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(65, 97, 128, 0.07) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    #ci-claim { position: absolute; left: 0; top: 330px; width: 1920px; text-align: center; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 132px; line-height: 1.05; }
+    #ci-claim em { font-style: normal; color: #416180; }
+    .ci-linea { display: block; }
+    #ci-logo { position: absolute; left: 525px; top: 250px; width: 230px; height: 230px; }
+    #ci-marca { position: absolute; left: 795px; top: 248px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 230px; line-height: 1; letter-spacing: -0.01em; }
+    #ci-url { position: absolute; left: 529px; top: 560px; padding: 22px 40px; background: #416180; color: #fff; border-radius: 3px; font-weight: 600; font-size: 52px; }
+    #ci-evento { position: absolute; left: 531px; top: 720px; font-size: 38px; font-weight: 600; }
+    #ci-equipo { position: absolute; left: 531px; top: 780px; font-size: 32px; color: #5d5d60; }
+  </style>
+  <div id="root" data-composition-id="cierre" data-width="1920" data-height="1080">
+    <div id="ci-claim"><span class="ci-linea">Salida indicativa.</span><span class="ci-linea"><em>Decisión humana.</em></span></div>
+    <svg id="ci-logo" viewBox="0 0 48 48" aria-label="Símbolo de Suelo-IA">
+      <g fill="none" stroke="#416180" stroke-width="2"><path d="M4 14V4h10m20 0h10v10M4 34v10h10m20 0h10V34" /><path d="M12 12h24v24H12zm0 10h14m0-10v24m0-8h10" /></g>
+      <path fill="#416180" d="M28 30h6v4h-6z" />
+    </svg>
+    <div id="ci-marca">Suelo-IA</div>
+    <div id="ci-url" data-var-text="url">suelo-ia-knwnic.vercel.app</div>
+    <div id="ci-evento">Neiva Fest · Reto Innova 2026</div>
+    <div id="ci-equipo">Sebastián Polanía · Juan Pablo Escamilla · Guillermo Moreno</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#ci-claim .ci-linea", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.45, ease: "power2.out" }, 0.15);
+    tl.to("#ci-claim", { opacity: 0, filter: "blur(10px)", duration: 0.2, ease: "power3.in" }, 2.25);
+    // La marca llega desde abajo y el nombre se descubre a su lado
+    tl.fromTo("#ci-logo", { y: 700, rotation: -12, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, 2.1);
+    tl.fromTo("#ci-marca", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power3.out" }, 2.55);
+    tl.fromTo("#ci-url", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)", transformOrigin: "0 50%" }, 3.2);
+    tl.fromTo("#ci-evento, #ci-equipo", { opacity: 0 }, { opacity: 1, duration: 0.35, stagger: 0.2, ease: "power2.out" }, 3.6);
+    window.__timelines["cierre"] = tl;
+  </script>
+</template>

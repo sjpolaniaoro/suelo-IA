@@ -1,0 +1,54 @@
+<template>
+  <style>
+    @font-face { font-family: "Barlow"; font-weight: 500; src: url("assets/fonts/Barlow-500.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow"; font-weight: 600; src: url("assets/fonts/Barlow-600.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-700.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; font-family: "Barlow", sans-serif; color: #1d1f20;
+      background-color: #f2f2f3;
+      background-image: linear-gradient(rgba(65, 97, 128, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(65, 97, 128, 0.07) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .f-t { position: absolute; left: 120px; top: 110px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 110px; line-height: 1; letter-spacing: -0.01em; }
+    #f-t3 { width: 1100px; }
+    .f-card { position: absolute; background: #fff; border: 1px solid #98989b; border-radius: 3px; padding: 26px 36px 28px; box-shadow: 0 18px 40px rgba(29, 31, 32, 0.14); }
+    .f-card b { display: block; font-weight: 600; font-size: 42px; line-height: 1.1; }
+    .f-card span { display: block; margin-top: 8px; font-size: 30px; color: #5d5d60; }
+    #f-c1 { left: 170px; top: 430px; }
+    #f-c2 { left: 1090px; top: 330px; }
+    #f-c3 { left: 700px; top: 650px; }
+    #f-c4 { left: 1080px; top: 830px; }
+  </style>
+  <div id="root" data-composition-id="fuentes" data-width="1920" data-height="1080">
+    <div id="f-t1" class="f-t">Las fuentes existen</div>
+    <div id="f-t2" class="f-t">…pero están separadas</div>
+    <div id="f-t3" class="f-t" data-hold>Verificar exige ir a campo, predio por predio</div>
+    <div id="f-c1" class="f-card"><b>CATASTRAL_REGISTRO1_20250505.xlsx</b><span>Registro 1 · 16,2 MB</span></div>
+    <div id="f-c2" class="f-card"><b>Terrenos.shp</b><span>Cartografía predial · 60,4 MB</span></div>
+    <div id="f-c3" class="f-card"><b>Construccion.shp</b><span>Construcciones · 50,2 MB</span></div>
+    <div id="f-c4" class="f-card"><b>open_buildings_neiva.csv</b><span>Open Buildings, Google Research · 24,9 MB</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const caidas = [["#f-c1", -3, 0.1], ["#f-c2", 2.5, 0.4], ["#f-c3", -1.5, 0.7], ["#f-c4", 3, 1.0]];
+    caidas.forEach(([s, r, t]) => {
+      tl.fromTo(s, { y: -900, rotation: r * 3, opacity: 0 }, { y: 0, rotation: r, opacity: 1, duration: 0.45, ease: "back.out(1.4)" }, t);
+    });
+    gsap.set("#f-t2, #f-t3", { opacity: 0 });
+    tl.fromTo("#f-t1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0.3);
+    // Las fuentes se separan
+    tl.to("#f-t1", { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power3.in" }, 3.2);
+    tl.fromTo("#f-t2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 3.4);
+    tl.to("#f-c1", { x: -110, y: 60, duration: 1.0, ease: "power2.inOut" }, 3.3);
+    tl.to("#f-c2", { x: 160, y: -40, duration: 1.0, ease: "power2.inOut" }, 3.35);
+    tl.to("#f-c3", { x: -60, y: 90, duration: 1.0, ease: "power2.inOut" }, 3.4);
+    tl.to("#f-c4", { x: 60, y: 40, duration: 1.0, ease: "power2.inOut" }, 3.45);
+    // El costo: ir a campo
+    tl.to("#f-t2", { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power3.in" }, 6.4);
+    tl.to(".f-card", { opacity: 0.3, duration: 0.4, ease: "power2.out" }, 6.4);
+    tl.fromTo("#f-t3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power2.out" }, 6.6);
+    tl.to("#f-t3", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 10.3);
+    tl.to(".f-card", { opacity: 1, duration: 0.4, ease: "power2.out" }, 10.4);
+    window.__timelines["fuentes"] = tl;
+  </script>
+</template>

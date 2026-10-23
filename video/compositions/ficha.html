@@ -1,0 +1,49 @@
+<template>
+  <style>
+    @font-face { font-family: "Barlow"; font-weight: 500; src: url("assets/fonts/Barlow-500.woff2") format("woff2"); }
+    @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-700.woff2") format("woff2"); }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #e9ecf0; font-family: "Barlow", sans-serif; color: #1d1f20; }
+    #fc-vuelo { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #fc-plano { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #f2f2f3; }
+    #fc-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+    #fc-cam img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .tarjeta { position: absolute; background: #f2f2f3; border: 2px solid #1d1f20; border-radius: 3px; padding: 30px 44px 34px; box-shadow: 0 18px 40px rgba(29, 31, 32, 0.14); }
+    #fc-t0 { left: 110px; top: 100px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 96px; line-height: 1; }
+    #fc-t0 em { font-style: normal; color: #416180; }
+    .fc-t { position: absolute; left: 110px; top: 330px; width: 800px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 104px; line-height: 1.02; letter-spacing: -0.01em; }
+    .fc-sub { position: absolute; left: 114px; top: 700px; width: 760px; font-size: 34px; line-height: 1.35; color: #5d5d60; }
+    #fc-panel { position: absolute; left: 0; top: 0; width: 950px; height: 1080px; background: #f2f2f3; border-right: 2px solid #1d1f20; }
+    #fc-marco { position: absolute; left: 996px; top: 600px; width: 800px; height: 132px; border: 5px solid #e5484d; border-radius: 4px; }
+    .w { display: inline-block; }
+  </style>
+  <div id="root" data-composition-id="ficha" data-width="1920" data-height="1080">
+    <video id="fc-vuelo" class="clip" src="assets/video/acercamiento-predio.mp4" muted playsinline data-start="0" data-duration="5.4" data-playback-rate="0.75" data-track-index="0"></video>
+    <div id="fc-t0" class="tarjeta">Del sector <em>al predio</em></div>
+    <div id="fc-plano">
+      <div id="fc-cam"><img src="assets/img/04-ficha.webp" alt="Ficha del predio K 4 21 115 en Suelo-IA" /></div>
+      <div id="fc-panel"></div>
+      <div id="fc-t1" class="fc-t"><span class="w">Lo</span> <span class="w">registrado</span> <span class="w">frente</span> <span class="w">a</span> <span class="w">lo</span> <span class="w">observado</span></div>
+      <div id="fc-s1" class="fc-sub">El registro dice 0&nbsp;m². Las imágenes muestran una huella de 3.845&nbsp;m².</div>
+      <div id="fc-t2" class="fc-t" data-hold><span class="w">Con</span> <span class="w">razones,</span> <span class="w">confianza</span> <span class="w">y</span> <span class="w">fuentes</span> <span class="w">con</span> <span class="w">fecha</span></div>
+      <div id="fc-marco"></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#fc-t0", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 0.4);
+    tl.to("#fc-t0", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 4.6);
+    // Corte a la ficha real del predio elegido (escala 2.2 de la captura)
+    tl.fromTo("#fc-plano", { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "none" }, 5.25);
+    tl.fromTo("#fc-cam", { scale: 2.5, x: -2900, y: -140 }, { scale: 2.2, x: -2289, y: -94, duration: 0.5, ease: "expo.out" }, 5.25);
+    gsap.set("#fc-t2 .w", { opacity: 0 });
+    tl.fromTo("#fc-t1 .w", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.07, ease: "power2.out" }, 5.8);
+    tl.fromTo("#fc-s1", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 6.7);
+    // Marco sobre las barras Registrado / Observado
+    tl.fromTo("#fc-marco", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out" }, 7.45);
+    tl.to("#fc-t1, #fc-s1", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 10.2);
+    tl.to("#fc-marco", { opacity: 0, duration: 0.2 }, 10.2);
+    tl.fromTo("#fc-t2 .w", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.07, ease: "power2.out" }, 10.45);
+    tl.to("#fc-t2", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 14.6);
+    window.__timelines["ficha"] = tl;
+  </script>
+</template>

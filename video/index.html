@@ -1,0 +1,83 @@
+<!doctype html>
+<html
+  lang="es"
+  data-composition-variables='[{"id":"url","type":"string","label":"URL de la demo","default":"suelo-ia-knwnic.vercel.app"}]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      :root {
+        --paper: #f2f2f3;
+        --ink: #1d1f20;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: var(--paper);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="90" data-width="1920" data-height="1080">
+      <!-- Escenas -->
+      <div id="gancho" data-composition-id="gancho" data-composition-src="compositions/gancho.html" data-start="0" data-duration="10" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="fuentes" data-composition-id="fuentes" data-composition-src="compositions/fuentes.html" data-start="10" data-duration="11" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="revela" data-composition-id="revela" data-composition-src="compositions/revela.html" data-start="21" data-duration="7" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="mapa" data-composition-id="mapa" data-composition-src="compositions/mapa.html" data-start="28" data-duration="12" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="filtro" data-composition-id="filtro" data-composition-src="compositions/filtro.html" data-start="40" data-duration="11" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="ficha" data-composition-id="ficha" data-composition-src="compositions/ficha.html" data-start="51" data-duration="15" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="decide" data-composition-id="decide" data-composition-src="compositions/decide.html" data-start="66" data-duration="9" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="cifra" data-composition-id="cifra" data-composition-src="compositions/cifra.html" data-start="75" data-duration="9" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="cierre" data-composition-id="cierre" data-composition-src="compositions/cierre.html" data-start="84" data-duration="6" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+
+      <!-- Efectos de sonido (Pixabay, ver assets/sfx/CREDITS.md) -->
+      <audio id="sfx-gancho-palabras" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="0.35" data-duration="0.57" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="sfx-gancho-pregunta" class="clip" src="assets/sfx/click-soft.mp3" data-start="6.25" data-duration="0.37" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-corte-1" class="clip" src="assets/sfx/whoosh.mp3" data-start="9.7" data-duration="0.57" data-track-index="10" data-volume="0.7"></audio>
+      <audio id="sfx-archivo-1" class="clip" src="assets/sfx/pop.mp3" data-start="10.55" data-duration="0.72" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-archivo-2" class="clip" src="assets/sfx/pop.mp3" data-start="10.85" data-duration="0.72" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="sfx-archivo-3" class="clip" src="assets/sfx/pop.mp3" data-start="11.15" data-duration="0.72" data-track-index="15" data-volume="0.7"></audio>
+      <audio id="sfx-archivo-4" class="clip" src="assets/sfx/pop.mp3" data-start="11.45" data-duration="0.72" data-track-index="16" data-volume="0.6"></audio>
+      <audio id="sfx-separan" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="13.4" data-duration="0.57" data-track-index="10" data-volume="0.6"></audio>
+      <audio id="sfx-riser-marca" class="clip" src="assets/sfx/riser.mp3" data-start="20" data-duration="10.03" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="sfx-impacto-marca" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="22.25" data-duration="2.12" data-track-index="14" data-volume="0.8"></audio>
+      <audio id="sfx-corte-2" class="clip" src="assets/sfx/whoosh-cinematic.mp3" data-start="27.6" data-duration="5.54" data-track-index="10" data-volume="0.6"></audio>
+      <audio id="sfx-camara-mapa" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="33.4" data-duration="0.57" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-cifras-mapa" class="clip" src="assets/sfx/pop.mp3" data-start="34.75" data-duration="0.72" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="sfx-corte-3" class="clip" src="assets/sfx/whoosh.mp3" data-start="39.7" data-duration="0.57" data-track-index="10" data-volume="0.6"></audio>
+      <audio id="sfx-clic-a1" class="clip" src="assets/sfx/click.mp3" data-start="42.03" data-duration="0.37" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-titulo-a1" class="clip" src="assets/sfx/pop.mp3" data-start="43.05" data-duration="0.72" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="sfx-clic-predio" class="clip" src="assets/sfx/click.mp3" data-start="48.03" data-duration="0.37" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-vuelo" class="clip" src="assets/sfx/whoosh-cinematic.mp3" data-start="51.6" data-duration="5.54" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="sfx-corte-ficha" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="56.2" data-duration="0.57" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-observado" class="clip" src="assets/sfx/pop.mp3" data-start="58.55" data-duration="0.72" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="sfx-corte-4" class="clip" src="assets/sfx/whoosh.mp3" data-start="65.7" data-duration="0.57" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="sfx-clic-confirmar" class="clip" src="assets/sfx/click.mp3" data-start="68.03" data-duration="0.37" data-track-index="11" data-volume="1"></audio>
+      <audio id="sfx-confirmado" class="clip" src="assets/sfx/chime.mp3" data-start="68.1" data-duration="2.54" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-riser-cifra" class="clip" src="assets/sfx/riser.mp3" data-start="74.6" data-duration="10.03" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="sfx-impacto-cifra" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="77.05" data-duration="2.12" data-track-index="14" data-volume="0.8"></audio>
+      <audio id="sfx-corte-5" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="83.7" data-duration="0.57" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="sfx-marca-final" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="86.55" data-duration="2.12" data-track-index="14" data-volume="0.7"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
