@@ -12,6 +12,7 @@ export const COLORES = {
   rojo: [229, 72, 77],
   naranja: [244, 140, 6],
   amarillo: [250, 204, 21],
+  no_residencial: [14, 159, 188],
   sin_alerta: [160, 167, 176],
 };
 export const COLORES_ESTADO = {
@@ -32,8 +33,10 @@ const ESTILO_VACIO = {
 const movil = () => window.innerWidth <= 860;
 const relleno = () => (movil() ? { top: 70, left: 20, right: 20, bottom: Math.round(window.innerHeight * 0.6) } : 60);
 
+// NR (uso probablemente no residencial) no tiene puntaje de vivienda: solo aparece en su propio filtro.
 export function pasaFiltros(p, filtros) {
-  if (!(p.puntaje > 0)) return false;
+  if (p.NR) return filtros.tipo === "NR";
+  if (!(p.puntaje > 0) || filtros.tipo === "NR") return false;
   return (filtros.tipo === "todas" || p[filtros.tipo]) && filtros.niveles.has(p.nivel);
 }
 
@@ -68,7 +71,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
         if (!object) return null;
         const p = object.properties;
         const lineas = [`<b>${p.direccion || p.npn}</b>`];
-        lineas.push(p.puntaje > 0 ? `Prioridad ${p.nivel === "rojo" ? "alta" : p.nivel === "naranja" ? "media" : "baja"} · puntaje ${p.puntaje}` : "Sin alerta");
+        lineas.push(p.NR ? "Revisar destino (uso probablemente no residencial)" : p.puntaje > 0 ? `Prioridad ${p.nivel === "rojo" ? "alta" : p.nivel === "naranja" ? "media" : "baja"} · puntaje ${p.puntaje}` : "Sin alerta");
         return {
           html: lineas.join("<br>"),
           style: { background: "var(--sia-surface)", color: "var(--sia-ink)", border: "1px solid var(--sia-control)", fontSize: "13px", padding: "8px 12px", borderRadius: "3px", fontFamily: "var(--sia-body)" },
@@ -111,7 +114,8 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
           if (p.npn === seleccionado) return [37, 99, 235, 255];
           const est = estados[p.npn]?.estado;
           if (est && COLORES_ESTADO[est]) return [...COLORES_ESTADO[est], 235];
-          if (p.puntaje > 0 && !pasaFiltros(p, filtros)) return [...COLORES.sin_alerta, 55];
+          const vivo = pasaFiltros(p, filtros) || (p.NR && filtros.tipo === "todas");
+          if (p.nivel !== "sin_alerta" && !vivo) return [...COLORES.sin_alerta, 55];
           return [...COLORES[p.nivel], p.nivel === "sin_alerta" ? 170 : 235];
         },
         getLineColor: [255, 255, 255, 90],

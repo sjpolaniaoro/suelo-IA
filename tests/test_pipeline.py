@@ -79,6 +79,23 @@ def test_a1_requiere_umbral_de_huella():
     assert not alertas.calcular(_predios(area_huella=10.0, confianza_media=0.9), CFG, True)["A1"].iat[0]
 
 
+def test_huella_grande_es_uso_no_residencial_y_no_a1():
+    umbral = CFG["alertas"]["A1"]["huella_no_residencial_min_m2"]
+    r = alertas.calcular(_predios(area_huella=umbral + 1, confianza_media=0.9), CFG, True)
+    assert r["NR"].iat[0] and not r["A1"].iat[0]
+    assert r["puntaje"].iat[0] == 0 and r["nivel"].iat[0] == "no_residencial"
+    assert "revisar destino" in r["razones"].iat[0][0]
+    # Justo por debajo del umbral sigue siendo A1 de vivienda.
+    r = alertas.calcular(_predios(area_huella=umbral - 1, confianza_media=0.9), CFG, True)
+    assert r["A1"].iat[0] and not r["NR"].iat[0] and r["puntaje"].iat[0] >= 60
+
+
+def test_nr_no_aplica_a_predios_con_area_construida_ni_ph():
+    umbral = CFG["alertas"]["A1"]["huella_no_residencial_min_m2"]
+    assert not alertas.calcular(_predios(area_huella=umbral + 1, area_construida_reg=50.0), CFG, True)["NR"].iat[0]
+    assert not alertas.calcular(_predios(area_huella=umbral + 1, condicion="9"), CFG, True)["NR"].iat[0]
+
+
 def test_ph_no_recibe_a1_ni_a2():
     r = alertas.calcular(_predios(condicion="9", area_huella=90.0), CFG, True)
     assert not r["A1"].iat[0] and not r["A2"].iat[0]

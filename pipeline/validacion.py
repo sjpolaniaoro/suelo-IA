@@ -81,7 +81,10 @@ def muestra() -> Path:
                        key=lambda f: f["properties"]["npn"])
         elegidos = rng.sample(resto, min(n, len(resto)))
         filas += [_fila("aleatoria", est, i + 1, f) for i, f in enumerate(elegidos)]
-    sin = sorted((f for f in feats if f["properties"]["puntaje"] == 0 and not f["properties"]["ph"]),
+    # Los NR (uso probablemente no residencial) no son vivienda sin alerta: quedan fuera del control.
+    poblacion["no_residencial"] = sum(bool(f["properties"].get("NR")) for f in feats)
+    sin = sorted((f for f in feats if f["properties"]["puntaje"] == 0 and not f["properties"]["ph"]
+                  and not f["properties"].get("NR")),
                  key=lambda f: f["properties"]["npn"])
     poblacion["control"] = len(sin)
     ctl = rng.sample(sin, min(N_CONTROL, len(sin)))

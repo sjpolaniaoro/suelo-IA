@@ -51,12 +51,15 @@ def predio(npn: str):
 
 
 @app.get("/alertas")
-def lista_alertas(tipo: str | None = Query(None, pattern="^A[123]$"), limit: int = Query(50, ge=1, le=500)):
+def lista_alertas(tipo: str | None = Query(None, pattern="^(A[123]|NR)$"), limit: int = Query(50, ge=1, le=500)):
     if not _cache:
         _cache.update(_predios())
-    filas = [
-        f["properties"] for f in _cache.values()
-        if f["properties"]["puntaje"] > 0 and (tipo is None or f["properties"][tipo])
-    ]
-    filas.sort(key=lambda p: p["puntaje"], reverse=True)
+    props = [f["properties"] for f in _cache.values()]
+    if tipo == "NR":
+        # Uso probablemente no residencial: sin puntaje de vivienda, se ordena por huella detectada.
+        filas = [p for p in props if p.get("NR")]
+        filas.sort(key=lambda p: p.get("area_huella") or 0, reverse=True)
+    else:
+        filas = [p for p in props if p["puntaje"] > 0 and (tipo is None or p[tipo])]
+        filas.sort(key=lambda p: p["puntaje"], reverse=True)
     return {"total": len(filas), "predios": filas[:limit]}

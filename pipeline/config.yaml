@@ -17,6 +17,10 @@ alertas:
     area_huella_min_m2: 20
     confianza_min: 0.70
     puntos: 60
+    # Huella detectada desde la cual un predio «habitacional» sin área construida deja de leerse como
+    # vivienda sin registrar: se marca NR (uso probablemente no residencial: revisar destino), sin
+    # puntaje de vivienda. Una huella de más de 1.000 m² no es una casa típica del sector.
+    huella_no_residencial_min_m2: 1000
   A2:
     factor_area: 1.2
     puntos: 30

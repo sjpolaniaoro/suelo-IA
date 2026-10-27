@@ -32,6 +32,7 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
 - Deduplicación: el Registro 1 tiene varias filas por predio (una por propietario). Se toma una fila por número predial.
 - Alertas por predio del sector 02, con parámetros en `pipeline/config.yaml`:
   - **A1, posible construcción no registrada:** destino Habitacional, condición 0, área construida registrada = 0, y huellas de Open Buildings dentro del terreno con área total ≥ 20 m² y confianza ≥ 0,70.
+  - **NR, uso probablemente no residencial (revisar destino):** un predio que cumpliría A1 pero con huella ≥ 1.000 m² (`huella_no_residencial_min_m2` en `pipeline/config.yaml`). No recibe A1 ni puntaje de vivienda; la ficha pide verificar el uso real y el destino. Se agregó el 27-oct-2026 tras detectar que el predio de mayor huella era un edificio no residencial registrado como Habitacional.
   - **A2, área construida subregistrada:** área de huellas dentro del terreno > 1,2 × área construida registrada (solo predios no PH con área construida > 0).
   - **A3, avalúo atípico:** el residuo de log(avalúo) frente a log(área terreno) y log(área construida), con efecto fijo de manzana (manzanas con 10 o más predios), es mayor a ln(2) en valor absoluto.
   - **Puntaje de prioridad** entre 0 y 100: A1 = 60, A2 = 30, A3 = 10, más un ajuste por área de huella detectada. Cada predio guarda la lista de razones en texto ("Huella detectada de 84 m², sin área construida registrada").

@@ -42,13 +42,16 @@ def calcular(df: pd.DataFrame, cfg: dict, hay_huellas: bool) -> pd.DataFrame:
     nph = out["condicion"] == "0"
     huella = out["area_huella"].fillna(0.0) if hay_huellas else pd.Series(0.0, index=out.index)
 
-    out["A1"] = (
+    sin_registro = (
         hay_huellas
         & (out["destino"] == "Habitacional")
         & nph
         & (out["area_construida_reg"] == 0)
         & (huella >= a["A1"]["area_huella_min_m2"])
     )
+    # Huella muy grande bajo destino Habitacional: probable uso no residencial con destino desactualizado.
+    out["NR"] = sin_registro & (huella >= a["A1"]["huella_no_residencial_min_m2"])
+    out["A1"] = sin_registro & ~out["NR"]
     out["A2"] = (
         hay_huellas
         & nph
@@ -66,9 +69,16 @@ def calcular(df: pd.DataFrame, cfg: dict, hay_huellas: bool) -> pd.DataFrame:
         + out["A3"] * a["A3"]["puntos"]
     )
     out["puntaje"] = (base + ajuste.where(out["A1"] | out["A2"], 0.0)).clip(upper=100).round(0)
+    # NR queda fuera del puntaje de vivienda: es una pregunta sobre el destino, no sobre construcción oculta.
+    out.loc[out["NR"], "puntaje"] = 0.0
     out["nivel"] = np.select(
-        [out["puntaje"] >= a["A1"]["puntos"], out["puntaje"] >= a["A2"]["puntos"], out["puntaje"] > 0],
-        ["rojo", "naranja", "amarillo"],
+        [
+            out["NR"],
+            out["puntaje"] >= a["A1"]["puntos"],
+            out["puntaje"] >= a["A2"]["puntos"],
+            out["puntaje"] > 0,
+        ],
+        ["no_residencial", "rojo", "naranja", "amarillo"],
         default="sin_alerta",
     )
 
@@ -86,6 +96,11 @@ def _razones(r) -> list[str]:
     if r.A1:
         razones.append(
             f"Huella detectada de {_fmt(r.area_huella)} m², sin área construida registrada."
+        )
+    if r.NR:
+        razones.append(
+            f"Uso probablemente no residencial: revisar destino. Huella detectada de {_fmt(r.area_huella)} m² "
+            f"en un predio registrado como Habitacional sin área construida."
         )
     if r.A2:
         razones.append(

@@ -1,9 +1,10 @@
 {
   "alertas": {
-    "A1": 807,
+    "A1": 805,
     "A2": 414,
     "A3": 64
   },
   "control": 4361,
-  "prioridad_top": 50
+  "prioridad_top": 50,
+  "no_residencial": 2
 }

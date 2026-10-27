@@ -159,7 +159,7 @@ def main(argv=None) -> int:
     props = [
         "npn", "direccion", "destino", "ph", "area_terreno", "area_construida_reg", "avaluo",
         "vigencia", "area_huella", "n_huellas", "confianza_media", "pisos_usados",
-        "altura_ilustrativa", "altura", "A1", "A2", "A3", "puntaje", "nivel", "razones", "confianza",
+        "altura_ilustrativa", "altura", "A1", "A2", "A3", "NR", "puntaje", "nivel", "razones", "confianza",
     ]
     tol = None
     salida = cfg["salida"]
@@ -202,6 +202,7 @@ def main(argv=None) -> int:
         },
         "alertas": {k: int(geo[k].sum()) for k in ("A1", "A2", "A3")},
         "predios_con_alerta": int((geo["puntaje"] > 0).sum()),
+        "predios_uso_no_residencial": int(geo["NR"].sum()),
         "predios_rojos": int((geo["nivel"] == "rojo").sum()),
         "confianza_baja": int((geo["confianza"] == "baja").sum()),
         "huellas_sin_registro": n_vol,
