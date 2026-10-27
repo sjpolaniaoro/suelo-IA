@@ -2,6 +2,19 @@
 
 Derivado de spec.md. Cada tarea se traza a una sección del spec. Objetivo de fecha: tareas 1 a 10 antes del cierre del 22 de octubre a las 11:59 p. m.; tareas 11 a 13 antes de la sustentación del 30 de octubre.
 
+## Estado al 26 de octubre de 2026
+
+| Tarea | Estado |
+|---|---|
+| 1 a 8 (estructura, notebook, Registro 1, cartografía, recorte, evidencia, alertas, exportación) | Hecho. El pipeline reproduce las cifras de control del spec y genera `web/public/data/` y `api/data/`. |
+| 9 (mapa 3D y ficha) | Hecho y ampliado: proceso por etapas, ficha en tres pasos, atajos, enlace compartible, importación y exportación de CSV. La identidad visual vigente es «Plano catastral» (`docs/diseno-plano-catastral.md`, `web/DISENO.md`). |
+| 10 (despliegue) | Hecho: Vercel (`web/`) y Render (`api/`, plan gratuito). URL en el README. |
+| 11 (validar predios) | Preparado: muestra de 240 predios (`docs/validacion/muestra.csv`) y cálculo de métricas ponderadas. **Pendiente la revisión humana de los veredictos.** |
+| 12 (serie temporal v1.1) | Pendiente. |
+| 13 (demo de sustentación) | Pitch de 10 diapositivas preparado por el equipo. Falta confirmar el video de respaldo y la prueba desde celular. |
+
+Cambios respecto al plan original: la capa de construcciones es `Construccion.shp` (con `numero_pis`), no `Unidad de Construccion.shp`; la validación pasó de 50 a 240 predios con muestreo estratificado; el sitio tiene portada en `/` y mapa en `/app/`; y se agregó una licencia MIT para el código.
+
 ## Tareas
 
 1. **Crear el repo y la estructura base** (spec: 3, Incluye)

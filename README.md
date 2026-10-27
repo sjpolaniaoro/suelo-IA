@@ -7,11 +7,13 @@ Proyecto presentado a la Convocatoria Pública 001 de 2026, Neiva Fest Reto Inno
 - Especificación: [`docs/spec.md`](docs/spec.md)
 - Plan de tareas: [`docs/plan-de-tareas.md`](docs/plan-de-tareas.md)
 - Plan de desarrollo (arquitectura por capas, despliegue y roadmap): [`docs/plan-de-desarrollo.md`](docs/plan-de-desarrollo.md)
+- Identidad visual «Plano catastral» y portada: [`docs/diseno-plano-catastral.md`](docs/diseno-plano-catastral.md) y [`web/DISENO.md`](web/DISENO.md)
+- Ajustes aplicados al Anexo 2: [`docs/anexo2-ajustes.md`](docs/anexo2-ajustes.md)
 
-Estado: v1 con datos reales del sector 02 (corrida del 22-oct-2026). El pipeline reproduce todas las cifras de control del spec y genera `web/public/data/` y `api/data/` (resultados en `resumen.json`: 7.329 predios dibujados, 268 sin geometría, A1 = 807, A2 = 414, A3 = 90). Son alertas para priorizar revisión, no hallazgos confirmados.
+Estado (26-oct-2026): v1 desplegada con datos reales del sector 02 (corrida del 22-oct-2026); 13 pruebas automáticas en verde. El pipeline reproduce todas las cifras de control del spec y genera `web/public/data/` y `api/data/` (resultados en `resumen.json`: 7.329 predios dibujados, 268 sin geometría, A1 = 807, A2 = 414, A3 = 90). Son alertas para priorizar revisión, no hallazgos confirmados.
 
 ## Demo en línea
-- Landing y mapa 3D (Vercel): https://suelo-ia-knwnic.vercel.app (la landing está en `/` y el mapa en `/app/`, p. ej. `/app/?predio=NÚMERO` abre la ficha de un predio)
+- Portada y mapa 3D (Vercel): https://suelo-ia-knwnic.vercel.app (la portada está en `/` y el mapa en `/app/`, p. ej. `/app/?predio=NÚMERO` abre la ficha de un predio). La solicitud de piloto de la portada prepara un correo en el navegador; no se guarda ni se envía a ningún servidor.
 - API (Render, plan gratuito; el primer pedido puede tardar ~50 s en despertar): https://suelo-ia-api.onrender.com
 - El mapa funciona sin la API: usa los archivos de `web/public/data/` y avisa "Modo sin conexión a la API" si no responde.
 
@@ -39,8 +41,11 @@ Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 rea
 `pipeline/` datos (Python) · `web/` mapa 3D (React, deck.gl, MapLibre; Vercel) · `api/` FastAPI (Render, plan gratuito; `render.yaml`) · `notebooks/` extracción de Open Buildings · `tests/` pruebas.
 
 ## Pendiente
-- Completar el Anexo 2 con los textos de [`docs/anexo2-ajustes.md`](docs/anexo2-ajustes.md).
-- Revisar con imagen o visita los 240 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`; si el tiempo no alcanza, los primeros 50 de cada grupo ya son una muestra aleatoria válida) y calcular precisión, exhaustividad y F1 estimados: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.
+- **Revisión humana de la muestra:** revisar con imagen o visita los 240 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`; los primeros 50 de cada grupo ya son una muestra aleatoria válida) y calcular precisión, exhaustividad y F1 estimados: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.
+- **Anexo 2:** completar los huecos de las secciones 8 y 11 y alinear el reparto del incentivo con el pitch (ver [`docs/anexo2-ajustes.md`](docs/anexo2-ajustes.md)).
+- **Roadmap:** serie temporal 2016-2023 (v1.1) y consulta normativa (v2), según el plan de desarrollo.
+
+Los documentos de la postulación (Anexos 3, 4 y 5 y el pitch) traen datos personales y no se versionan; se guardan localmente.
 
 Licencia del código: MIT ([`LICENSE`](LICENSE)); datos de terceros según [`LICENCIAS.md`](LICENCIAS.md).
 

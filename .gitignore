@@ -9,3 +9,6 @@ __pycache__/
 data/sintetico/
 
 .claude/
+
+# Documentos de la postulación (traen datos personales y firmas): no se publican.
+docs/postulacion/

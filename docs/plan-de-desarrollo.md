@@ -8,12 +8,20 @@ Este plan ajusta el de `docs/plan-de-tareas.md` a una solución **autocontenida*
 
 Fechas: radicación del Anexo 2 hoy 22-oct-2026 11:59 p. m.; demo en vivo el 30-oct.
 
-## Inconsistencias a corregir (detectadas al leer el Anexo)
+## Inconsistencias detectadas en el Anexo y su estado (26-oct-2026)
 
-1. El Anexo (sección 6) enlaza `github.com/sjpolaniaoro/sueloia`; el repo real es `suelo-IA`. Corregir uno de los dos antes de radicar.
-2. El Anexo (sección 4) habla de alturas 2016-2023 (Open Buildings Temporal) como evidencia v1; el spec deja eso en v1.1. En v1 la altura 3D sale de `numero_pis` de `Construccion.shp`, no de Open Buildings. Ajustar el texto o declararlo.
-3. La sección 6 del Anexo tiene huecos por completar: URL de Vercel, URL de Render y estado declarado con fecha. Salen de la tarea de despliegue.
-4. Vercel Hobby es para uso no comercial; está bien para el piloto, pero hay que declararlo en limitaciones si el proyecto pasa a uso institucional pago.
+1. Enlace del repositorio (`sueloia` frente a `suelo-IA`): corregido en la copia v2 del Anexo 2.
+2. Alturas 2016-2023 como evidencia v1: aclarado en la copia v2; en la v1 la altura 3D sale de `numero_pis` de `Construccion.shp` y la serie temporal es v1.1.
+3. Huecos de la sección 6 (URL de Vercel, URL de Render, estado declarado): completados en la copia v2.
+4. Vercel Hobby es para uso no comercial: vigente; declararlo si el proyecto pasa a uso institucional pago.
+
+Los textos exactos aplicados están en [`anexo2-ajustes.md`](anexo2-ajustes.md). El Anexo radicado el 22-oct no se modificó.
+
+## Estado de implementación frente a este plan
+
+- Hecho: capas 1 a 7 (fuentes, carga de archivos, cómputo, API, mapa 3D, despliegue con CI, licencias).
+- Diferencias: no se creó `pipeline/fuentes.yaml` (las fuentes están en `pipeline/fuentes.py` y `manifiesto.json` registra archivo, hash y licencia); el servicio de Render se configuró con comandos propios y `render.yaml` queda como referencia; la identidad visual y la portada se rediseñaron como «Plano catastral» (ver `diseno-plano-catastral.md`).
+- Roadmap (v1.1, v2 con RAG y multiconsulta, fase 3): sin cambios.
 
 ## Arquitectura por capas
 
