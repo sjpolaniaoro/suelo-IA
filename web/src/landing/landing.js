@@ -25,6 +25,9 @@ async function mostrarCifras() {
         (k) => Number.isFinite(r[k]),
       ) ||
       !["A1", "A2", "A3"].every((k) => Number.isFinite(r.alertas?.[k])) ||
+      !["sin_area_construida", "habitacionales_no_ph"].every((k) =>
+        Number.isFinite(r[k]),
+      ) ||
       !Number.isFinite(Date.parse(r.generado))
     )
       throw new Error("Resumen incompleto");
@@ -35,6 +38,12 @@ async function mostrarCifras() {
         style: "percent",
         maximumFractionDigits: 1,
       }).format(r.tasa_cruce),
+      sec_sin_area: number.format(r.sin_area_construida),
+      sec_hab: number.format(r.habitacionales_no_ph),
+      sec_pct: new Intl.NumberFormat("es-CO", {
+        style: "percent",
+        maximumFractionDigits: 1,
+      }).format(r.sin_area_construida / r.habitacionales_no_ph),
       generado: date.format(new Date(r.generado)),
       ...Object.fromEntries(
         ["A1", "A2", "A3"].map((k) => [k, number.format(r.alertas[k])]),

@@ -24,6 +24,13 @@ for (const key of [
   if (!Number.isFinite(valor)) throw new Error("Cifra inválida: " + key);
   valores[key] = numero.format(valor);
 }
+// Planteamiento del problema: habitacionales sin propiedad horizontal sin área construida en el sector.
+const pct = new Intl.NumberFormat("es-CO", { style: "percent", maximumFractionDigits: 1 });
+for (const key of ["sin_area_construida", "habitacionales_no_ph"])
+  if (!Number.isFinite(resumen[key])) throw new Error("Cifra inválida: " + key);
+valores.sec_sin_area = numero.format(resumen.sin_area_construida);
+valores.sec_hab = numero.format(resumen.habitacionales_no_ph);
+valores.sec_pct = pct.format(resumen.sin_area_construida / resumen.habitacionales_no_ph);
 valores.generado = fecha.format(new Date(resumen.generado));
 const path = new URL("index.html", root);
 const html = await readFile(path, "utf8");

@@ -405,6 +405,35 @@ body.sia-landing {
   display: none;
 }
 
+/* Planteamiento del problema dentro de la portada */
+.sia-problema {
+  margin: 4px 0 20px;
+  padding: 14px 0 0;
+  border-top: 2px solid var(--sia-ink);
+  max-width: 52ch;
+}
+.sia-problema dd {
+  font: 600 clamp(1.8rem, 3vw, 2.6rem)/1.1 var(--sia-heading);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--neiva-rojo);
+}
+.sia-problema dt {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--sia-muted);
+}
+/* Cifras con la descripción de cada señal */
+.sia-stat-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--sia-accent-200);
+  max-width: 30ch;
+}
+.sia-stats > div {
+  justify-content: flex-end;
+}
+
 @media (max-width: 1000px) {
   .sia-method-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));

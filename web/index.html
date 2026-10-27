@@ -42,7 +42,7 @@
       </button>
       <nav id="navegacion" aria-label="Principal">
         <a href="#alertas">Alertas</a><a href="#metodo">Método</a
-        ><a href="#piloto">Piloto</a><a href="#fuentes">Fuentes</a>
+        ><a href="#piloto">Piloto</a><a href="#limites">Límites</a>
       </nav>
       <a
         class="sia-button sia-header-cta"
@@ -64,9 +64,10 @@
             <em>entre el registro y el territorio.</em>
           </h1>
           <p class="sia-lead">
-            Cruza el registro catastral, la cartografía y las huellas de
-            edificaciones. Encuentra qué predios conviene revisar primero, con
-            sus razones y fuentes.
+            Las fuentes catastrales de Neiva son públicas, pero están separadas.
+            Suelo-IA las cruza y señala qué predios conviene revisar primero,
+            con razones y fuentes, para Gestión Catastral, Hacienda y
+            Planeación.
           </p>
           <div class="sia-cover-actions">
             <a class="sia-button" href="/app/"
@@ -75,20 +76,16 @@
               >Solicitar un piloto <span aria-hidden="true">→</span></a
             >
           </div>
-          <ul class="sia-roles" aria-label="Para los equipos del territorio">
-            <li>
-              <strong>Gestión Catastral</strong
-              ><span>Prioriza la revisión predial</span>
-            </li>
-            <li>
-              <strong>Hacienda</strong
-              ><span>Consulta señales con contexto</span>
-            </li>
-            <li>
-              <strong>Planeación</strong
-              ><span>Contrasta registro y territorio</span>
-            </li>
-          </ul>
+          <dl class="sia-problema" aria-label="El problema en cifras">
+            <div>
+              <dd><span data-stat="sec_sin_area">1.064</span> de <span data-stat="sec_hab">4.111</span></dd>
+              <dt>
+                predios habitacionales del sector 02 figuran sin área construida
+                (<span data-stat="sec_pct">25,9%</span>). Algunos serán lotes vacíos;
+                otros, construcciones no registradas.
+              </dt>
+            </div>
+          </dl>
           <p class="sia-disclaimer">
             Herramienta independiente, no oficial.<br />Alertas para priorizar
             revisión; no son hallazgos confirmados.
@@ -144,10 +141,10 @@
         </svg>
         <span>Río Magdalena</span>
       </div>
-      <section class="sia-stat-band" aria-label="Cifras del piloto">
+      <section class="sia-stat-band" id="alertas" aria-label="Cifras del piloto">
         <div class="sia-band-in">
           <div class="sia-band-heading">
-            <p class="sia-label">Del dato a la decisión humana</p>
+            <p class="sia-label">Tres señales, una revisión pendiente</p>
             <h2>
               <span data-stat="predios_con_geometria">7.329</span> predios en el
               mapa.<br /><span>Una lista para orientar la revisión.</span>
@@ -155,18 +152,22 @@
           </div>
           <dl class="sia-stats" aria-busy="false">
             <div>
+              <p class="sia-stat-note">Predios con A1, A2 o A3. Un predio puede tener más de una.</p>
               <dt>Con al menos una alerta</dt>
               <dd data-stat="predios_con_alerta">1.283</dd>
             </div>
             <div>
+              <p class="sia-stat-note">Una huella de edificación donde el registro no indica área construida, en predios habitacionales sin propiedad horizontal.</p>
               <dt>A1 · Posible construcción no registrada</dt>
               <dd data-stat="A1">805</dd>
             </div>
             <div>
+              <p class="sia-stat-note">El área de las huellas supera el área construida registrada en predios sin propiedad horizontal.</p>
               <dt>A2 · Posible área subregistrada</dt>
               <dd data-stat="A2">414</dd>
             </div>
             <div>
+              <p class="sia-stat-note">Diferencia estadística frente a predios comparables de la manzana. No estima un nuevo avalúo ni calcula impuestos.</p>
               <dt>A3 · Avalúo atípico</dt>
               <dd data-stat="A3">90</dd>
             </div>
@@ -197,9 +198,6 @@
           <p>
             Lo que está registrado frente a lo que se observa. Una ficha reúne
             la señal, sus fuentes y el contexto para que una persona decida.
-          </p>
-          <p class="sia-audience">
-            Para equipos de Gestión Catastral, Hacienda y Planeación.
           </p>
         </div>
         <article
@@ -247,69 +245,6 @@
             Activa JavaScript para consultar el ejemplo del piloto.
           </p>
         </article>
-      </section>
-      <section
-        class="sia-alerts sia-section"
-        id="alertas"
-        aria-labelledby="alertas-titulo"
-      >
-        <div class="sia-section-heading">
-          <div>
-            <p class="sia-label">Leyenda de lectura</p>
-            <h2 id="alertas-titulo">Tres señales. Una revisión pendiente.</h2>
-          </div>
-          <p>
-            Los códigos identifican reglas, no niveles de prioridad. Un predio
-            puede tener más de una alerta.
-          </p>
-        </div>
-        <div class="sia-alert-row">
-          <span class="sia-alert-code">A1</span>
-          <div>
-            <h3>Posible construcción no registrada</h3>
-            <p>
-              Una huella de edificación donde el registro no indica área
-              construida, en predios habitacionales sin propiedad horizontal.
-            </p>
-          </div>
-          <div class="sia-alert-count">
-            <strong data-stat="A1">805</strong><span>predios con A1</span>
-          </div>
-        </div>
-        <div class="sia-alert-row">
-          <span class="sia-alert-code">A2</span>
-          <div>
-            <h3>Posible área subregistrada</h3>
-            <p>
-              El área de las huellas supera el área construida registrada en
-              predios sin propiedad horizontal. Las fechas y las mediciones
-              requieren contraste.
-            </p>
-          </div>
-          <div class="sia-alert-count">
-            <strong data-stat="A2">414</strong><span>predios con A2</span>
-          </div>
-        </div>
-        <div class="sia-alert-row">
-          <span class="sia-alert-code">A3</span>
-          <div>
-            <h3>Avalúo atípico</h3>
-            <p>
-              Una diferencia estadística respecto a predios comparables de la
-              manzana. No estima un nuevo avalúo ni calcula impuestos.
-            </p>
-          </div>
-          <div class="sia-alert-count">
-            <strong data-stat="A3">90</strong><span>predios con A3</span>
-          </div>
-        </div>
-        <p class="sia-footnote">
-          Reglas y umbrales documentados en la
-          <a
-            href="https://github.com/sjpolaniaoro/suelo-IA/blob/main/docs/spec.md"
-            >especificación del proyecto</a
-          >. Los conteos pueden solaparse.
-        </p>
       </section>
       <section
         class="sia-method sia-section"
@@ -364,83 +299,6 @@
             <p>Fuera de Suelo-IA: la actuación corresponde a quien tiene la competencia.</p>
           </li>
         </ol>
-      </section>
-      <section class="sia-notes sia-section" aria-labelledby="notas-titulo">
-        <div>
-          <p class="sia-label">Notas de uso</p>
-          <h2 id="notas-titulo">Leer también<br />los límites.</h2>
-        </div>
-        <div class="sia-notes-list">
-          <div>
-            <h3>Fuentes con fechas distintas</h3>
-            <p>
-              El registro y las huellas pueden representar momentos diferentes.
-              Una alerta necesita verificación.
-            </p>
-          </div>
-          <div>
-            <h3>La precisión está en validación</h3>
-            <p>
-              No se presentan métricas de desempeño como resultados confirmados.
-              <a
-                href="https://github.com/sjpolaniaoro/suelo-IA/tree/main/docs/validacion"
-                >Consultar la validación</a
-              >.
-            </p>
-          </div>
-          <div>
-            <h3>Alturas de referencia</h3>
-            <p>
-              La vista 3D usa los pisos de la cartografía y puede mostrar
-              alturas ilustrativas. No mide la altura actual desde satélite.
-            </p>
-          </div>
-          <div>
-            <h3>Trabajo en tu navegador</h3>
-            <p>
-              Las revisiones se guardan localmente y se exportan a CSV. El mapa
-              utiliza datos incluidos aunque la API no responda.
-            </p>
-          </div>
-          <div>
-            <h3>Datos del predio</h3>
-            <p>
-              El pipeline excluye nombres, documentos y contactos. Si aparecen
-              columnas de datos personales, se detiene.
-            </p>
-          </div>
-          <div>
-            <h3>Decisión humana</h3>
-            <p>
-              Suelo-IA no modifica el catastro, no emite nuevos avalúos y no
-              genera cobros.
-            </p>
-          </div>
-        </div>
-      </section>
-      <section class="sia-scope sia-section" aria-labelledby="alcance-titulo">
-        <div>
-          <p class="sia-label">Alcance del piloto</p>
-          <h2 id="alcance-titulo">
-            Empezar por un sector.<br />Verificar antes de ampliar.
-          </h2>
-        </div>
-        <dl>
-          <div>
-            <dt>Disponible</dt>
-            <dd>
-              Sector urbano 02, mapa 3D, alertas A1–A3, ficha y exportación de
-              revisiones.
-            </dd>
-          </div>
-          <div>
-            <dt>Previsto</dt>
-            <dd>
-              Ampliación de cobertura, serie temporal y consulta normativa. Son
-              desarrollos futuros, no funciones del piloto actual.
-            </dd>
-          </div>
-        </dl>
       </section>
       <section
         class="sia-pilot sia-section"
@@ -555,50 +413,52 @@
           >
         </div>
       </section>
-      <section class="sia-faq sia-section" aria-labelledby="preguntas-titulo">
+      <section class="sia-faq sia-section" id="limites" aria-labelledby="preguntas-titulo">
         <div>
-          <p class="sia-label">Antes de revisar</p>
-          <h2 id="preguntas-titulo">Preguntas del trabajo de campo.</h2>
+          <p class="sia-label">Límites y preguntas</p>
+          <h2 id="preguntas-titulo">Leer también<br />los límites.</h2>
         </div>
         <div>
           <details>
             <summary>¿Una alerta confirma una diferencia catastral?</summary>
             <p>
-              No. Es una señal para priorizar una revisión. Debe contrastarse
-              con las fuentes, imágenes o una visita; no sustituye la actuación
-              de la autoridad catastral.
+              No. Es una señal para priorizar una revisión. Debe contrastarse con las fuentes, imágenes o una visita; no sustituye la actuación de la autoridad catastral.
             </p>
           </details>
           <details>
             <summary>¿Cómo se validan los resultados?</summary>
             <p>
-              El proyecto tiene una muestra de validación pendiente de revisión
-              humana. Se documentarán las métricas cuando esa revisión permita
-              calcularlas; no se garantiza precisión antes de medirla.
+              El proyecto tiene una muestra de 240 predios pendiente de revisión humana. Se documentarán las métricas cuando esa revisión permita calcularlas; no se garantiza precisión antes de medirla. <a href="https://github.com/sjpolaniaoro/suelo-IA/tree/main/docs/validacion">Consultar la validación</a>.
             </p>
           </details>
           <details>
-            <summary>¿Dónde quedan mis revisiones?</summary>
+            <summary>¿Qué es NR, «uso probablemente no residencial»?</summary>
             <p>
-              En el almacenamiento de tu navegador. Puedes exportarlas e
-              importarlas como CSV. Si el navegador impide guardar, el mapa te
-              avisa y permite exportar antes de cerrar.
+              Un predio registrado como habitacional, sin área construida, con una huella detectada muy grande (más de 1.000 m²). Es más probable que sea otro uso, como un equipamiento. Se separa del puntaje de vivienda y pide revisar el destino.
             </p>
           </details>
           <details>
-            <summary>¿Qué pasa si la API no responde?</summary>
+            <summary>¿Qué cubre hoy y qué sigue?</summary>
             <p>
-              El mapa lee los archivos incluidos con la página y muestra el
-              aviso de modo sin API. Las teselas del mapa base, las fuentes y
-              los enlaces de imágenes sí pueden necesitar internet.
+              Hoy: sector urbano 02, mapa 3D, alertas A1 a A3 y NR, ficha y exportación de revisiones. Previsto: ampliación de cobertura, serie temporal y consulta normativa. Son desarrollos futuros, no funciones del piloto actual.
             </p>
           </details>
           <details>
-            <summary>¿Puedo consultar otros sectores?</summary>
+            <summary>¿Por qué las alturas y las fechas pueden no coincidir?</summary>
             <p>
-              La versión actual cubre el sector urbano 02 de Neiva. La
-              ampliación de cobertura está prevista y depende de la
-              disponibilidad y calidad de los datos.
+              El registro y las huellas pueden representar momentos diferentes. La vista 3D usa los pisos de la cartografía y puede mostrar alturas ilustrativas; no mide la altura actual desde satélite.
+            </p>
+          </details>
+          <details>
+            <summary>¿Dónde quedan mis revisiones y qué pasa si la API no responde?</summary>
+            <p>
+              Las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
+            </p>
+          </details>
+          <details>
+            <summary>¿Qué pasa con los datos personales y con el catastro?</summary>
+            <p>
+              El pipeline excluye nombres, documentos y contactos; si aparecen columnas de datos personales, se detiene. Suelo-IA no modifica el catastro, no emite nuevos avalúos y no genera cobros: la decisión es humana.
             </p>
           </details>
         </div>
@@ -612,6 +472,7 @@
           >Explorar el mapa <span aria-hidden="true">↗</span></a
         >
       </section>
+    
     </main>
     <footer class="sia-footer" id="fuentes">
       <div class="sia-footer-brand">
