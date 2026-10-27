@@ -1,3 +1,5 @@
+import { ESTADOS } from "./validar.js";
+
 // Revisiones humanas: viven en el navegador (localStorage) y se exportan a CSV.
 const CLAVE = "suelo-ia-revisiones";
 let memoria = {};
@@ -46,7 +48,15 @@ export const borrarEquipo = () => {
 export const leerCola = () => leerJson(CLAVE_COLA, []);
 export const guardarCola = (c) => guardarJson(CLAVE_COLA, c);
 
-const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+// Una hoja de cálculo evalúa como fórmula las celdas de texto que empiezan por = + - @ tab o retorno.
+// Se antepone una comilla simple (desdeCsv la quita al reimportar). Los números no se tocan.
+const FORMULA = /^[=+\-@\t\r]/;
+const esc = (v) => {
+  let t = String(v ?? "");
+  if (typeof v === "string" && FORMULA.test(t)) t = `'${t}`;
+  return `"${t.replace(/"/g, '""')}"`;
+};
+const sinPrefijo = (t) => t.replace(/^'(?=[=+\-@\t\r])/, "");
 
 export function aCsv(filas, columnas) {
   const cab = columnas.map((c) => c[0]).join(",");
@@ -71,8 +81,13 @@ export function desdeCsv(texto) {
   if (iN < 0 || iE < 0) throw new Error("El CSV debe tener las columnas npn y estado.");
   const r = {};
   for (const l of lineas.slice(1)) {
-    const c = parse(l);
-    if (c[iN]) r[c[iN]] = { estado: c[iE], fecha: c[iF] || "", ...(iR >= 0 && c[iR] ? { revisor: c[iR] } : {}) };
+    const c = parse(l).map(sinPrefijo);
+    // Solo entran filas con npn de 30 dígitos y un estado válido; el resto se ignora.
+    if (!/^\d{30}$/.test(c[iN] || "") || !ESTADOS.includes(c[iE])) continue;
+    const fecha = c[iF] && Number.isFinite(Date.parse(c[iF])) ? c[iF] : "";
+    const revisor = iR >= 0 ? (c[iR] || "").trim().slice(0, 60) : "";
+    r[c[iN]] = { estado: c[iE], fecha, ...(revisor ? { revisor } : {}) };
   }
+  if (!Object.keys(r).length) throw new Error("El CSV no trae revisiones válidas (npn de 30 dígitos y estado confirmado, descartado o no_concluyente).");
   return r;
 }

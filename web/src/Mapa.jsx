@@ -4,6 +4,7 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import { limites } from "./datos.js";
+import { textoTooltip } from "./tooltip.js";
 
 maplibregl.setWorkerUrl(workerUrl);
 
@@ -94,13 +95,10 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
       layers: [],
       getTooltip: ({ object }) => {
         if (!object) return null;
-        const p = object.properties;
-        const lineas = [`<b>${p.direccion || p.npn}</b>`];
-        lineas.push(p.NR ? "Revisar destino (uso probablemente no residencial)" : p.puntaje > 0 ? `Prioridad ${p.nivel === "rojo" ? "alta" : p.nivel === "naranja" ? "media" : "baja"} · puntaje ${p.puntaje}` : "Sin alerta");
-        if (p.accion) lineas.push(p.accion === "campo" ? "Verificar en campo" : "Conciliar en oficina");
+        // Texto plano, no html: deck.gl asigna html a innerHTML sin sanear (ver tooltip.js).
         return {
-          html: lineas.join("<br>"),
-          style: { background: "var(--sia-surface)", color: "var(--sia-ink)", border: "1px solid var(--sia-control)", fontSize: "13px", padding: "8px 12px", borderRadius: "3px", fontFamily: "var(--sia-body)" },
+          text: textoTooltip(object.properties),
+          style: { whiteSpace: "pre-line", background: "var(--sia-surface)", color: "var(--sia-ink)", border: "1px solid var(--sia-control)", fontSize: "13px", padding: "8px 12px", borderRadius: "3px", fontFamily: "var(--sia-body)" },
         };
       },
     });

@@ -40,6 +40,9 @@ Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 rea
 ## Revisiones en equipo
 La mesa guarda las revisiones en el navegador. Si el equipo activa «Revisión en equipo» (nombre básico y un código compartido), también se guardan en una base de datos de solo anexar en Supabase, para que no se pierdan y todos vean lo mismo; si no hay conexión, se envían al volver. Detalles, seguridad y operación en [`db/README.md`](db/README.md).
 
+## Pruebas
+`pytest -q` (pipeline y API) y `npm test` dentro de `web/` (validación de archivos importados, CSV y tooltip). Las pruebas de la base de revisiones están en [`db/pruebas/`](db/pruebas/).
+
 ## Estructura
 `pipeline/` datos (Python) · `web/` mapa 3D (React, deck.gl, MapLibre; Vercel) · `api/` FastAPI (Render, plan gratuito; `render.yaml`) · `notebooks/` extracción de Open Buildings · `db/` base de revisiones (Supabase) · `tests/` pruebas.
 

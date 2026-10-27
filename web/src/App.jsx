@@ -6,6 +6,7 @@ import {
   aCsv, borrarEquipo, desdeCsv, descargar, guardar, guardarCola, guardarEquipo, leer, leerCola, leerEquipo,
 } from "./revisiones.js";
 import { enviarNube, leerNube, uuid } from "./nube.js";
+import { LIMITE_BYTES, validarGeojson } from "./validar.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
 const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
@@ -47,6 +48,7 @@ export default function App() {
   const equipoRef = useRef(equipo);
   const colaRef = useRef(leerCola());
   const enviando = useRef(false);
+  const codigoMalo = useRef(false); // con un código rechazado no se reintenta: cada intento cuenta como fallo
   equipoRef.current = equipo;
 
   const fijarCola = useCallback((nueva) => {
@@ -81,7 +83,7 @@ export default function App() {
 
   const vaciar = useCallback(async () => {
     const eq = equipoRef.current;
-    if (!eq || enviando.current) return;
+    if (!eq || enviando.current || codigoMalo.current) return;
     enviando.current = true;
     try {
       if (colaRef.current.length) setSync({ estado: "enviando", error: "" });
@@ -101,7 +103,8 @@ export default function App() {
       await traer();
       setSync({ estado: "ok", error: "" });
     } catch (e) {
-      setSync({ estado: e.tipo === "codigo" ? "codigo" : "red", error: e.message });
+      if (e.tipo === "codigo") codigoMalo.current = true;
+      setSync({ estado: e.tipo === "codigo" ? "codigo" : e.tipo === "bloqueo" ? "bloqueo" : "red", error: e.message });
     } finally {
       enviando.current = false;
     }
@@ -279,6 +282,7 @@ export default function App() {
       const nuevo = { nombre, codigo };
       guardarEquipo(nuevo);
       equipoRef.current = nuevo;
+      codigoMalo.current = false;
       // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre de quien lo activa.
       const previas = Object.entries(revisiones).filter(([, r]) => !r.nube);
       fijarCola([
@@ -300,6 +304,7 @@ export default function App() {
   const salirDelEquipo = () => {
     borrarEquipo();
     equipoRef.current = null;
+    codigoMalo.current = false;
     setEquipo(null);
     setSync({ estado: "local", error: "" });
   };
@@ -345,16 +350,14 @@ export default function App() {
     e.target.value = "";
     if (!f) return;
     try {
+      if (f.size > LIMITE_BYTES) throw new Error("El archivo pesa más de 30 MB.");
       const texto = await f.text();
       if (f.name.toLowerCase().endsWith(".csv")) {
         const r = { ...revisiones, ...desdeCsv(texto) };
         setRevisiones(r);
         setGuardadoOk(guardar(r));
       } else {
-        const fc = JSON.parse(texto);
-        if (fc.type !== "FeatureCollection" || !fc.features?.[0]?.properties?.npn) {
-          throw new Error("El GeoJSON debe ser el generado por el pipeline (propiedad npn).");
-        }
+        const fc = validarGeojson(JSON.parse(texto));
         setDatos((d) => ({ ...d, predios: fc }));
         setSel(null);
       }
@@ -499,6 +502,7 @@ export default function App() {
                     enviando: "Enviando…",
                     red: `Sin conexión: ${pendientes} por enviar. Se reintenta solo.`,
                     codigo: "El código ya no es válido. Sal del equipo y vuelve a activarlo.",
+                    bloqueo: "Demasiados intentos con el código: se reintenta solo en unos minutos.",
                     local: "Conectando…",
                   }[sync.estado]}
                 </p>

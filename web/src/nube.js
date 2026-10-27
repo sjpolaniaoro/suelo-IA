@@ -2,10 +2,10 @@
 // La clave publicable es pública por diseño y NO da acceso a las tablas: las funciones exigen el
 // código de equipo y la tabla es de solo anexar (db/migrations). El frontend sigue funcionando sin
 // esta conexión: las revisiones se guardan en el navegador y se envían cuando hay red.
-const URL_NUBE = import.meta.env.VITE_SUPABASE_URL || "https://acaexgrlmopqfyxufssa.supabase.co";
-const CLAVE_NUBE = import.meta.env.VITE_SUPABASE_KEY || "sb_publishable_sAxKTNI5x0OYb3ihfvCpdQ_5l4Q0MlW";
+const URL_NUBE = import.meta.env?.VITE_SUPABASE_URL || "https://acaexgrlmopqfyxufssa.supabase.co";
+const CLAVE_NUBE = import.meta.env?.VITE_SUPABASE_KEY || "sb_publishable_sAxKTNI5x0OYb3ihfvCpdQ_5l4Q0MlW";
 
-// tipo: "codigo" (código de equipo incorrecto), "datos" (el servidor rechazó el evento) o "red".
+// tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "datos" (rechazó el evento) o "red".
 export class ErrorNube extends Error {
   constructor(mensaje, tipo) {
     super(mensaje);
@@ -46,10 +46,26 @@ async function rpc(nombre, cuerpo, ms = 8000) {
   throw new ErrorNube(detalle.message || "El servidor rechazó la revisión.", "datos");
 }
 
-export const leerNube = (codigo) => rpc("leer_revisiones", { p_codigo: codigo });
+// Desde la migración 0003 las funciones no lanzan error ante un código malo (un error revertiría el
+// contador de intentos): devuelven {ok:false, error}. Las versiones anteriores lanzaban un error HTTP y
+// devolvían un arreglo o un uuid; se aceptan las dos formas para poder desplegar en cualquier orden.
+export function interpretar(resp) {
+  if (resp && typeof resp === "object" && !Array.isArray(resp) && "ok" in resp) {
+    if (resp.ok) return resp;
+    if (resp.error === "codigo_invalido") throw new ErrorNube("Código de equipo incorrecto.", "codigo");
+    if (resp.error === "demasiados_intentos") throw new ErrorNube("Demasiados intentos con el código. Espera unos minutos.", "bloqueo");
+    throw new ErrorNube("El servidor rechazó la solicitud.", "datos");
+  }
+  return resp;
+}
 
-export const enviarNube = (ev, codigo) =>
-  rpc("registrar_revision", {
+export const leerNube = async (codigo) => {
+  const r = interpretar(await rpc("leer_revisiones", { p_codigo: codigo }));
+  return Array.isArray(r) ? r : r.filas;
+};
+
+export const enviarNube = async (ev, codigo) =>
+  interpretar(await rpc("registrar_revision", {
     p_id: ev.id,
     p_npn: ev.npn,
     p_estado: ev.estado,
@@ -61,4 +77,4 @@ export const enviarNube = (ev, codigo) =>
     p_triangulacion: ev.triangulacion ?? null,
     p_accion: ev.accion ?? null,
     p_version: ev.version ?? null,
-  });
+  }));
