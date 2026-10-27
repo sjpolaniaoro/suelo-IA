@@ -5,7 +5,7 @@ import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js"
 import { aCsv, desdeCsv, descargar, guardar, leer } from "./revisiones.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
-const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"]];
+const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
 const TODOS_NIVELES = new Set(NIVELES.map((x) => x[0]));
 const MAX_LISTA = 400;
 
@@ -43,7 +43,7 @@ export default function App() {
     if (!datos) return [];
     return datos.predios.features
       .map((f) => f.properties)
-      .filter((p) => p.puntaje > 0)
+      .filter((p) => p.puntaje > 0 || p.NR)
       .sort((a, b) => b.puntaje - a.puntaje || (b.area_huella ?? 0) - (a.area_huella ?? 0));
   }, [datos]);
 
@@ -52,12 +52,13 @@ export default function App() {
 
   const cuentaNivel = useMemo(() => {
     const c = { rojo: 0, naranja: 0, amarillo: 0 };
-    alertas.forEach((p) => { if (tipo === "todas" || p[tipo]) c[p.nivel]++; });
+    alertas.forEach((p) => { if (!p.NR && (tipo === "todas" || p[tipo])) c[p.nivel]++; });
     return c;
   }, [alertas, tipo]);
   const cuentaTipo = useMemo(() => {
-    const c = { todas: 0, A1: 0, A2: 0, A3: 0 };
+    const c = { todas: 0, A1: 0, A2: 0, A3: 0, NR: 0 };
     alertas.forEach((p) => {
+      if (p.NR) { c.NR++; return; }
       if (!niveles.has(p.nivel)) return;
       c.todas++;
       ["A1", "A2", "A3"].forEach((k) => { if (p[k]) c[k]++; });
@@ -288,6 +289,7 @@ export default function App() {
               <span><i style={{ background: rgb(COLORES_ESTADO.confirmado) }} />Confirmado</span>
               <span><i style={{ background: rgb(COLORES_ESTADO.descartado) }} />Descartado</span>
               <span><i style={{ background: rgb(COLORES_ESTADO.no_concluyente) }} />No concluyente</span>
+              <span><i style={{ background: rgb(COLORES.no_residencial) }} />Revisar destino (NR)</span>
               <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta</span>
             </div>
           </details>
@@ -299,13 +301,13 @@ export default function App() {
           <ol className="lista" aria-label="Predios de la etapa seleccionada">
             {visibles.map((p) => {
               const rev = revisiones[p.npn];
-              const tipos = ["A1", "A2", "A3"].filter((k) => p[k]).join(" · ");
+              const tipos = ["A1", "A2", "A3", "NR"].filter((k) => p[k]).join(" · ");
               return (
                 <li key={p.npn}>
                   <button className={`${p.npn === sel ? "sel" : ""} n-${p.nivel}`} onClick={() => elegir(p.npn)}>
                     <span className="dir">{p.direccion || p.npn}</span>
                     <span className="meta">{tipos}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
-                    <b className="pt">{p.puntaje}</b>
+                    <b className="pt">{p.NR ? "NR" : p.puntaje}</b>
                     {rev && <em className={`est ${rev.estado}`} title={rev.estado}>{ICONO[rev.estado]}</em>}
                   </button>
                 </li>

@@ -6,7 +6,7 @@ export const VEREDICTOS = [
   { k: "descartado", t: "Descartado", tecla: "D", ayuda: "No hay diferencia" },
   { k: "no_concluyente", t: "No concluyente", tecla: "N", ayuda: "No alcanza para decidir" },
 ];
-const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", sin_alerta: "Sin alerta" };
+const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
   p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso,
@@ -35,10 +35,10 @@ export default function Ficha({
         <h2>{p.direccion || "Sin dirección"}</h2>
         <p className="npn">{p.npn}</p>
         <div className="chips">
-          <span className={`chip-nivel ${p.nivel}`}>{NIVEL[p.nivel]} · {fmt(p.puntaje)}</span>
+          <span className={`chip-nivel ${p.nivel}`}>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</span>
           <span className={`chip ${p.confianza === "baja" ? "baja" : ""}`}>Confianza {p.confianza}</span>
           {p.ph && <span className="chip">Propiedad horizontal</span>}
-          {["A1", "A2", "A3"].filter((k) => p[k]).map((k) => <span key={k} className="chip chip-alerta">{k}</span>)}
+          {["A1", "A2", "A3", "NR"].filter((k) => p[k]).map((k) => <span key={k} className="chip chip-alerta">{k}</span>)}
         </div>
       </header>
 
@@ -46,6 +46,13 @@ export default function Ficha({
         <li>
           <div className="paso-cab"><span className="paso-num">1</span><h3>Qué se detectó</h3></div>
           {p.razones?.length ? <ul className="razones">{p.razones.map((r) => <li key={r}>{r}</li>)}</ul> : <p className="suave">Sin alertas.</p>}
+          {p.NR && (
+            <p className="aviso-destino">
+              Uso probablemente no residencial: el registro dice Habitacional sin área construida, pero la huella detectada
+              es muy grande para una vivienda. Verifique el uso real y, si corresponde, el destino y el área construida.
+              No cuenta en el puntaje de vivienda.
+            </p>
+          )}
           {verBarras ? (
             <div className="barras">
               <div className="barra"><span>Registrado</span><i className="reg" style={{ width: `${Math.max(2, (reg / escala) * 100)}%` }} /><b>{fmt(reg, " m²")}</b></div>

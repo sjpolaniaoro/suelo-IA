@@ -4,6 +4,7 @@
   --rojo: #e5484d;
   --naranja: #f48c06;
   --amarillo: #facc15;
+  --no-residencial: #0e9fbc;
   --confirmado: #3fcb93;
   --gris: #7c8da0;
   --morado: #8b7cf6;
@@ -300,6 +301,9 @@ kbd {
 .lista li button.n-amarillo::before {
   background: var(--amarillo);
 }
+.lista li button.n-no_residencial::before {
+  background: var(--no-residencial);
+}
 .lista li button:hover {
   background: #e6e6e8;
 }
@@ -474,6 +478,9 @@ main {
 .ficha.nivel-amarillo {
   border-top-color: var(--amarillo);
 }
+.ficha.nivel-no_residencial {
+  border-top-color: var(--no-residencial);
+}
 .ficha-cab {
   padding: 12px 16px;
   background: var(--sia-paper);
@@ -544,6 +551,16 @@ main {
 }
 .chips .chip-nivel.amarillo {
   border-left-color: var(--amarillo);
+}
+.chips .chip-nivel.no_residencial {
+  border-left-color: var(--no-residencial);
+}
+.aviso-destino {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-left: 4px solid var(--no-residencial);
+  background: #0e9fbc14;
+  font-size: 13px;
 }
 .chips .baja {
   outline: 1px solid #9b5a00;
