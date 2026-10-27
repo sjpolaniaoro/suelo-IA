@@ -23,7 +23,14 @@ Reemplaza el hueco «[Definir titularidad, licencia y alcance de publicación co
 
 > A la fecha, el repositorio público declara licencia MIT para el código propio (archivo LICENSE, a nombre de los tres integrantes) y los datos de terceros conservan sus propias licencias (archivo LICENCIAS.md); la titularidad y el alcance de publicación se confirmarán con los tres autores.
 
-## Pendiente en el Anexo 2 (no resuelto por estos ajustes)
-- Sección 8: `[Confirmar dedicación, tarifas internas y presupuesto del piloto]`.
-- Sección 11: `[Incorporar formación, experiencia pertinente y soportes del integrante]` (perfil de Guillermo Andrés Moreno Olarte).
-- Distribución del incentivo: la sección 12 del Anexo (35/25/15/15/10 %) no coincide con la diapositiva 9 del pitch (40/25/20/10/5 %). Decidir cuál rige y alinear el otro documento.
+## 5. Sección 8: supuestos del presupuesto
+Reemplaza el corchete «[Confirmar dedicación, tarifas internas y presupuesto del piloto]» (el equipo confirmó los valores de la tabla el 26-oct-2026):
+
+> Los supuestos de la tabla fueron confirmados por el equipo el 26 de octubre de 2026.
+
+## 6. Sección 12: reparto del incentivo
+Rige el reparto del Anexo 2 (35/25/15/15/10 %); no se modifica la sección. La diapositiva 9 del pitch (40/25/20/10/5 %) debe alinearse con ese reparto.
+
+## Pendiente en el Anexo 2
+- Sección 11: `[Incorporar formación, experiencia pertinente y soportes del integrante]` (perfil de Guillermo Andrés Moreno Olarte). Falta el texto del perfil.
+- Pitch, diapositiva 9: alinear el reparto del incentivo con la sección 12 del Anexo.
