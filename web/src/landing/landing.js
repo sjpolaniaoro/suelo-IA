@@ -1,4 +1,5 @@
 import "./landing.css";
+import "./neiva.css";
 import ejemplo from "./ejemplo.json";
 const base = import.meta.env.BASE_URL;
 const number = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 });
@@ -62,6 +63,9 @@ function mostrarEjemplo() {
     ejemplo.area_construida_reg,
   );
   $("#ejemplo-huella").textContent = number.format(ejemplo.area_huella);
+  const tope = Math.max(ejemplo.area_construida_reg, ejemplo.area_huella, 1);
+  $("#barra-registro").style.width = Math.max(2, (ejemplo.area_construida_reg / tope) * 100) + "%";
+  $("#barra-huella").style.width = Math.max(2, (ejemplo.area_huella / tope) * 100) + "%";
   $("#ejemplo-razon").textContent = ejemplo.razon;
   $("#ejemplo-confianza").textContent = "Confianza " + ejemplo.confianza;
   $("#ejemplo-enlace").href =

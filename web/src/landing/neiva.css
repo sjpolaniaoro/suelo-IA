@@ -1,0 +1,424 @@
+/* Identidad neivana de la portada: papel de plano cálido, colores de la bandera de Neiva
+   (rojo, verde, amarillo) como ornamento y el río Magdalena como hilo. Los colores de prioridad
+   del mapa (rojo, naranja, amarillo) no cambian: aquí solo son identidad, nunca estado. */
+body.sia-landing {
+  --neiva-rojo: #c8272d;
+  --neiva-verde: #1b6b3a;
+  --neiva-verde-900: #12342a;
+  --neiva-amarillo: #f4b82e;
+  --neiva-rio: #2b7a96;
+  --sia-paper: #f7f1e3;
+  --sia-surface: #fffdf7;
+  --sia-ink: #1f2a22;
+  --sia-muted: #55594f;
+  --sia-accent: #1b6b3a;
+  --sia-accent-hover: #12502b;
+  --sia-accent-900: #12342a;
+  --sia-accent-600: #3f8a5b;
+  --sia-accent-300: #bfe3c9;
+  --sia-accent-200: #dff0e3;
+  --sia-soft: #ece4cf;
+  --sia-line: #ddd3bb;
+  --sia-line-strong: #a89f86;
+  --sia-grid: color-mix(in srgb, #8a6a2b 9%, transparent);
+  background: var(--sia-paper);
+}
+
+/* Franja tricolor sobre el encabezado */
+.sia-franja {
+  display: flex;
+  height: 8px;
+}
+.sia-franja i {
+  flex: 1;
+}
+.sia-franja i:nth-child(1) { background: var(--neiva-rojo); }
+.sia-franja i:nth-child(2) { background: var(--neiva-verde); }
+.sia-franja i:nth-child(3) { background: var(--neiva-amarillo); }
+
+.sia-header {
+  border-bottom: 1px solid var(--sia-line-strong);
+}
+.sia-brand img {
+  width: 44px;
+  height: 44px;
+}
+.sia-location {
+  color: var(--neiva-verde);
+}
+
+/* Portada */
+.sia-cover {
+  position: relative;
+}
+.sia-cover h1 em {
+  color: var(--neiva-verde);
+  background: linear-gradient(transparent 82%, color-mix(in srgb, var(--neiva-amarillo) 75%, transparent) 82%);
+  padding: 0 2px;
+}
+.sia-plancha > span {
+  background: linear-gradient(90deg, var(--neiva-rojo) 33%, var(--neiva-verde) 33% 66%, var(--neiva-amarillo) 66%);
+  height: 3px;
+  opacity: 1;
+}
+.sia-button {
+  background: var(--neiva-verde);
+  border-color: var(--neiva-verde);
+  box-shadow: 4px 4px 0 var(--neiva-amarillo);
+}
+.sia-button:hover {
+  background: var(--neiva-verde-900);
+  border-color: var(--neiva-verde-900);
+  transform: translate(-1px, -1px);
+}
+.sia-text-link {
+  color: var(--neiva-verde);
+}
+.sia-roles li + li {
+  border-left-color: var(--sia-line-strong);
+}
+.sia-roles strong {
+  color: var(--neiva-verde);
+}
+/* La captura 3D se presenta como un pliego: marco de tinta y sombra de plano. */
+.sia-plan {
+  border: 2px solid var(--sia-ink);
+  background-color: var(--sia-surface);
+  box-shadow: 10px 10px 0 color-mix(in srgb, var(--neiva-rio) 28%, transparent);
+}
+.sia-plan-top {
+  background: var(--sia-soft);
+  color: var(--sia-ink);
+  border-bottom: 2px solid var(--sia-ink);
+}
+.sia-plan figcaption {
+  color: var(--sia-muted);
+  border-top: 1px solid var(--sia-line-strong);
+}
+.sia-live-mark {
+  background: var(--neiva-rojo);
+}
+
+/* El río Magdalena como divisor: línea de agua entre la portada y las cifras */
+.sia-rio {
+  position: relative;
+  height: 90px;
+  margin-top: 8px;
+  background: var(--neiva-verde-900);
+  line-height: 0;
+}
+.sia-rio svg {
+  display: block;
+  width: 100%;
+  height: 90px;
+  position: absolute;
+  inset: 0;
+}
+.sia-rio .rio-a {
+  fill: var(--sia-paper);
+}
+.sia-rio .rio-b {
+  stroke: var(--neiva-rio);
+  stroke-width: 3;
+  stroke-dasharray: 2 9;
+  stroke-linecap: round;
+}
+.sia-rio span {
+  position: absolute;
+  right: 48px;
+  bottom: 14px;
+  font: 500 12px/1 var(--sia-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--neiva-amarillo);
+}
+
+/* Cifras: fondo verde profundo, números en amarillo bandera */
+.sia-stat-band {
+  background: var(--neiva-verde-900);
+  padding-top: 8px;
+}
+.sia-stats > div {
+  border-top-color: var(--sia-accent-600);
+  border-right-color: color-mix(in srgb, var(--neiva-amarillo) 35%, transparent);
+}
+.sia-stats dd {
+  color: var(--neiva-amarillo);
+}
+.sia-stats dt {
+  color: var(--sia-accent-200);
+}
+.sia-band-heading .sia-label {
+  color: var(--neiva-amarillo);
+}
+.sia-stat-band .sia-footnote {
+  color: var(--sia-accent-200);
+}
+
+/* Secciones */
+.sia-label {
+  color: var(--neiva-verde);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+}
+.sia-section {
+  border-top: 2px solid var(--sia-ink);
+}
+.sia-alert-code {
+  border-color: var(--neiva-verde);
+  color: var(--neiva-verde);
+  background: var(--sia-surface);
+}
+
+/* Ficha de ejemplo: registrado frente a observado, con barras como en la mesa de revisión */
+.sia-example-sheet {
+  background: var(--sia-surface);
+  border: 2px solid var(--sia-ink);
+  box-shadow: 8px 8px 0 var(--neiva-amarillo);
+}
+.sia-sheet-heading {
+  background: var(--sia-soft);
+  color: var(--sia-ink);
+  border-bottom: 2px solid var(--sia-ink);
+}
+.sia-comparison dd {
+  color: var(--neiva-verde);
+}
+.sia-bar {
+  display: block;
+  height: 10px;
+  margin-top: 12px;
+  background: color-mix(in srgb, var(--sia-ink) 8%, transparent);
+}
+.sia-bar b {
+  display: block;
+  height: 100%;
+  width: 2%;
+  transition: width 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.sia-bar-reg b {
+  background: var(--sia-line-strong);
+}
+.sia-bar-obs b {
+  background: var(--neiva-rojo);
+}
+
+/* Método: ruta del trámite catastral, como una línea de río con paradas */
+.sia-method-steps {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border-top: 0;
+  position: relative;
+}
+.sia-method-steps::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--neiva-rio) 0 10px, transparent 10px 16px);
+  border-radius: 2px;
+}
+.sia-method-steps li {
+  position: relative;
+  padding-top: 44px;
+}
+.sia-method-steps li::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--neiva-verde);
+  border: 4px solid var(--sia-paper);
+  box-shadow: 0 0 0 2px var(--neiva-verde);
+}
+.sia-method-steps li:first-child::before {
+  left: 0;
+}
+.sia-method-steps li:nth-child(5)::before {
+  background: var(--neiva-amarillo);
+  box-shadow: 0 0 0 2px var(--sia-ink);
+}
+.sia-method-steps li.sia-fuera::before {
+  background: var(--sia-paper);
+  box-shadow: 0 0 0 2px var(--neiva-rojo);
+}
+.sia-method-steps em {
+  display: block;
+  margin-top: 6px;
+  font: 600 11px/1.3 var(--sia-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neiva-rio);
+  font-style: normal;
+}
+.sia-method-steps span {
+  color: var(--neiva-verde);
+}
+.sia-method-steps li.sia-fuera span {
+  color: var(--neiva-rojo);
+}
+.sia-method-steps li.sia-fuera h3,
+.sia-method-steps li.sia-fuera p {
+  font-style: italic;
+}
+
+/* Cierre y pie */
+.sia-closing {
+  border-top: 2px solid var(--sia-ink);
+  border-bottom: 2px solid var(--sia-ink);
+}
+.sia-footer {
+  background: var(--neiva-verde-900);
+  color: var(--sia-accent-200);
+  position: relative;
+}
+.sia-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--neiva-rojo) 33%, var(--neiva-verde) 33% 66%, var(--neiva-amarillo) 66%);
+}
+.sia-footer a,
+.sia-footer dt,
+.sia-footer-legal {
+  color: var(--neiva-amarillo);
+}
+.sia-footer .sia-brand {
+  color: #fff;
+}
+.sia-footer .sia-brand small {
+  color: var(--sia-accent-200);
+}
+
+/* ---------- Sistema de marca: tipografía, firma y trama ---------- */
+body.sia-landing {
+  --sia-heading: "Fraunces", Georgia, "Times New Roman", serif;
+  --sia-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+/* Títulos en serif cálida (Fraunces); cifras y códigos catastrales en monoespaciada. */
+.sia-landing h1,
+.sia-landing h2 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+.sia-cover h1 {
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  max-width: 17ch;
+  line-height: 1.08;
+}
+.sia-section h2,
+.sia-closing h2,
+.sia-band-heading h2 {
+  font-size: clamp(1.9rem, 3.2vw, 3rem);
+}
+.sia-example-content h3 {
+  font-size: 1.7rem;
+}
+.sia-stats dd,
+.sia-comparison dd,
+.sia-alert-count strong,
+.sia-method-steps span {
+  font-family: var(--sia-heading);
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+.sia-npn,
+.sia-alert-code,
+.sia-map-evidence .sia-alert-code {
+  font-family: var(--sia-mono);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.sia-alert-code {
+  font-size: 18px;
+}
+
+/* Firma: marca + palabra. El punto medio es el río que cruza el predio. */
+.sia-brand {
+  gap: 14px;
+}
+.sia-brand img {
+  width: 48px;
+  height: 48px;
+}
+.sia-word {
+  display: block;
+  font: 700 1.7rem/1 var(--sia-heading);
+  letter-spacing: -0.025em;
+  color: var(--sia-ink);
+}
+.sia-word i {
+  font-style: normal;
+  color: var(--neiva-rio);
+  margin: 0 1px;
+}
+.sia-word small {
+  display: block;
+  margin-top: 6px;
+  font: 600 10px/1 var(--sia-body);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sia-muted);
+}
+.sia-footer .sia-word {
+  color: #fff;
+}
+.sia-footer .sia-word i {
+  color: var(--neiva-amarillo);
+}
+.sia-footer .sia-word small {
+  color: var(--sia-accent-200);
+}
+
+/* Trama: las manzanas reales del sector 02 como fondo de la portada, no una cuadrícula genérica. */
+.sia-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/img/plano-sector02.svg") no-repeat left -160px bottom -140px / 820px auto;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.sia-cover > * {
+  position: relative;
+}
+/* Rótulos: el predio señalado (amarillo) como viñeta. */
+.sia-label::before {
+  content: "";
+  flex: none;
+  width: 9px;
+  height: 9px;
+  background: var(--neiva-amarillo);
+  border: 1.5px solid var(--sia-ink);
+}
+.sia-plancha::before {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .sia-method-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sia-method-steps::before {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .sia-rio span { right: 16px; }
+  .sia-method-steps { grid-template-columns: 1fr; }
+  .sia-method-steps li::before { left: 0 !important; }
+  .sia-plan { box-shadow: 6px 6px 0 color-mix(in srgb, var(--neiva-rio) 28%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sia-bar b { transition: none; }
+}

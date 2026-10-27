@@ -18,19 +18,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500&display=swap"
       rel="stylesheet"
     />
   </head>
   <body class="sia-landing">
+    <div class="sia-franja" aria-hidden="true"><i></i><i></i><i></i></div>
     <a class="sia-skip" href="#contenido">Saltar al contenido</a>
     <header class="sia-header">
       <a class="sia-brand" href="/" aria-label="Suelo-IA, inicio"
-        ><img src="/favicon.svg" width="42" height="42" alt="" /><span
-          >Suelo-IA<small>Inteligencia territorial</small></span
+        ><img src="/marca/marca.svg" width="44" height="44" alt="" /><span class="sia-word"
+          >Suelo<i>·</i>IA<small>Inteligencia territorial</small></span
         ></a
       >
-      <span class="sia-location">Neiva, Huila<br />Sector urbano 02</span>
+      <span class="sia-location">Neiva, Huila<br />Capital Bambuquera · Sector 02</span>
       <button
         class="sia-menu"
         aria-controls="navegacion"
@@ -55,7 +56,7 @@
       <section class="sia-cover" aria-labelledby="titulo">
         <div class="sia-cover-copy">
           <p class="sia-label sia-plancha">
-            Piloto territorial <span aria-hidden="true"></span> Neiva · Sector
+            Piloto territorial <span aria-hidden="true"></span> Hecho en Neiva · Sector
             02
           </p>
           <h1 id="titulo">
@@ -136,6 +137,13 @@
           </figcaption>
         </figure>
       </section>
+      <div class="sia-rio" aria-hidden="true">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none" focusable="false">
+          <path class="rio-a" d="M0 52c120-34 240-34 360 0s240 34 360 0 240-34 360 0 240 34 360 0v38H0z"/>
+          <path class="rio-b" d="M0 66c120-26 240-26 360 0s240 26 360 0 240-26 360 0 240 26 360 0" fill="none"/>
+        </svg>
+        <span>Río Magdalena</span>
+      </div>
       <section class="sia-stat-band" aria-label="Cifras del piloto">
         <div class="sia-band-in">
           <div class="sia-band-heading">
@@ -211,6 +219,7 @@
                 <dd>
                   <span id="ejemplo-registro"></span
                   ><small>m² / Registro catastral</small>
+                  <i class="sia-bar sia-bar-reg" aria-hidden="true"><b id="barra-registro"></b></i>
                 </dd>
               </div>
               <div>
@@ -218,6 +227,7 @@
                 <dd>
                   <span id="ejemplo-huella"></span
                   ><small>m² / Open Buildings</small>
+                  <i class="sia-bar sia-bar-obs" aria-hidden="true"><b id="barra-huella"></b></i>
                 </dd>
               </div>
             </dl>
@@ -308,9 +318,9 @@
       >
         <div class="sia-section-heading">
           <div>
-            <p class="sia-label">Método de trabajo</p>
+            <p class="sia-label">Del registro al predio</p>
             <h2 id="metodo-titulo">
-              De fuentes separadas<br />a una revisión con contexto.
+              La ruta del trámite catastral,<br />con evidencia en cada paso.
             </h2>
           </div>
           <p>
@@ -320,34 +330,38 @@
         </div>
         <ol class="sia-method-steps">
           <li>
-            <span>01</span>
+            <span>01</span><em>Insumo catastral</em>
             <h3>Reunir</h3>
             <p>
-              Registro catastral, cartografía predial y huellas de
-              edificaciones.
+              Registro 1, cartografía predial y huellas de edificaciones.
             </p>
           </li>
           <li>
-            <span>02</span>
+            <span>02</span><em>Identificación predial</em>
             <h3>Cruzar</h3>
             <p>
-              Relacionar el registro con el terreno y la evidencia espacial.
+              Relacionar cada número predial con su terreno y la evidencia espacial.
             </p>
           </li>
           <li>
-            <span>03</span>
+            <span>03</span><em>Priorización</em>
             <h3>Priorizar</h3>
             <p>Aplicar las reglas y conservar las razones de cada alerta.</p>
           </li>
           <li>
-            <span>04</span>
+            <span>04</span><em>Consulta</em>
             <h3>Consultar</h3>
             <p>Explorar el mapa y leer lo registrado frente a lo observado.</p>
           </li>
           <li>
-            <span>05</span>
+            <span>05</span><em>Verificación en campo</em>
             <h3>Verificar</h3>
-            <p>Contrastar, registrar una revisión y exportar el trabajo.</p>
+            <p>Contrastar con imagen o visita, registrar una revisión y exportar.</p>
+          </li>
+          <li class="sia-fuera">
+            <span>06</span><em>Actualización catastral</em>
+            <h3>Decide la autoridad</h3>
+            <p>Fuera de Suelo-IA: la actuación corresponde a quien tiene la competencia.</p>
           </li>
         </ol>
       </section>
@@ -602,8 +616,8 @@
     <footer class="sia-footer" id="fuentes">
       <div class="sia-footer-brand">
         <a class="sia-brand" href="/"
-          ><img src="/favicon.svg" width="42" height="42" alt="" /><span
-            >Suelo-IA<small>Inteligencia territorial</small></span
+          ><img src="/marca/marca.svg" width="44" height="44" alt="" /><span class="sia-word"
+            >Suelo<i>·</i>IA<small>Inteligencia territorial</small></span
           ></a
         >
         <p>
