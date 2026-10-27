@@ -31,6 +31,9 @@ Reemplaza el corchete «[Confirmar dedicación, tarifas internas y presupuesto d
 ## 6. Sección 12: reparto del incentivo
 Rige el reparto del Anexo 2 (35/25/15/15/10 %); no se modifica la sección. La diapositiva 9 del pitch (40/25/20/10/5 %) debe alinearse con ese reparto.
 
-## Pendiente en el Anexo 2
-- Sección 11: `[Incorporar formación, experiencia pertinente y soportes del integrante]` (perfil de Guillermo Andrés Moreno Olarte). Falta el texto del perfil.
-- Pitch, diapositiva 9: alinear el reparto del incentivo con la sección 12 del Anexo.
+## 7. Sección 11: perfil de Guillermo Andrés Moreno Olarte
+El corchete «[Incorporar formación, experiencia pertinente y soportes del integrante]» se reemplazó por un perfil redactado solo con lo que consta en su hoja de vida (octubre de 2026). Ese texto vive únicamente en la copia local v2 del Anexo; no se publica en el repositorio porque son datos personales de un tercero.
+
+## Pendiente
+- Pitch, diapositiva 9: alinear el reparto del incentivo con la sección 12 del Anexo (35/25/15/15/10 %).
+- Tabla del equipo (inicio del Anexo): el campo «Documento de Identidad» del representante sigue como «[Número]» en el Anexo de Drive.
