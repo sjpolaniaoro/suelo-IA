@@ -970,3 +970,51 @@ main {
     transition: none !important;
   }
 }
+
+/* ---------- Tema de Neiva en la mesa de revisión ---------- */
+.franja {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  height: 6px;
+  pointer-events: none;
+}
+.franja i {
+  flex: 1;
+}
+.franja i:nth-child(1) { background: var(--neiva-rojo); }
+.franja i:nth-child(2) { background: var(--neiva-verde); }
+.franja i:nth-child(3) { background: var(--neiva-amarillo); }
+.marca .palabra {
+  font: 700 1.4rem/1 var(--sia-heading);
+  letter-spacing: -0.025em;
+}
+.marca .palabra i {
+  font-style: normal;
+  color: var(--neiva-rio);
+  margin: 0 1px;
+}
+/* Cifras en Fraunces con números lineales; códigos catastrales en monoespaciada. */
+.nodo,
+.pt,
+.fichas button b,
+.resumen-tri,
+.barra b {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.npn,
+.dir {
+  font-family: var(--sia-mono);
+}
+.ficha h2,
+.ficha-cab h2 {
+  font-family: var(--sia-heading);
+  font-weight: 600;
+}
+.panel-cab,
+.ficha {
+  border-color: var(--sia-line-strong);
+}

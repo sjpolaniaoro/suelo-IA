@@ -1,21 +1,26 @@
-/* Identidad compartida de la portada y la mesa de revisión. */
+/* Identidad compartida de la portada y la mesa de revisión (tema de Neiva). */
 :root {
-  --sia-paper: #f2f2f3;
-  --sia-surface: #fff;
-  --sia-ink: #1d1f20;
-  --sia-muted: #5d5d60;
-  --sia-accent: #416180;
-  --sia-accent-hover: #2c455d;
-  --sia-accent-900: #1d2d3d;
-  --sia-accent-600: #597ea3;
-  --sia-accent-300: #b5d9fd;
-  --sia-accent-200: #d6ebff;
-  --sia-soft: #e6edf3;
-  --sia-line: #d4d4d7;
-  --sia-line-strong: #98989b;
-  --sia-grid: color-mix(in srgb, var(--sia-accent) 6%, transparent);
-  --sia-control: #77777b;
-  --sia-heading: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --sia-paper: #f7f1e3;
+  --sia-surface: #fffdf7;
+  --sia-ink: #1f2a22;
+  --sia-muted: #55594f;
+  --sia-accent: #1b6b3a;
+  --sia-accent-hover: #12502b;
+  --sia-accent-900: #12342a;
+  --sia-accent-600: #3f8a5b;
+  --sia-accent-300: #bfe3c9;
+  --sia-accent-200: #dff0e3;
+  --sia-soft: #ece4cf;
+  --sia-line: #ddd3bb;
+  --sia-line-strong: #a89f86;
+  --sia-grid: color-mix(in srgb, #8a6a2b 9%, transparent);
+  --sia-control: #7a7560;
+  --sia-heading: "Fraunces", Georgia, "Times New Roman", serif;
   --sia-body: "Barlow", system-ui, sans-serif;
+  --sia-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
   --sia-radius: 3px;
+  --neiva-rojo: #c8272d;
+  --neiva-verde: #1b6b3a;
+  --neiva-amarillo: #f4b82e;
+  --neiva-rio: #2b7a96;
 }

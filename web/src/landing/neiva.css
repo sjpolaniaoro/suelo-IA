@@ -434,6 +434,188 @@ body.sia-landing {
   justify-content: flex-end;
 }
 
+/* ---------- Carrusel de escenarios: se recorre de lado, sin bajar por la página ---------- */
+.sia-band-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.sia-band-total {
+  max-width: 34ch;
+  font-size: 15px;
+  color: var(--sia-accent-200);
+}
+.sia-band-total strong {
+  display: block;
+  font: 600 clamp(2.4rem, 4vw, 3.4rem)/1 var(--sia-heading);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--neiva-amarillo);
+}
+.sia-carrusel {
+  margin-top: 28px;
+}
+.sia-carrusel-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.sia-carrusel-pos {
+  font: 600 12px/1.4 var(--sia-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neiva-amarillo);
+}
+.sia-carrusel-botones {
+  display: flex;
+  gap: 8px;
+}
+.sia-car-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--neiva-amarillo);
+  background: transparent;
+  color: var(--neiva-amarillo);
+  font-size: 20px;
+  line-height: 1;
+}
+.sia-car-btn:hover:not(:disabled) {
+  background: var(--neiva-amarillo);
+  color: var(--neiva-verde-900);
+}
+.sia-car-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.sia-carrusel-prog {
+  height: 3px;
+  margin-bottom: 18px;
+  background: color-mix(in srgb, var(--neiva-amarillo) 25%, transparent);
+}
+.sia-carrusel-prog i {
+  display: block;
+  height: 100%;
+  width: 10%;
+  background: var(--neiva-amarillo);
+  transition: width 0.25s;
+}
+.sia-carrusel-pista {
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 4px 8px 20px 2px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neiva-amarillo) transparent;
+}
+.sia-carrusel-pista:focus-visible {
+  outline: 3px solid var(--neiva-amarillo);
+  outline-offset: 4px;
+}
+.sia-escenario {
+  flex: 0 0 min(400px, 86%);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 24px 24px;
+  background: var(--sia-surface);
+  color: var(--sia-ink);
+  border: 2px solid var(--sia-ink);
+  box-shadow: 6px 6px 0 var(--neiva-amarillo);
+}
+.sia-esc-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.sia-esc-codigo {
+  padding: 4px 10px;
+  border: 2px solid var(--neiva-verde);
+  color: var(--neiva-verde);
+  font: 500 15px/1.2 var(--sia-mono);
+  white-space: nowrap;
+}
+.sia-esc-tipo {
+  font: 600 11px/1.3 var(--sia-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sia-muted);
+  text-align: right;
+}
+.sia-escenario h3 {
+  font: 600 1.35rem/1.2 var(--sia-heading);
+  color: var(--sia-ink);
+}
+.sia-esc-num {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.sia-esc-num strong {
+  font: 600 2.6rem/1 var(--sia-heading);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--neiva-verde);
+}
+.sia-esc-num span {
+  font-size: 13px;
+  color: var(--sia-muted);
+}
+.sia-escenario dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.sia-escenario dt {
+  font: 600 11px/1.3 var(--sia-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neiva-rio);
+}
+.sia-escenario dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sia-esc-cola {
+  margin-top: auto;
+  padding: 10px 12px;
+  border-left: 4px solid var(--sia-line-strong);
+  background: var(--sia-soft);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.sia-esc-cola b {
+  display: block;
+  font: 600 11px/1.3 var(--sia-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.sia-esc-cola.oficina {
+  border-left-color: var(--neiva-rio);
+}
+.sia-esc-cola.campo {
+  border-left-color: var(--sia-ink);
+}
+.sia-esc-cola.variable {
+  border-left-color: var(--neiva-amarillo);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sia-carrusel-prog i {
+    transition: none;
+  }
+}
+
 @media (max-width: 1000px) {
   .sia-method-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -241,12 +241,13 @@ export default function App() {
 
   return (
     <div className={`app ${sel ? "con-ficha" : ""}`}>
+      <div className="franja" aria-hidden="true"><i /><i /><i /></div>
       <button className="menu" onClick={() => setPanel(!panel)} aria-label="Mostrar u ocultar panel" aria-expanded={panel}>☰</button>
       <section className={`panel ${panel ? "" : "oculto"}`}>
         <header className="panel-cab">
           <a className="marca" href="/" aria-label="Suelo-IA, volver al inicio">
             <img src="/favicon.svg" width="36" height="36" alt="" className="marca-logo" />
-            <span>Suelo-IA</span>
+            <span className="palabra">Suelo<i>·</i>IA</span>
           </a>
           <span className="sector">Sector 02 · Neiva</span>
           <a className="inicio" href="/">← Inicio</a>

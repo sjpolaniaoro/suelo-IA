@@ -31,8 +31,23 @@ const ESTILO = "https://tiles.openfreemap.org/styles/positron";
 const ESTILO_VACIO = {
   version: 8,
   sources: {},
-  layers: [{ id: "fondo", type: "background", paint: { "background-color": "#e9edf0" } }],
+  layers: [{ id: "fondo", type: "background", paint: { "background-color": "#f4eddc" } }],
 };
+
+// Base cartográfica con el tema de Neiva: tierra cálida, agua en azul Magdalena y parques suaves.
+const TEMA_MAPA = { tierra: "#f4eddc", agua: "#b4d3e0", cauce: "#8fbfd3", parque: "#dde6c8" };
+function aplicarTema(m) {
+  (m.getStyle()?.layers || []).forEach((l) => {
+    try {
+      if (l.type === "background") m.setPaintProperty(l.id, "background-color", TEMA_MAPA.tierra);
+      else if (l.type === "fill" && /^water/.test(l.id)) m.setPaintProperty(l.id, "fill-color", TEMA_MAPA.agua);
+      else if (l.type === "line" && /^waterway/.test(l.id)) m.setPaintProperty(l.id, "line-color", TEMA_MAPA.cauce);
+      else if (l.type === "fill" && /^(park|landcover_(wood|grass))/.test(l.id)) m.setPaintProperty(l.id, "fill-color", TEMA_MAPA.parque);
+    } catch {
+      /* capa sin esa propiedad: se deja como viene */
+    }
+  });
+}
 
 // En el celular el panel y la ficha tapan la parte baja: el mapa se centra en lo que queda visible.
 const movil = () => window.innerWidth <= 860;
@@ -53,6 +68,8 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
   const overlay = useRef(null);
   const limitesSector = useRef(null);
   const [vista, setVista] = useState("3d");
+  // Verdadero cuando el control de deck.gl ya está en el mapa: recién entonces se pueden poner capas.
+  const [listo, setListo] = useState(false);
 
   useEffect(() => {
     const m = new maplibregl.Map({
@@ -66,6 +83,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
       attributionControl: { compact: true, customAttribution: "Open Buildings (Google Research) · Registro 1 y cartografía: Alcaldía de Neiva" },
     });
     m.addControl(new maplibregl.NavigationControl({ showCompass: true }), "top-right");
+    m.on("style.load", () => aplicarTema(m));
     let cayo = false;
     m.on("error", (e) => {
       if (!cayo && e?.error?.status !== undefined && m.getStyle()?.layers?.length > 1) return;
@@ -88,12 +106,17 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
     });
     // MapLibre puede no tener proyección mientras carga el estilo remoto o su respaldo.
     // deck.gl consulta esa proyección al añadir el control: esperar evita romper la ficha.
-    const agregarOverlay = () => m.addControl(overlay.current);
+    const agregarOverlay = () => {
+      m.addControl(overlay.current);
+      setListo(true);
+    };
     if (m.isStyleLoaded()) agregarOverlay();
     else m.once("style.load", agregarOverlay);
     mapa.current = m;
+    if (new URLSearchParams(window.location.search).has("debug")) window.__suelo = { mapa: m, overlay: overlay.current };
     return () => {
       m.off("style.load", agregarOverlay);
+      setListo(false);
       m.remove();
       mapa.current = null;
       overlay.current = null;
@@ -107,7 +130,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
   }, [predios]);
 
   useEffect(() => {
-    if (!overlay.current || !predios) return;
+    if (!overlay.current || !predios || !listo) return;
     const capas = [
       new GeoJsonLayer({
         id: "predios",
@@ -160,12 +183,10 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
         })
       );
     }
-    const m = mapa.current;
-    const aplicarCapas = () => overlay.current?.setProps({ layers: capas });
-    if (m?.isStyleLoaded()) aplicarCapas();
-    else m?.once("style.load", aplicarCapas);
-    return () => m?.off("style.load", aplicarCapas);
-  }, [predios, huellas, filtros, estados, seleccionado, onSeleccion, vista]);
+    // No se condiciona a map.isStyleLoaded(): devuelve falso mientras cargan teselas y, si el evento
+    // style.load ya pasó, las capas nunca se aplicaban y el mapa quedaba sin predios dibujados.
+    overlay.current.setProps({ layers: capas });
+  }, [predios, huellas, filtros, estados, seleccionado, onSeleccion, vista, listo]);
 
   useEffect(() => {
     if (!seleccionado || !predios || !mapa.current) return;

@@ -141,37 +141,132 @@
         </svg>
         <span>Río Magdalena</span>
       </div>
-      <section class="sia-stat-band" id="alertas" aria-label="Cifras del piloto">
+      <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo">
         <div class="sia-band-in">
           <div class="sia-band-heading">
-            <p class="sia-label">Tres señales, una revisión pendiente</p>
-            <h2>
-              <span data-stat="predios_con_geometria">7.329</span> predios en el
-              mapa.<br /><span>Una lista para orientar la revisión.</span>
-            </h2>
+            <div>
+              <p class="sia-label">Escenarios de revisión</p>
+              <h2 id="band-titulo">
+                <span data-stat="predios_con_geometria">7.329</span> predios en el
+                mapa.<br /><span>Cada alerta tiene su escenario.</span>
+              </h2>
+            </div>
+            <p class="sia-band-total">
+              <strong data-stat="predios_con_alerta">1.283</strong> predios con al
+              menos una alerta de vivienda. Un predio puede tener más de una.
+            </p>
           </div>
-          <dl class="sia-stats" aria-busy="false">
-            <div>
-              <p class="sia-stat-note">Predios con A1, A2 o A3. Un predio puede tener más de una.</p>
-              <dt>Con al menos una alerta</dt>
-              <dd data-stat="predios_con_alerta">1.283</dd>
+          <div class="sia-carrusel" role="group" aria-roledescription="carrusel" aria-label="Escenarios de revisión" aria-busy="false">
+            <div class="sia-carrusel-barra" id="escenario-barra" hidden>
+              <p class="sia-carrusel-pos" id="escenario-pos" aria-live="polite">Escenario 1 de 10</p>
+              <div class="sia-carrusel-botones">
+                <button type="button" class="sia-car-btn" id="escenario-ant" aria-label="Escenario anterior">←</button>
+                <button type="button" class="sia-car-btn" id="escenario-sig" aria-label="Escenario siguiente">→</button>
+              </div>
             </div>
-            <div>
-              <p class="sia-stat-note">Una huella de edificación donde el registro no indica área construida, en predios habitacionales sin propiedad horizontal.</p>
-              <dt>A1 · Posible construcción no registrada</dt>
-              <dd data-stat="A1">805</dd>
-            </div>
-            <div>
-              <p class="sia-stat-note">El área de las huellas supera el área construida registrada en predios sin propiedad horizontal.</p>
-              <dt>A2 · Posible área subregistrada</dt>
-              <dd data-stat="A2">414</dd>
-            </div>
-            <div>
-              <p class="sia-stat-note">Diferencia estadística frente a predios comparables de la manzana. No estima un nuevo avalúo ni calcula impuestos.</p>
-              <dt>A3 · Avalúo atípico</dt>
-              <dd data-stat="A3">90</dd>
-            </div>
-          </dl>
+            <div class="sia-carrusel-prog" aria-hidden="true"><i id="escenario-prog"></i></div>
+            <ol class="sia-carrusel-pista" id="escenarios" tabindex="0" aria-label="Escenarios. Desliza hacia los lados o usa las flechas del teclado.">
+            <li class="sia-escenario" data-nombre="A1" aria-label="Escenario 1 de 10: A1">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">A1</span><span class="sia-esc-tipo">Alerta de área</span></div>
+              <h3>Posible construcción no registrada</h3>
+              <p class="sia-esc-num"><strong data-stat="A1">805</strong><span>predios</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>Predio habitacional sin propiedad horizontal, con área construida registrada igual a cero y una huella de 20 m² o más (confianza de 0,70 o más).</dd></div>
+                <div><dt>Qué significa</dt><dd>Aparece una construcción donde el registro no tiene área. Con la triangulación se sabe si la cartografía oficial también la dibuja.</dd></div>
+              </dl>
+              <p class="sia-esc-cola variable"><b>Qué se hace</b>Oficina si la cartografía también la dibuja; campo si solo la imagen la ve</p>
+            </li>
+            <li class="sia-escenario" data-nombre="A2" aria-label="Escenario 2 de 10: A2">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">A2</span><span class="sia-esc-tipo">Alerta de área</span></div>
+              <h3>Posible área subregistrada</h3>
+              <p class="sia-esc-num"><strong data-stat="A2">414</strong><span>predios</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>Predio sin propiedad horizontal con área construida registrada y una huella mayor a 1,2 veces esa área.</dd></div>
+                <div><dt>Qué significa</dt><dd>Lo que se ve es bastante más grande que lo registrado. La cartografía respalda la diferencia en pocos casos, así que se valida aparte.</dd></div>
+              </dl>
+              <p class="sia-esc-cola variable"><b>Qué se hace</b>Oficina si la cartografía lo respalda; campo si solo la imagen</p>
+            </li>
+            <li class="sia-escenario" data-nombre="A3" aria-label="Escenario 3 de 10: A3">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">A3</span><span class="sia-esc-tipo">Alerta de avalúo</span></div>
+              <h3>Avalúo atípico</h3>
+              <p class="sia-esc-num"><strong data-stat="A3">90</strong><span>predios</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>El avalúo se aleja más del doble (o queda por debajo de la mitad) de lo esperado frente a predios comparables de la manzana, con 10 o más predios.</dd></div>
+                <div><dt>Qué significa</dt><dd>Una diferencia estadística, no un nuevo avalúo ni un cálculo de impuestos.</dd></div>
+              </dl>
+              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Oficina: revisar el dato con la autoridad catastral</p>
+            </li>
+            <li class="sia-escenario" data-nombre="NR" aria-label="Escenario 4 de 10: NR">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">NR</span><span class="sia-esc-tipo">Alerta de destino</span></div>
+              <h3>Uso probablemente no residencial</h3>
+              <p class="sia-esc-num"><strong data-stat="NR">2</strong><span>predios</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>Predio habitacional sin área construida con una huella de 1.000 m² o más.</dd></div>
+                <div><dt>Qué significa</dt><dd>Es más probable un equipamiento u otro uso que una vivienda sin registrar. Sale del puntaje de vivienda y pide revisar el destino.</dd></div>
+              </dl>
+              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Oficina: revisar el destino registrado</p>
+            </li>
+            <li class="sia-escenario" data-nombre="2 fuentes" aria-label="Escenario 5 de 10: 2 fuentes">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">2 fuentes</span><span class="sia-esc-tipo">Triangulación</span></div>
+              <h3>Cartografía e imagen contradicen el registro</h3>
+              <p class="sia-esc-num"><strong data-stat="tri_dos_fuentes">733</strong><span>de los predios sin área registrada</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m², la cartografía oficial dibuja construcción y la imagen también la detecta.</dd></div>
+                <div><dt>Qué significa</dt><dd>Dos fuentes independientes coinciden entre sí contra el registro: probablemente está desactualizado.</dd></div>
+              </dl>
+              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Conciliar en oficina, sin visita</p>
+            </li>
+            <li class="sia-escenario" data-nombre="Solo imagen" aria-label="Escenario 6 de 10: Solo imagen">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">Solo imagen</span><span class="sia-esc-tipo">Triangulación</span></div>
+              <h3>Solo la imagen contradice el registro</h3>
+              <p class="sia-esc-num"><strong data-stat="tri_solo_imagen">74</strong><span>de los predios sin área registrada</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m², la imagen detecta una huella y la cartografía oficial no dibuja construcción.</dd></div>
+                <div><dt>Qué significa</dt><dd>Puede ser una construcción posterior a la cartografía, o un error de la imagen. No hay segunda fuente.</dd></div>
+              </dl>
+              <p class="sia-esc-cola campo"><b>Qué se hace</b>Verificar en campo</p>
+            </li>
+            <li class="sia-escenario" data-nombre="Solo cartografía" aria-label="Escenario 7 de 10: Solo cartografía">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">Solo cartografía</span><span class="sia-esc-tipo">Triangulación</span></div>
+              <h3>Solo la cartografía contradice el registro</h3>
+              <p class="sia-esc-num"><strong data-stat="tri_solo_cartografia">152</strong><span>de los predios sin área registrada</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m² y la cartografía dibuja construcción, pero la imagen no detecta una huella.</dd></div>
+                <div><dt>Qué significa</dt><dd>Una inconsistencia interna del catastro. Hoy no genera alerta, pero se cuenta para no perderla de vista.</dd></div>
+              </dl>
+              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Conciliar en oficina</p>
+            </li>
+            <li class="sia-escenario" data-nombre="Sin evidencia" aria-label="Escenario 8 de 10: Sin evidencia">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">Sin evidencia</span><span class="sia-esc-tipo">Triangulación</span></div>
+              <h3>Ninguna fuente contradice el registro</h3>
+              <p class="sia-esc-num"><strong data-stat="tri_sin_evidencia">101</strong><span>de los predios sin área registrada</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m² y ni la cartografía ni la imagen muestran construcción.</dd></div>
+                <div><dt>Qué significa</dt><dd>Probablemente un lote vacío. Es el caso que menos urge revisar.</dd></div>
+              </dl>
+              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Sin acción por ahora</p>
+            </li>
+            <li class="sia-escenario" data-nombre="Confianza baja" aria-label="Escenario 9 de 10: Confianza baja">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">Confianza baja</span><span class="sia-esc-tipo">Calidad del dato</span></div>
+              <h3>Ficha con confianza baja</h3>
+              <p class="sia-esc-num"><strong data-stat="confianza_baja">927</strong><span>fichas</span></p>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>La confianza media de las huellas es menor a 0,75, o el terreno mide menos de 30 m².</dd></div>
+                <div><dt>Qué significa</dt><dd>La señal es más frágil: se marca para que la revisión humana lo tenga en cuenta.</dd></div>
+              </dl>
+              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Se revisa con más cuidado; no cambia la cola</p>
+            </li>
+            <li class="sia-escenario" data-nombre="PH" aria-label="Escenario 10 de 10: PH">
+              <div class="sia-esc-cab"><span class="sia-esc-codigo">PH</span><span class="sia-esc-tipo">Exclusión</span></div>
+              <h3>Propiedad horizontal</h3>
+              <dl>
+                <div><dt>Se activa cuando</dt><dd>Predio en propiedad horizontal (condición 9 del número predial).</dd></div>
+                <div><dt>Qué significa</dt><dd>No recibe A1 ni A2 porque el área se registra por unidad y casi no hay geometría de unidades en los datos abiertos.</dd></div>
+              </dl>
+              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Fuera de estas alertas</p>
+            </li>
+            </ol>
+          </div>
           <p id="cifras-estado" class="sia-footnote" role="status">
             Cifras del resumen del piloto; se actualizan al cargar la página.
           </p>
@@ -182,7 +277,7 @@
           <noscript
             ><p class="sia-footnote">
               Las cifras corresponden al resumen incluido en esta versión.
-              Activa JavaScript para consultar la ficha de ejemplo.
+              Desliza la lista de escenarios hacia los lados.
             </p></noscript
           >
         </div>

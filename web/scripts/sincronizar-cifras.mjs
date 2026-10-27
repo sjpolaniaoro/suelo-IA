@@ -31,6 +31,20 @@ for (const key of ["sin_area_construida", "habitacionales_no_ph"])
 valores.sec_sin_area = numero.format(resumen.sin_area_construida);
 valores.sec_hab = numero.format(resumen.habitacionales_no_ph);
 valores.sec_pct = pct.format(resumen.sin_area_construida / resumen.habitacionales_no_ph);
+// Escenarios del carrusel: alerta NR, triangulación y confianza baja.
+const tri = resumen.triangulacion;
+if (!tri) throw new Error("El resumen no trae la triangulación");
+for (const [key, valor] of [
+  ["NR", resumen.predios_uso_no_residencial],
+  ["tri_dos_fuentes", tri.dos_fuentes],
+  ["tri_solo_imagen", tri.solo_imagen],
+  ["tri_solo_cartografia", tri.solo_cartografia],
+  ["tri_sin_evidencia", tri.sin_evidencia],
+  ["confianza_baja", resumen.confianza_baja],
+]) {
+  if (!Number.isFinite(valor)) throw new Error("Cifra inválida: " + key);
+  valores[key] = numero.format(valor);
+}
 valores.generado = fecha.format(new Date(resumen.generado));
 const path = new URL("index.html", root);
 const html = await readFile(path, "utf8");
