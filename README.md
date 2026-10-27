@@ -37,8 +37,11 @@ El Registro 1 (`CATASTRAL_REGISTRO1_20250505.xlsx`) se copia a `data/raw/`. El p
 ## Qué verifica el pipeline
 Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 real ya coinciden: 159.213 predios únicos, 4.111 habitacionales no PH en el sector 02 y 1.064 sin área construida. Falla con error explícito si el insumo trae columnas de datos personales.
 
+## Revisiones en equipo
+La mesa guarda las revisiones en el navegador. Si el equipo activa «Revisión en equipo» (nombre básico y un código compartido), también se guardan en una base de datos de solo anexar en Supabase, para que no se pierdan y todos vean lo mismo; si no hay conexión, se envían al volver. Detalles, seguridad y operación en [`db/README.md`](db/README.md).
+
 ## Estructura
-`pipeline/` datos (Python) · `web/` mapa 3D (React, deck.gl, MapLibre; Vercel) · `api/` FastAPI (Render, plan gratuito; `render.yaml`) · `notebooks/` extracción de Open Buildings · `tests/` pruebas.
+`pipeline/` datos (Python) · `web/` mapa 3D (React, deck.gl, MapLibre; Vercel) · `api/` FastAPI (Render, plan gratuito; `render.yaml`) · `notebooks/` extracción de Open Buildings · `db/` base de revisiones (Supabase) · `tests/` pruebas.
 
 ## Pendiente
 - **Revisión humana de la muestra:** revisar con imagen o visita los 240 predios de [`docs/validacion/muestra.csv`](docs/validacion/muestra.csv) (llenar `veredicto`; los primeros 50 de cada grupo ya son una muestra aleatoria válida) y calcular precisión, exhaustividad y F1 estimados: `python -m pipeline.validacion metricas docs/validacion/muestra.csv`.

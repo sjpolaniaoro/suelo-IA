@@ -104,7 +104,7 @@ export default function Ficha({
           </div>
           {revision && (
             <p className="nota">
-              Marcado «{VEREDICTOS.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}.{" "}
+              Marcado «{VEREDICTOS.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}` : ""}.{" "}
               <button className="enlace" onClick={() => onQuitar(p.npn)}>Quitar</button>
             </p>
           )}

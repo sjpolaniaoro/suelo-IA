@@ -47,6 +47,7 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
   - Color por puntaje: gris (sin alerta), amarillo, naranja, rojo.
   - Panel de cifras del sector, filtro por tipo de alerta y ficha al hacer clic.
 - Ficha por predio: lo registrado frente a lo observado, razones, confianza, fuentes con fecha y un botón "Registrar revisión" (confirmado / descartado / no concluyente) que guarda en el navegador y exporta CSV.
+- Revisiones en equipo (opcional, desde el 27-oct-2026): base de datos en Supabase (Postgres) de solo anexar (`db/migrations/`). El navegador solo llama a dos funciones, `registrar_revision` y `leer_revisiones`, que exigen un código de equipo (guardado como hash). Cada evento guarda npn, veredicto, nombre básico de quien revisa y la foto de la alerta (puntaje, alertas, triangulación, cola, versión de los datos). Sin el código, las revisiones siguen quedando solo en el navegador y el frontend funciona sin la base. El pipeline sigue sin leer ni escribir nombres.
 - API en Render: `GET /health`, `GET /sectores/02/resumen`, `GET /predios/{npn}`, `GET /alertas?tipo=A1&limit=50`. CORS abierto solo para el dominio de Vercel.
 - Créditos visibles en el mapa: Open Buildings (Google Research), Registro 1 y cartografía (Alcaldía de Neiva) y OpenStreetMap si se usa el mapa base.
 
@@ -55,7 +56,7 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
 - Índice de subutilización del suelo y valor por zona. Son la fase 3.
 - Serie temporal 2016-2023 de Open Buildings (alturas y crecimiento). Pasa a v1.1, antes del 30 de octubre, si alcanza el tiempo.
 - Otros sectores, zona rural y ciudad completa.
-- Base de datos, autenticación y usuarios. Las revisiones no se guardan en el servidor.
+- Cuentas de usuario y autenticación completa. La revisión en equipo usa un código compartido y el nombre básico de quien revisa (ver «Incluye»).
 - Datos del Observatorio Inmobiliario Catastral.
 - Cualquier cálculo de impuesto, avalúo nuevo o cobro.
 

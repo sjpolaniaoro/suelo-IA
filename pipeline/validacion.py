@@ -1,6 +1,7 @@
 """Kit de validación (Anexo 2, sección 7): muestra de predios y métricas.
 
     python -m pipeline.validacion muestra            # escribe docs/validacion/muestra.csv
+    python -m pipeline.validacion volcar REVISIONES  # pasa a la muestra el CSV exportado de la mesa
     python -m pipeline.validacion metricas ARCHIVO   # precisión, exhaustividad y F1 estimados
 
 La muestra tiene tres grupos:
@@ -100,6 +101,42 @@ def muestra() -> Path:
     return SALIDA
 
 
+def volcar_revisiones(revisiones_csv: Path, muestra_csv: Path = SALIDA) -> dict:
+    """Pasa a la muestra los veredictos del CSV que exporta la mesa de revisión.
+
+    El CSV trae npn, estado y revisor. Los estados válidos (confirmado, descartado, no_concluyente)
+    llenan `veredicto`, y el nombre de quien revisó queda en `observaciones`. Los predios del CSV que
+    no están en la muestra se cuentan aparte y no se tocan.
+    """
+    with open(revisiones_csv, encoding="utf-8-sig") as fh:
+        rev = {f["npn"]: f for f in csv.DictReader(fh) if f.get("npn")}
+    with open(muestra_csv, encoding="utf-8-sig") as fh:
+        filas = list(csv.DictReader(fh))
+    aplicados = invalidos = 0
+    en_muestra = set()
+    for f in filas:
+        r = rev.get(f["npn"])
+        if not r:
+            continue
+        en_muestra.add(f["npn"])
+        if r.get("estado") not in VEREDICTOS:
+            invalidos += 1
+            continue
+        f["veredicto"] = r["estado"]
+        if r.get("revisor") and not f.get("observaciones"):
+            f["observaciones"] = f"revisor: {r['revisor']}"
+        aplicados += 1
+    with open(muestra_csv, "w", newline="", encoding="utf-8-sig") as out:
+        w = csv.DictWriter(out, fieldnames=COLUMNAS)
+        w.writeheader()
+        w.writerows(filas)
+    return {
+        "aplicados": aplicados,
+        "estado_invalido": invalidos,
+        "fuera_de_la_muestra": len(rev) - len(en_muestra),
+    }
+
+
 def wilson(k: int, n: int) -> tuple[float, float] | None:
     """Intervalo de Wilson al 95 % para una proporción k/n."""
     if n == 0:
@@ -179,6 +216,8 @@ def metricas(filas: list[dict], poblacion: dict) -> dict:
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "muestra":
         print("Muestra escrita en", muestra())
+    elif len(sys.argv) > 2 and sys.argv[1] == "volcar":
+        print(json.dumps(volcar_revisiones(Path(sys.argv[2])), ensure_ascii=False))
     elif len(sys.argv) > 2 and sys.argv[1] == "metricas":
         with open(sys.argv[2], encoding="utf-8-sig") as fh:
             filas = list(csv.DictReader(fh))

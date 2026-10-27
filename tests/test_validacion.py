@@ -1,3 +1,5 @@
+import csv
+
 import pytest
 
 from pipeline import validacion
@@ -39,3 +41,28 @@ def test_wilson():
     lo, hi = validacion.wilson(8, 10)
     assert 0.4 < lo < 0.8 < hi < 1.0
     assert validacion.wilson(0, 0) is None
+
+
+def test_volcar_revisiones_llena_veredictos_de_la_muestra(tmp_path):
+    muestra = tmp_path / "muestra.csv"
+    base = {c: "" for c in validacion.COLUMNAS}
+    filas = [{**base, "grupo": "prioridad", "npn": "1" * 30}, {**base, "grupo": "control", "npn": "2" * 30}]
+    with open(muestra, "w", newline="", encoding="utf-8-sig") as fh:
+        w = csv.DictWriter(fh, fieldnames=validacion.COLUMNAS)
+        w.writeheader()
+        w.writerows(filas)
+    revisiones = tmp_path / "revisiones.csv"
+    lineas = [
+        "npn,estado,revisor",
+        "1" * 30 + ",confirmado,Ana Pérez",
+        "2" * 30 + ",quizas,Luis",
+        "3" * 30 + ",descartado,Eva",
+    ]
+    revisiones.write_text("\n".join(lineas), encoding="utf-8-sig")
+    r = validacion.volcar_revisiones(revisiones, muestra)
+    assert r == {"aplicados": 1, "estado_invalido": 1, "fuera_de_la_muestra": 1}
+    with open(muestra, encoding="utf-8-sig") as fh:
+        sal = {f["npn"]: f for f in csv.DictReader(fh)}
+    assert sal["1" * 30]["veredicto"] == "confirmado"
+    assert sal["1" * 30]["observaciones"] == "revisor: Ana Pérez"
+    assert sal["2" * 30]["veredicto"] == ""

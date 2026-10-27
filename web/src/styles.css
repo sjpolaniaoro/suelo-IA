@@ -1018,3 +1018,77 @@ main {
 .ficha {
   border-color: var(--sia-line-strong);
 }
+
+/* ---------- Revisión en equipo ---------- */
+.equipo {
+  margin: 8px 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--sia-line-strong);
+  background: var(--sia-surface);
+  font-size: 13px;
+}
+.equipo summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--sia-accent);
+}
+.equipo form,
+.equipo > div {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.equipo p {
+  margin: 0;
+}
+.equipo label {
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--sia-muted);
+}
+.equipo input {
+  min-height: 38px;
+  padding: 6px 8px;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  background: #fff;
+  font: inherit;
+  color: var(--sia-ink);
+}
+.equipo button {
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid var(--sia-accent);
+  border-radius: 3px;
+  background: var(--sia-accent);
+  color: #fff;
+}
+.equipo button:disabled {
+  opacity: 0.6;
+}
+.equipo .acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.equipo .acciones button {
+  background: var(--sia-surface);
+  color: var(--sia-ink);
+  border-color: var(--sia-control);
+}
+.equipo .suave {
+  font-size: 12px;
+  color: var(--sia-muted);
+}
+.error-equipo {
+  color: var(--neiva-rojo);
+  font-weight: 600;
+}
+.estado-sync.ok {
+  color: var(--sia-accent);
+}
+.estado-sync.red,
+.estado-sync.codigo {
+  color: var(--neiva-rojo);
+}

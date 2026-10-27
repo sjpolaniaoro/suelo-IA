@@ -547,13 +547,13 @@
           <details>
             <summary>¿Dónde quedan mis revisiones y qué pasa si la API no responde?</summary>
             <p>
-              Las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
+              Por defecto, las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si el equipo activa la revisión en equipo con su código, también se guardan en una base de datos de solo anexar, con el nombre de quien revisó, y no se pierden. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
             </p>
           </details>
           <details>
             <summary>¿Qué pasa con los datos personales y con el catastro?</summary>
             <p>
-              El pipeline excluye nombres, documentos y contactos; si aparecen columnas de datos personales, se detiene. Suelo-IA no modifica el catastro, no emite nuevos avalúos y no genera cobros: la decisión es humana.
+              El pipeline excluye nombres, documentos y contactos; si aparecen columnas de datos personales, se detiene. En la revisión en equipo solo se guarda el nombre básico de quien revisa, sin documentos, correos ni teléfonos. Suelo-IA no modifica el catastro, no emite nuevos avalúos y no genera cobros: la decisión es humana.
             </p>
           </details>
         </div>

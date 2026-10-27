@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Mapa, { COLORES, COLORES_ACCION, COLORES_ESTADO, pasaFiltros } from "./Mapa.jsx";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
-import { aCsv, desdeCsv, descargar, guardar, leer } from "./revisiones.js";
+import {
+  aCsv, borrarEquipo, desdeCsv, descargar, guardar, guardarCola, guardarEquipo, leer, leerCola, leerEquipo,
+} from "./revisiones.js";
+import { enviarNube, leerNube, uuid } from "./nube.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
 const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
@@ -35,6 +38,85 @@ export default function App() {
   const [auto, setAuto] = useState(leerAuto);
   const [mostrar, setMostrar] = useState(MAX_LISTA);
   const entrada = useRef(null);
+
+  /* ---------- Revisión en equipo (Supabase): nombre, código y cola de envío ---------- */
+  const [equipo, setEquipo] = useState(leerEquipo);
+  const [sync, setSync] = useState({ estado: "local", error: "" });
+  const [pendientes, setPendientes] = useState(() => leerCola().length);
+  const [formEquipo, setFormEquipo] = useState({ nombre: "", codigo: "", error: "", ocupado: false });
+  const equipoRef = useRef(equipo);
+  const colaRef = useRef(leerCola());
+  const enviando = useRef(false);
+  equipoRef.current = equipo;
+
+  const fijarCola = useCallback((nueva) => {
+    colaRef.current = nueva;
+    guardarCola(nueva);
+    setPendientes(nueva.length);
+  }, []);
+
+  // Trae lo que el equipo ya revisó y lo une con lo local (lo pendiente de enviar no se pisa).
+  const traer = useCallback(async () => {
+    const eq = equipoRef.current;
+    if (!eq) return;
+    const filas = await leerNube(eq.codigo);
+    const enNube = new Set(filas.map((f) => f.npn));
+    setRevisiones((prev) => {
+      const sig = { ...prev };
+      for (const f of filas) {
+        if (colaRef.current.some((e) => e.npn === f.npn)) continue;
+        const local = sig[f.npn];
+        if (!local || (local.fecha || "") <= f.fecha_cliente) {
+          sig[f.npn] = { estado: f.estado, fecha: f.fecha_cliente, revisor: f.revisor, nube: true };
+        }
+      }
+      // Lo que alguien quitó en la nube y aquí ya estaba sincronizado se retira también.
+      for (const [npn, r] of Object.entries(sig)) {
+        if (r.nube && !enNube.has(npn) && !colaRef.current.some((e) => e.npn === npn)) delete sig[npn];
+      }
+      guardar(sig);
+      return sig;
+    });
+  }, []);
+
+  const vaciar = useCallback(async () => {
+    const eq = equipoRef.current;
+    if (!eq || enviando.current) return;
+    enviando.current = true;
+    try {
+      if (colaRef.current.length) setSync({ estado: "enviando", error: "" });
+      while (colaRef.current.length) {
+        const ev = colaRef.current[0];
+        try {
+          await enviarNube(ev, eq.codigo);
+        } catch (e) {
+          if (e.tipo !== "datos") throw e;
+          // Un evento que el servidor rechaza se descarta para no bloquear a los demás.
+        }
+        fijarCola(colaRef.current.slice(1));
+        if (ev.estado !== "quitada" && !colaRef.current.some((x) => x.npn === ev.npn)) {
+          setRevisiones((prev) => (prev[ev.npn] ? { ...prev, [ev.npn]: { ...prev[ev.npn], nube: true } } : prev));
+        }
+      }
+      await traer();
+      setSync({ estado: "ok", error: "" });
+    } catch (e) {
+      setSync({ estado: e.tipo === "codigo" ? "codigo" : "red", error: e.message });
+    } finally {
+      enviando.current = false;
+    }
+  }, [fijarCola, traer]);
+
+  useEffect(() => {
+    if (!equipo) return undefined;
+    vaciar();
+    const cada = setInterval(vaciar, 30000);
+    window.addEventListener("online", vaciar);
+    return () => {
+      clearInterval(cada);
+      window.removeEventListener("online", vaciar);
+    };
+  }, [equipo, vaciar]);
 
   useEffect(() => {
     cargarSector().then(setDatos).catch((e) => setError(e.message));
@@ -147,18 +229,79 @@ export default function App() {
   }, [base, sel, revisiones]);
 
   /* ---------- Decidir ---------- */
+  // Foto de la alerta al revisar: sirve después para medir la precisión por tipo de evidencia.
+  const eventoDe = useCallback((npn, estado, fecha) => {
+    const p = datos?.predios.features.find((f) => f.properties.npn === npn)?.properties;
+    return {
+      id: uuid(),
+      npn,
+      estado,
+      fecha,
+      revisor: equipoRef.current.nombre,
+      puntaje: p?.puntaje ?? null,
+      alertas: ["A1", "A2", "A3", "NR"].filter((k) => p?.[k]).join("+") || null,
+      triangulacion: p?.triangulacion ?? null,
+      accion: p?.accion ?? null,
+      version: datos?.resumen?.generado ?? null,
+    };
+  }, [datos]);
+
+  const encolar = useCallback((ev) => {
+    fijarCola([...colaRef.current, ev]);
+    vaciar();
+  }, [fijarCola, vaciar]);
+
   const decidir = useCallback((npn, estado) => {
-    const sig = { ...revisiones, [npn]: { estado, fecha: new Date().toISOString() } };
+    const fecha = new Date().toISOString();
+    const sig = { ...revisiones, [npn]: { estado, fecha, ...(equipo ? { revisor: equipo.nombre } : {}) } };
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
+    if (equipo) encolar(eventoDe(npn, estado, fecha));
     if (auto) siguientePendiente(npn, sig);
-  }, [revisiones, auto, siguientePendiente]);
+  }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe]);
 
   const quitar = (npn) => {
     const sig = { ...revisiones };
     delete sig[npn];
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
+    if (equipo) encolar(eventoDe(npn, "quitada", new Date().toISOString()));
+  };
+
+  const activarEquipo = async (e) => {
+    e.preventDefault();
+    const nombre = formEquipo.nombre.trim().replace(/\s+/g, " ");
+    const codigo = formEquipo.codigo.trim();
+    if (nombre.length < 2) return setFormEquipo((f) => ({ ...f, error: "Escribe tu nombre (al menos 2 letras)." }));
+    setFormEquipo((f) => ({ ...f, ocupado: true, error: "" }));
+    try {
+      await leerNube(codigo); // valida el código antes de guardarlo
+      const nuevo = { nombre, codigo };
+      guardarEquipo(nuevo);
+      equipoRef.current = nuevo;
+      // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre de quien lo activa.
+      const previas = Object.entries(revisiones).filter(([, r]) => !r.nube);
+      fijarCola([
+        ...colaRef.current,
+        ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString())),
+      ]);
+      setRevisiones((prev) => {
+        const sig = Object.fromEntries(Object.entries(prev).map(([k, r]) => [k, r.revisor ? r : { ...r, revisor: nombre }]));
+        guardar(sig);
+        return sig;
+      });
+      setFormEquipo({ nombre: "", codigo: "", error: "", ocupado: false });
+      setEquipo(nuevo);
+    } catch (err) {
+      setFormEquipo((f) => ({ ...f, ocupado: false, error: err.message }));
+    }
+  };
+
+  const salirDelEquipo = () => {
+    borrarEquipo();
+    equipoRef.current = null;
+    setEquipo(null);
+    setSync({ estado: "local", error: "" });
   };
 
   const cambiarAuto = (v) => {
@@ -190,8 +333,8 @@ export default function App() {
   /* ---------- Exportar y cargar ---------- */
   const exportarRevisiones = () => {
     const mapa = new Map(datos.predios.features.map((f) => [f.properties.npn, f.properties]));
-    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha }));
-    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["fecha", "fecha"], ["direccion", "direccion"], ["puntaje", "puntaje"]]));
+    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor }));
+    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["fecha", "fecha"], ["revisor", "revisor"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"]]));
   };
   const exportarLista = () =>
     descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["triangulacion", "triangulacion"], ["accion", "accion"], ["razones", "razones"]]));
@@ -329,6 +472,43 @@ export default function App() {
           {r && !hayEvidencia && <p className="aviso">Evidencia de imágenes pendiente: solo se muestra A3.</p>}
           {api === false && <p className="aviso">Modo sin conexión a la API: se usan los datos incluidos en la página.</p>}
           {!guardadoOk && <p className="aviso">El navegador no permite guardar: las revisiones se pierden al cerrar. Exporte el CSV.</p>}
+
+          <details className="equipo" open={!equipo}>
+            <summary>Revisión en equipo{equipo ? ` · ${equipo.nombre}` : ""}</summary>
+            {!equipo ? (
+              <form onSubmit={activarEquipo}>
+                <p>
+                  Guarda las revisiones en la nube para que el equipo las vea y no se pierdan. Se guarda <b>tu nombre</b>{" "}
+                  junto a cada revisión; no se guardan documentos, correos ni teléfonos.
+                </p>
+                <label>Tu nombre
+                  <input value={formEquipo.nombre} onChange={(e) => setFormEquipo({ ...formEquipo, nombre: e.target.value })} minLength={2} maxLength={60} autoComplete="name" required />
+                </label>
+                <label>Código de equipo
+                  <input type="password" value={formEquipo.codigo} onChange={(e) => setFormEquipo({ ...formEquipo, codigo: e.target.value })} autoComplete="off" required />
+                </label>
+                {formEquipo.error && <p className="error-equipo" role="alert">{formEquipo.error}</p>}
+                <button type="submit" disabled={formEquipo.ocupado}>{formEquipo.ocupado ? "Comprobando…" : "Activar"}</button>
+                <p className="suave">Sin el código, las revisiones quedan solo en este navegador.</p>
+              </form>
+            ) : (
+              <div>
+                <p className={`estado-sync ${sync.estado}`} role="status">
+                  {{
+                    ok: pendientes ? `${pendientes} por enviar` : "Sincronizado con el equipo",
+                    enviando: "Enviando…",
+                    red: `Sin conexión: ${pendientes} por enviar. Se reintenta solo.`,
+                    codigo: "El código ya no es válido. Sal del equipo y vuelve a activarlo.",
+                    local: "Conectando…",
+                  }[sync.estado]}
+                </p>
+                <div className="acciones">
+                  <button onClick={vaciar}>Sincronizar ahora</button>
+                  <button onClick={salirDelEquipo}>Salir del equipo</button>
+                </div>
+              </div>
+            )}
+          </details>
 
           <ol className="lista" aria-label="Predios de la etapa seleccionada">
             {visibles.map((p) => {
