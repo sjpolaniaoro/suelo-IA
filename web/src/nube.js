@@ -5,7 +5,8 @@
 const URL_NUBE = import.meta.env?.VITE_SUPABASE_URL || "https://acaexgrlmopqfyxufssa.supabase.co";
 const CLAVE_NUBE = import.meta.env?.VITE_SUPABASE_KEY || "sb_publishable_sAxKTNI5x0OYb3ihfvCpdQ_5l4Q0MlW";
 
-// tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "datos" (rechazó el evento) o "red".
+// tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "datos" (rechazó el evento),
+// "config" (acceso o configuración; se reintenta) o "red".
 export class ErrorNube extends Error {
   constructor(mensaje, tipo) {
     super(mensaje);
@@ -43,7 +44,10 @@ async function rpc(nombre, cuerpo, ms = 8000) {
   try { detalle = await r.json(); } catch { /* sin cuerpo */ }
   if (detalle.message === "codigo_invalido") throw new ErrorNube("Código de equipo incorrecto.", "codigo");
   if (r.status >= 500 || r.status === 429) throw new ErrorNube("El servidor de revisiones no responde.", "red");
-  throw new ErrorNube(detalle.message || "El servidor rechazó la revisión.", "datos");
+  // Solo un rechazo por los datos (400, 409, 422) permite descartar el evento; un 401, 403 o 404 es de
+  // configuración (clave rotada, función ausente) y el evento debe seguir en la cola.
+  if ([400, 409, 422].includes(r.status)) throw new ErrorNube(detalle.message || "El servidor rechazó la revisión.", "datos");
+  throw new ErrorNube("El servidor de revisiones rechazó la solicitud (acceso o configuración).", "config");
 }
 
 // Desde la migración 0003 las funciones no lanzan error ante un código malo (un error revertiría el

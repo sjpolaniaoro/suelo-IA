@@ -6,8 +6,9 @@ fila nueva; «quitar» una revisión es otro evento. Nada se actualiza ni se bor
 
 - Proyecto: `suelo-ia` en Supabase (región São Paulo, plan gratuito).
 - Esquema: [`migrations/0001_revisiones.sql`](migrations/0001_revisiones.sql),
-  [`migrations/0002_endurecer.sql`](migrations/0002_endurecer.sql) y
-  [`migrations/0003_limite_de_intentos.sql`](migrations/0003_limite_de_intentos.sql). Se aplican en ese orden.
+  [`migrations/0002_endurecer.sql`](migrations/0002_endurecer.sql),
+  [`migrations/0003_limite_de_intentos.sql`](migrations/0003_limite_de_intentos.sql),
+  [`migrations/0004_endurecer_ciclo2.sql`](migrations/0004_endurecer_ciclo2.sql). Se aplican en ese orden.
 - Pruebas de la 0003: [`pruebas/0003_limite_de_intentos.sql`](pruebas/0003_limite_de_intentos.sql). Se corren
   después de aplicar la migración y terminan con un `RAISE EXCEPTION` que revierte todo (la tabla es de solo anexar).
 
@@ -23,8 +24,14 @@ por cliente (`cf-connecting-ip`, o el último elemento de `x-forwarded-for`) y e
 - Las funciones ya no lanzan error ante un código malo (un error revertiría el contador): devuelven
   `{ok:false, error:'codigo_invalido'|'demasiados_intentos'}`. El cliente entiende esta forma y la anterior,
   así que se puede desplegar el frontend antes o después de aplicar la migración (primero el frontend es lo más limpio).
-- Pendiente de comprobar en producción: que PostgREST entregue `cf-connecting-ip` en `request.headers`. Si no llega,
-  todos comparten el cliente `sin-ip` y el límite por cliente se vuelve global.
+- Comprobado en producción (27-oct-2026): PostgREST entrega la IP real del cliente; el borde ignora un
+  `X-Forwarded-For` falso, bloquea un `cf-connecting-ip` falso y no acepta `Prefer: tx=rollback` (el contador no se
+  revierte). Desde la 0004 los clientes IPv6 se agrupan por su /64.
+
+## Fechas (migración 0004)
+`registrar_revision` rechaza una `fecha_cliente` más de un día en el futuro o anterior a 2020 (`fecha_invalida`):
+la fecha decide qué evento es el vigente y, con la tabla de solo anexar, una fecha lejana no se podría corregir.
+Las funciones con `SECURITY DEFINER` fijan `search_path` vacío y califican sus objetos.
 
 ## Cómo se protege
 - Las tablas están cerradas a todos los roles (RLS sin políticas). El navegador no las lee ni las escribe.

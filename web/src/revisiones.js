@@ -52,8 +52,9 @@ export const guardarCola = (c) => guardarJson(CLAVE_COLA, c);
 // Se antepone una comilla simple (desdeCsv la quita al reimportar). Los números no se tocan.
 const FORMULA = /^[=+\-@\t\r]/;
 const esc = (v) => {
-  let t = String(v ?? "");
-  if (typeof v === "string" && FORMULA.test(t)) t = `'${t}`;
+  // Las listas (por ejemplo `razones`) se unen en un texto y se tratan igual que cualquier celda de texto.
+  let t = Array.isArray(v) ? v.join("; ") : String(v ?? "");
+  if (typeof v !== "number" && FORMULA.test(t)) t = `'${t}`;
   return `"${t.replace(/"/g, '""')}"`;
 };
 const sinPrefijo = (t) => t.replace(/^'(?=[=+\-@\t\r])/, "");
@@ -73,8 +74,18 @@ export function descargar(nombre, texto) {
   URL.revokeObjectURL(url);
 }
 
+const MAX_FILAS_CSV = 50000;
+// Una fecha fuera de rango (más de un día en el futuro o anterior a 2020) se vacía: la fecha decide qué
+// evento es el vigente, así que un archivo ajeno no debe poder fijar un estado hacia el futuro.
+function fechaSegura(texto) {
+  const ms = Date.parse(texto || "");
+  if (!Number.isFinite(ms) || ms > Date.now() + 86400000 || ms < Date.UTC(2020, 0, 1)) return "";
+  return new Date(ms).toISOString();
+}
+
 export function desdeCsv(texto) {
   const lineas = texto.replace(/^﻿/, "").split(/\r?\n/).filter(Boolean);
+  if (lineas.length > MAX_FILAS_CSV + 1) throw new Error(`El CSV trae más de ${MAX_FILAS_CSV} filas.`);
   const parse = (l) => [...l.matchAll(/("([^"]|"")*"|[^,]*)(,|$)/g)].map((m) => m[1].replace(/^"|"$/g, "").replace(/""/g, '"'));
   const cab = parse(lineas[0]);
   const iN = cab.indexOf("npn"), iE = cab.indexOf("estado"), iF = cab.indexOf("fecha"), iR = cab.indexOf("revisor");
@@ -84,9 +95,10 @@ export function desdeCsv(texto) {
     const c = parse(l).map(sinPrefijo);
     // Solo entran filas con npn de 30 dígitos y un estado válido; el resto se ignora.
     if (!/^\d{30}$/.test(c[iN] || "") || !ESTADOS.includes(c[iE])) continue;
-    const fecha = c[iF] && Number.isFinite(Date.parse(c[iF])) ? c[iF] : "";
+    const fecha = fechaSegura(c[iF]);
     const revisor = iR >= 0 ? (c[iR] || "").trim().slice(0, 60) : "";
-    r[c[iN]] = { estado: c[iE], fecha, ...(revisor ? { revisor } : {}) };
+    // origen "csv": lo importado se queda en este navegador; no se sube solo al equipo al activarlo.
+    r[c[iN]] = { estado: c[iE], fecha, origen: "csv", ...(revisor ? { revisor } : {}) };
   }
   if (!Object.keys(r).length) throw new Error("El CSV no trae revisiones válidas (npn de 30 dígitos y estado confirmado, descartado o no_concluyente).");
   return r;

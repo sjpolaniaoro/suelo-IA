@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import { ErrorNube, interpretar } from "../src/nube.js";
+import { ErrorNube, interpretar, leerNube } from "../src/nube.js";
 import { aCsv, desdeCsv } from "../src/revisiones.js";
 import { textoTooltip } from "../src/tooltip.js";
 import { validarGeojson } from "../src/validar.js";
@@ -110,4 +110,61 @@ test("interpretar acepta la forma anterior y entiende los errores de la nueva", 
   assert.throws(() => interpretar({ ok: false, error: "codigo_invalido" }), (e) => e instanceof ErrorNube && e.tipo === "codigo");
   assert.throws(() => interpretar({ ok: false, error: "demasiados_intentos" }), (e) => e instanceof ErrorNube && e.tipo === "bloqueo");
   assert.throws(() => interpretar({ ok: false, error: "otro" }), (e) => e instanceof ErrorNube && e.tipo === "datos");
+});
+
+/* ---------- Ciclo 2: listas en el CSV, fechas e importación acotada ---------- */
+test("aCsv también neutraliza las listas (razones)", () => {
+  const lineas = aCsv([{ razones: ["=1+1"] }, { razones: ["+cmd", "x"] }, { razones: ["Huella de 90 m²", "otra"] }], [["razones", "razones"]]).split("\n").slice(1);
+  assert.equal(lineas[0], `"'=1+1"`);
+  assert.equal(lineas[1], `"'+cmd; x"`);
+  assert.equal(lineas[2], `"Huella de 90 m²; otra"`, "una lista normal no cambia");
+});
+
+test("desdeCsv vacía las fechas fuera de rango, normaliza las válidas y marca el origen", () => {
+  const futuro = new Date(Date.now() + 5 * 86400000).toISOString();
+  const csv = aCsv(
+    [
+      { npn: NPN, estado: "confirmado", fecha: "2999-01-01", revisor: "A1" },
+      { npn: "2".repeat(30), estado: "confirmado", fecha: futuro, revisor: "A2" },
+      { npn: "3".repeat(30), estado: "descartado", fecha: "2019-12-31", revisor: "A3" },
+      { npn: "4".repeat(30), estado: "descartado", fecha: "2026-10-27T10:00:00Z", revisor: "A4" },
+    ],
+    [["npn", "npn"], ["estado", "estado"], ["fecha", "fecha"], ["revisor", "revisor"]],
+  );
+  const r = desdeCsv(csv);
+  assert.equal(r[NPN].fecha, "", "una fecha futura no puede fijar el estado");
+  assert.equal(r["2".repeat(30)].fecha, "");
+  assert.equal(r["3".repeat(30)].fecha, "", "anterior a 2020");
+  assert.equal(r["4".repeat(30)].fecha, "2026-10-27T10:00:00.000Z");
+  assert.ok(Object.values(r).every((x) => x.origen === "csv"), "lo importado queda marcado y no se sube solo");
+});
+
+test("desdeCsv rechaza archivos con demasiadas filas", () => {
+  const filas = Array.from({ length: 50002 }, () => `${NPN},confirmado`).join("\n");
+  assert.throws(() => desdeCsv(`npn,estado\n${filas}`), /más de 50000 filas/);
+});
+
+/* ---------- Errores del servidor: solo los de datos descartan el evento ---------- */
+test("leerNube distingue errores de datos, de configuración, de red y de código", async () => {
+  const original = globalThis.fetch;
+  const responder = (status, cuerpo = {}) => async () => new Response(JSON.stringify(cuerpo), { status });
+  try {
+    for (const [status, cuerpo, tipo] of [
+      [422, { message: "violación" }, "datos"],
+      [400, { message: "check" }, "datos"],
+      [401, {}, "config"],
+      [403, {}, "config"],
+      [404, {}, "config"],
+      [503, {}, "red"],
+      [429, {}, "red"],
+      [403, { message: "codigo_invalido" }, "codigo"],
+    ]) {
+      globalThis.fetch = responder(status, cuerpo);
+      await assert.rejects(() => leerNube("x"), (e) => e instanceof ErrorNube && e.tipo === tipo, `${status} -> ${tipo}`);
+    }
+    globalThis.fetch = async () => { throw new TypeError("sin red"); };
+    await assert.rejects(() => leerNube("x"), (e) => e.tipo === "red");
+  } finally {
+    globalThis.fetch = original;
+  }
 });

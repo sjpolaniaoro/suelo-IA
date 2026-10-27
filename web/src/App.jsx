@@ -87,15 +87,18 @@ export default function App() {
     enviando.current = true;
     try {
       if (colaRef.current.length) setSync({ estado: "enviando", error: "" });
-      while (colaRef.current.length) {
+      // La cola se lee del almacenamiento en cada vuelta: otra pestaña también puede estar agregando o enviando.
+      while (true) {
+        colaRef.current = leerCola();
+        if (!colaRef.current.length) break;
         const ev = colaRef.current[0];
         try {
           await enviarNube(ev, eq.codigo);
         } catch (e) {
           if (e.tipo !== "datos") throw e;
-          // Un evento que el servidor rechaza se descarta para no bloquear a los demás.
+          // Solo un rechazo por los datos descarta el evento para no bloquear a los demás.
         }
-        fijarCola(colaRef.current.slice(1));
+        fijarCola(leerCola().filter((x) => x.id !== ev.id));
         if (ev.estado !== "quitada" && !colaRef.current.some((x) => x.npn === ev.npn)) {
           setRevisiones((prev) => (prev[ev.npn] ? { ...prev, [ev.npn]: { ...prev[ev.npn], nube: true } } : prev));
         }
@@ -202,12 +205,25 @@ export default function App() {
     window.history.replaceState(null, "", u);
   }, [sel]);
 
+  // Índice por número predial: evita recorrer 7 mil predios en cada búsqueda.
+  const porNpn = useMemo(
+    () => new Map((datos?.predios.features ?? []).map((f) => [f.properties.npn, f.properties])),
+    [datos],
+  );
+
   useEffect(() => {
     if (!sel || !datos) return setFicha(null);
-    const local = datos.predios.features.find((f) => f.properties.npn === sel)?.properties;
+    const local = porNpn.get(sel);
     setFicha(local || null);
-    if (api && local) fichaDesdeApi(sel).then(setFicha).catch(() => setApi(false));
-  }, [sel, datos, api]);
+    // Si la persona cambia de predio antes de que responda la API, esa respuesta se ignora.
+    let vigente = true;
+    if (api && local) {
+      fichaDesdeApi(sel)
+        .then((f) => { if (vigente) setFicha(f); })
+        .catch(() => { if (vigente) setApi(false); });
+    }
+    return () => { vigente = false; };
+  }, [sel, datos, api, porNpn]);
 
   const centro = useMemo(() => {
     const f = datos?.predios.features.find((x) => x.properties.npn === sel);
@@ -234,7 +250,7 @@ export default function App() {
   /* ---------- Decidir ---------- */
   // Foto de la alerta al revisar: sirve después para medir la precisión por tipo de evidencia.
   const eventoDe = useCallback((npn, estado, fecha) => {
-    const p = datos?.predios.features.find((f) => f.properties.npn === npn)?.properties;
+    const p = porNpn.get(npn);
     return {
       id: uuid(),
       npn,
@@ -247,10 +263,10 @@ export default function App() {
       accion: p?.accion ?? null,
       version: datos?.resumen?.generado ?? null,
     };
-  }, [datos]);
+  }, [datos, porNpn]);
 
   const encolar = useCallback((ev) => {
-    fijarCola([...colaRef.current, ev]);
+    fijarCola([...leerCola(), ev]);
     vaciar();
   }, [fijarCola, vaciar]);
 
@@ -284,9 +300,9 @@ export default function App() {
       equipoRef.current = nuevo;
       codigoMalo.current = false;
       // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre de quien lo activa.
-      const previas = Object.entries(revisiones).filter(([, r]) => !r.nube);
+      const previas = Object.entries(revisiones).filter(([, r]) => !r.nube && r.origen !== "csv");
       fijarCola([
-        ...colaRef.current,
+        ...leerCola(),
         ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString())),
       ]);
       setRevisiones((prev) => {
