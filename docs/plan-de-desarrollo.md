@@ -15,7 +15,7 @@ Fechas: radicación del Anexo 2 hoy 22-oct-2026 11:59 p. m.; demo en vivo el 30-
 3. Huecos de la sección 6 (URL de Vercel, URL de Render, estado declarado): completados en la copia v2.
 4. Vercel Hobby es para uso no comercial: vigente; declararlo si el proyecto pasa a uso institucional pago.
 
-Los textos exactos aplicados están en [`anexo2-ajustes.md`](anexo2-ajustes.md). El Anexo radicado el 22-oct no se modificó.
+Los textos exactos aplicados están en [`anexo2-ajustes.md`](anexo2-ajustes.md). El Anexo radicado el 22-oct no se modificó. Decisiones del 26-oct: se confirman los supuestos del presupuesto (sección 8) y rige el reparto del incentivo de la sección 12; el perfil de Guillermo (sección 11) se incorporó en la copia local v2.
 
 ## Estado de implementación frente a este plan
 
