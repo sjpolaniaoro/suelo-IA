@@ -43,6 +43,10 @@ def test_extremo_a_extremo(tmp_path):
     assert len(fc["features"]) == len(sec)
     resumen = json.loads((api / "resumen.json").read_text(encoding="utf-8"))
     assert resumen["alertas"]["A1"] > 0
+    tri = resumen["triangulacion"]
+    assert tri["universo_sin_area"] == sum(
+        tri[k] for k in ("dos_fuentes", "solo_cartografia", "solo_imagen", "sin_evidencia")
+    )
     assert (web / "manifiesto.json").exists()
     # Sin datos personales en la salida.
     texto = (web / "sector02.geojson").read_text(encoding="utf-8").lower()
@@ -62,6 +66,7 @@ def test_sin_huellas_solo_a3(tmp_path):
     r = json.loads((tmp_path / "w" / "resumen.json").read_text(encoding="utf-8"))
     assert r["alertas"]["A1"] == 0 and r["alertas"]["A2"] == 0
     assert r["evidencia_imagenes"] is False
+    assert r["triangulacion"] is None
 
 
 def _predios(**kw):
@@ -92,8 +97,9 @@ def test_huella_grande_es_uso_no_residencial_y_no_a1():
 
 def test_nr_no_aplica_a_predios_con_area_construida_ni_ph():
     umbral = CFG["alertas"]["A1"]["huella_no_residencial_min_m2"]
-    assert not alertas.calcular(_predios(area_huella=umbral + 1, area_construida_reg=50.0), CFG, True)["NR"].iat[0]
-    assert not alertas.calcular(_predios(area_huella=umbral + 1, condicion="9"), CFG, True)["NR"].iat[0]
+    con_area = alertas.calcular(_predios(area_huella=umbral + 1, area_construida_reg=50.0), CFG, True)
+    en_ph = alertas.calcular(_predios(area_huella=umbral + 1, condicion="9"), CFG, True)
+    assert not con_area["NR"].iat[0] and not en_ph["NR"].iat[0]
 
 
 def test_ph_no_recibe_a1_ni_a2():

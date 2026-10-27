@@ -8,7 +8,8 @@ from api import main
 def test_api(tmp_path, monkeypatch):
     fc = {"type": "FeatureCollection", "features": [
         {"type": "Feature", "geometry": None,
-         "properties": {"npn": "1", "puntaje": 70, "A1": True, "A2": False, "A3": False}},
+         "properties": {"npn": "1", "puntaje": 70, "A1": True, "A2": False, "A3": False,
+                        "accion": "oficina"}},
         {"type": "Feature", "geometry": None,
          "properties": {"npn": "2", "puntaje": 0, "A1": False, "A2": False, "A3": False}},
         {"type": "Feature", "geometry": None,
@@ -29,3 +30,7 @@ def test_api(tmp_path, monkeypatch):
     # NR (uso probablemente no residencial) no entra en el ranking de vivienda, pero se consulta aparte.
     assert [p["npn"] for p in c.get("/alertas").json()["predios"]] == ["1"]
     assert [p["npn"] for p in c.get("/alertas?tipo=NR").json()["predios"]] == ["3"]
+    # Cola de trabajo de la triangulación.
+    assert [p["npn"] for p in c.get("/alertas?accion=oficina").json()["predios"]] == ["1"]
+    assert c.get("/alertas?accion=campo").json()["total"] == 0
+    assert c.get("/alertas?accion=otra").status_code == 422

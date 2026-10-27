@@ -32,6 +32,13 @@ alertas:
     max_puntos: 10           # suma por área de huella detectada (escala hasta 200 m²)
     area_tope_m2: 200
 
+# Triangulación registro-cartografía-imagen (pipeline/consistencia.py).
+consistencia:
+  # Área mínima de construcción dibujada en la cartografía oficial para contarla como evidencia
+  # contra un registro sin área construida. Descarta trazos mínimos (casetas, errores de digitación).
+  cartografia_min_m2: 10
+  # La evidencia de imagen usa los mismos umbrales de A1 (alertas.A1.area_huella_min_m2 y confianza_min).
+
 confianza:
   huella_media_min: 0.75
   terreno_min_m2: 30

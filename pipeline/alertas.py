@@ -99,8 +99,9 @@ def _razones(r) -> list[str]:
         )
     if r.NR:
         razones.append(
-            f"Uso probablemente no residencial: revisar destino. Huella detectada de {_fmt(r.area_huella)} m² "
-            f"en un predio registrado como Habitacional sin área construida."
+            "Uso probablemente no residencial: revisar destino. "
+            f"Huella detectada de {_fmt(r.area_huella)} m² en un predio registrado como "
+            "Habitacional sin área construida."
         )
     if r.A2:
         razones.append(

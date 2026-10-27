@@ -32,13 +32,17 @@ def cargar_terrenos(ruta: str | Path, zona: str, sector: str) -> gpd.GeoDataFram
 
 
 def pisos_por_terreno(ruta: str | Path, llaves: set[str]) -> pd.DataFrame:
-    """Máximo de pisos por terreno, a partir de las unidades de construcción."""
+    """Pisos, número y área dibujada de construcciones por terreno (cartografía oficial)."""
     c = _minusculas(gpd.read_file(ruta, ignore_geometry=True))
     c["llave21"] = c["name"].astype(str).str[:21]
     c = c[c["llave21"].isin(llaves)].copy()
     c["numero_pis"] = pd.to_numeric(c["numero_pis"], errors="coerce")
+    # Área de huella de lo dibujado (suma de `area_const`); sirve de evidencia para la triangulación.
+    c["area_cart"] = (
+        pd.to_numeric(c["area_const"], errors="coerce").fillna(0.0) if "area_const" in c.columns else 0.0
+    )
     agg = c.groupby("llave21").agg(
-        pisos=("numero_pis", "max"), n_construcciones=("llave21", "size")
+        pisos=("numero_pis", "max"), n_construcciones=("llave21", "size"), area_cart=("area_cart", "sum")
     )
     return agg.reset_index()
 

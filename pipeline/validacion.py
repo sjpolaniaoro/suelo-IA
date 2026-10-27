@@ -35,8 +35,8 @@ N_PRIORIDAD, SEMILLA = 50, 42
 N_ALEATORIA = {"A1": 60, "A2": 40, "A3": 30}
 N_CONTROL = 60
 COLUMNAS = ["grupo", "estrato", "orden", "npn", "direccion", "puntaje", "nivel", "alertas",
-            "area_construida_reg", "area_huella", "confianza", "lat", "lon", "imagen",
-            "veredicto", "observaciones"]
+            "area_construida_reg", "area_huella", "triangulacion", "accion", "confianza", "lat", "lon",
+            "imagen", "veredicto", "observaciones"]
 VEREDICTOS = {"confirmado", "descartado", "no_concluyente"}
 Z = 1.96
 
@@ -54,6 +54,7 @@ def _fila(grupo: str, est: str, orden: int, f: dict) -> dict:
         "puntaje": p["puntaje"], "nivel": p["nivel"],
         "alertas": "+".join(k for k in ("A1", "A2", "A3") if p[k]),
         "area_construida_reg": p["area_construida_reg"], "area_huella": round(p["area_huella"] or 0),
+        "triangulacion": p.get("triangulacion") or "", "accion": p.get("accion") or "",
         "confianza": p["confianza"], "lat": round(c.y, 6), "lon": round(c.x, 6),
         "imagen": f"https://www.google.com/maps/@{c.y:.6f},{c.x:.6f},19z/data=!3m1!1e3",
         "veredicto": "", "observaciones": "",
@@ -151,6 +152,15 @@ def metricas(filas: list[dict], poblacion: dict) -> dict:
         out["precision_ic95"] = (max(0.0, prec - e), min(1.0, prec + e))
     else:
         out["precision_ic95"] = None
+
+    # Informativo: confirmación según cuántas fuentes contradicen el registro (sin ponderar por población).
+    por_tri = {}
+    for t in ("dos_fuentes", "solo_cartografia", "solo_imagen"):
+        sel = [f for f in filas if f.get("triangulacion") == t and f["grupo"] != "control"]
+        k = sum(f["veredicto"] == "confirmado" for f in sel)
+        n = k + sum(f["veredicto"] == "descartado" for f in sel)
+        por_tri[t] = {"k": k, "n": n, "tasa": k / n if n else None}
+    out["confirmacion_por_triangulacion"] = por_tri
 
     # Omisión: confirmados entre los predios sin alerta, escalada a la población sin alerta.
     k, d = cuenta("control")

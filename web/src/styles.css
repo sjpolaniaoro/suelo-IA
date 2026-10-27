@@ -642,6 +642,33 @@ main {
 .barra .obs {
   background: var(--rojo);
 }
+.barra .cart {
+  background: #2b7a96;
+}
+.triangulo {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--sia-muted);
+}
+.chips .chip-accion {
+  font-weight: 600;
+  border-left: 4px solid var(--sia-ink);
+}
+.chips .chip-accion.oficina {
+  border-left-color: #2b7a96;
+}
+.resumen-tri {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--sia-muted);
+}
+.fichas button i.borde,
+.leyenda i.borde {
+  background: transparent;
+  border-width: 2px;
+  border-style: solid;
+}
 .barra b {
   font: 600 12px var(--sia-body);
   color: var(--sia-ink);

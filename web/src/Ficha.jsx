@@ -6,6 +6,13 @@ export const VEREDICTOS = [
   { k: "descartado", t: "Descartado", tecla: "D", ayuda: "No hay diferencia" },
   { k: "no_concluyente", t: "No concluyente", tecla: "N", ayuda: "No alcanza para decidir" },
 ];
+const ACCION = { oficina: "Conciliar en oficina", campo: "Verificar en campo" };
+const TRIANGULO = {
+  dos_fuentes: "La cartografía oficial y la imagen coinciden entre sí y contradicen el registro.",
+  solo_cartografia: "Solo la cartografía oficial contradice el registro; la imagen no lo confirma.",
+  solo_imagen: "Solo la imagen contradice el registro; la cartografía oficial no lo respalda.",
+  sin_evidencia: "Ni la cartografía ni la imagen contradicen el registro (probable lote vacío).",
+};
 const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
@@ -18,7 +25,8 @@ export default function Ficha({
 
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
-  const escala = Math.max(reg, obs, 1);
+  const cart = p.area_cart ?? 0;
+  const escala = Math.max(reg, obs, cart, 1);
   const verBarras = hayEvidencia && !p.ph;
   const hecho = !!revision;
 
@@ -38,6 +46,7 @@ export default function Ficha({
           <span className={`chip-nivel ${p.nivel}`}>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</span>
           <span className={`chip ${p.confianza === "baja" ? "baja" : ""}`}>Confianza {p.confianza}</span>
           {p.ph && <span className="chip">Propiedad horizontal</span>}
+          {p.accion && <span className={`chip chip-accion ${p.accion}`}>{ACCION[p.accion]}</span>}
           {["A1", "A2", "A3", "NR"].filter((k) => p[k]).map((k) => <span key={k} className="chip chip-alerta">{k}</span>)}
         </div>
       </header>
@@ -56,11 +65,15 @@ export default function Ficha({
           {verBarras ? (
             <div className="barras">
               <div className="barra"><span>Registrado</span><i className="reg" style={{ width: `${Math.max(2, (reg / escala) * 100)}%` }} /><b>{fmt(reg, " m²")}</b></div>
-              <div className="barra"><span>Observado</span><i className="obs" style={{ width: `${Math.max(2, (obs / escala) * 100)}%` }} /><b>{fmt(obs, " m²")}</b></div>
+              {p.triangulacion && (
+                <div className="barra"><span>Cartografía</span><i className="cart" style={{ width: `${Math.max(2, (cart / escala) * 100)}%` }} /><b>{fmt(cart, " m²")}</b></div>
+              )}
+              <div className="barra"><span>Imagen</span><i className="obs" style={{ width: `${Math.max(2, (obs / escala) * 100)}%` }} /><b>{fmt(obs, " m²")}</b></div>
             </div>
           ) : (
             <p className="suave">{p.ph ? "El área de propiedad horizontal se registra por unidad." : "Evidencia de imágenes pendiente."}</p>
           )}
+          {p.triangulacion && TRIANGULO[p.triangulacion] && <p className="triangulo">{TRIANGULO[p.triangulacion]}</p>}
           <dl className="datos">
             <dt>Destino</dt><dd>{p.destino}</dd>
             <dt>Terreno</dt><dd>{fmt(p.area_terreno, " m²")}</dd>

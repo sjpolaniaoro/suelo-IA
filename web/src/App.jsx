@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Mapa, { COLORES, COLORES_ESTADO, pasaFiltros } from "./Mapa.jsx";
+import Mapa, { COLORES, COLORES_ACCION, COLORES_ESTADO, pasaFiltros } from "./Mapa.jsx";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import { aCsv, desdeCsv, descargar, guardar, leer } from "./revisiones.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
 const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
+const ACCIONES = [["todas", "Todas"], ["oficina", "Conciliar en oficina"], ["campo", "Verificar en campo"]];
+const TRI = { dos_fuentes: "2 fuentes", solo_cartografia: "solo cartografía", solo_imagen: "solo imagen" };
 const TODOS_NIVELES = new Set(NIVELES.map((x) => x[0]));
 const MAX_LISTA = 400;
 
@@ -22,6 +24,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [api, setApi] = useState(null); // null = comprobando
   const [tipo, setTipo] = useState("todas");
+  const [accion, setAccion] = useState("todas");
   const [niveles, setNiveles] = useState(TODOS_NIVELES);
   const [etapa, setEtapa] = useState("pendientes"); // todos | pendientes | revisados | confirmado
   const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
@@ -47,8 +50,18 @@ export default function App() {
       .sort((a, b) => b.puntaje - a.puntaje || (b.area_huella ?? 0) - (a.area_huella ?? 0));
   }, [datos]);
 
-  const filtros = useMemo(() => ({ tipo, niveles }), [tipo, niveles]);
+  const filtros = useMemo(() => ({ tipo, niveles, accion }), [tipo, niveles, accion]);
   const base = useMemo(() => alertas.filter((p) => pasaFiltros(p, filtros)), [alertas, filtros]);
+
+  const cuentaAccion = useMemo(() => {
+    const c = { todas: 0, oficina: 0, campo: 0 };
+    alertas.forEach((p) => {
+      if (!pasaFiltros(p, { tipo, niveles, accion: "todas" })) return;
+      c.todas++;
+      if (p.accion) c[p.accion]++;
+    });
+    return c;
+  }, [alertas, tipo, niveles]);
 
   const cuentaNivel = useMemo(() => {
     const c = { rojo: 0, naranja: 0, amarillo: 0 };
@@ -85,7 +98,7 @@ export default function App() {
     return true;
   }), [base, revisiones, etapa]);
   const visibles = lista.slice(0, mostrar);
-  useEffect(() => setMostrar(MAX_LISTA), [tipo, niveles, etapa]);
+  useEffect(() => setMostrar(MAX_LISTA), [tipo, niveles, accion, etapa]);
 
   const progreso = { hechos: etapas.revisados, total: base.length };
   const posicion = useMemo(() => {
@@ -181,7 +194,7 @@ export default function App() {
     descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["fecha", "fecha"], ["direccion", "direccion"], ["puntaje", "puntaje"]]));
   };
   const exportarLista = () =>
-    descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["razones", "razones"]]));
+    descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["triangulacion", "triangulacion"], ["accion", "accion"], ["razones", "razones"]]));
 
   // Carga de archivo en el navegador: nada se envía a ningún servidor.
   const cargarArchivo = async (e) => {
@@ -222,6 +235,7 @@ export default function App() {
     );
   }
   const r = datos?.resumen;
+  const tri = r?.triangulacion;
   const hayEvidencia = r?.evidencia_imagenes;
   const pct = base.length ? (etapas.revisados / base.length) * 100 : 0;
 
@@ -285,11 +299,28 @@ export default function App() {
                 </button>
               ))}
             </div>
+            <p className="etiqueta">Cola de trabajo</p>
+            <div className="fichas tipos" role="group" aria-label="Cola de trabajo">
+              {ACCIONES.map(([k, t]) => (
+                <button key={k} className={accion === k ? "on" : ""} aria-pressed={accion === k} onClick={() => setAccion(k)}>
+                  {k !== "todas" && <i className="borde" style={{ borderColor: rgb(COLORES_ACCION[k]) }} />}{t} <b>{n(cuentaAccion[k])}</b>
+                </button>
+              ))}
+            </div>
+            {tri && (
+              <p className="resumen-tri">
+                De {n(tri.universo_sin_area)} predios habitacionales sin área construida registrada: en {n(tri.dos_fuentes)} la
+                cartografía y la imagen coinciden en contradecir el registro, en {n(tri.solo_cartografia)} solo la cartografía,
+                en {n(tri.solo_imagen)} solo la imagen y en {n(tri.sin_evidencia)} ninguna fuente (probable lote vacío).
+              </p>
+            )}
             <div className="leyenda" aria-label="Colores del mapa">
               <span><i style={{ background: rgb(COLORES_ESTADO.confirmado) }} />Confirmado</span>
               <span><i style={{ background: rgb(COLORES_ESTADO.descartado) }} />Descartado</span>
               <span><i style={{ background: rgb(COLORES_ESTADO.no_concluyente) }} />No concluyente</span>
               <span><i style={{ background: rgb(COLORES.no_residencial) }} />Revisar destino (NR)</span>
+              <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.oficina) }} />Contorno: oficina</span>
+              <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.campo) }} />Contorno: campo</span>
               <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta</span>
             </div>
           </details>
@@ -302,11 +333,12 @@ export default function App() {
             {visibles.map((p) => {
               const rev = revisiones[p.npn];
               const tipos = ["A1", "A2", "A3", "NR"].filter((k) => p[k]).join(" · ");
+              const fuentes = p.triangulacion && TRI[p.triangulacion] ? ` · ${TRI[p.triangulacion]}` : "";
               return (
                 <li key={p.npn}>
                   <button className={`${p.npn === sel ? "sel" : ""} n-${p.nivel}`} onClick={() => elegir(p.npn)}>
                     <span className="dir">{p.direccion || p.npn}</span>
-                    <span className="meta">{tipos}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
+                    <span className="meta">{tipos}{fuentes}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
                     <b className="pt">{p.NR ? "NR" : p.puntaje}</b>
                     {rev && <em className={`est ${rev.estado}`} title={rev.estado}>{ICONO[rev.estado]}</em>}
                   </button>

@@ -51,7 +51,11 @@ def predio(npn: str):
 
 
 @app.get("/alertas")
-def lista_alertas(tipo: str | None = Query(None, pattern="^(A[123]|NR)$"), limit: int = Query(50, ge=1, le=500)):
+def lista_alertas(
+    tipo: str | None = Query(None, pattern="^(A[123]|NR)$"),
+    accion: str | None = Query(None, pattern="^(oficina|campo)$"),
+    limit: int = Query(50, ge=1, le=500),
+):
     if not _cache:
         _cache.update(_predios())
     props = [f["properties"] for f in _cache.values()]
@@ -62,4 +66,7 @@ def lista_alertas(tipo: str | None = Query(None, pattern="^(A[123]|NR)$"), limit
     else:
         filas = [p for p in props if p["puntaje"] > 0 and (tipo is None or p[tipo])]
         filas.sort(key=lambda p: p["puntaje"], reverse=True)
+    if accion:
+        # Cola de trabajo de la triangulación: conciliar en oficina o verificar en campo.
+        filas = [p for p in filas if p.get("accion") == accion]
     return {"total": len(filas), "predios": filas[:limit]}
