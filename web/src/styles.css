@@ -689,6 +689,74 @@ main {
   margin: 0;
   text-align: right;
 }
+.vista-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.vista-tabs .tab-enlace {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 3px;
+  border: 1px solid var(--sia-control);
+  color: inherit;
+  text-decoration: none;
+}
+.vista-tabs button,
+.vista-tabs .tab-enlace:hover {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 3px;
+  border: 1px solid var(--sia-control);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.vista-tabs button.activo {
+  background: var(--sia-soft);
+  font-weight: 600;
+}
+.vista-marco {
+  position: relative;
+  margin-bottom: 8px;
+}
+.vista-embebida {
+  display: block;
+  width: 100%;
+  height: clamp(200px, 32vh, 280px);
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  background: var(--sia-soft);
+}
+.vista-capa {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 10px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
+.vista-capa span {
+  padding: 5px 10px;
+  border-radius: 3px;
+  background: rgba(30, 40, 30, 0.78);
+  color: #fff;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.vista-capa:hover span,
+.vista-capa:focus-visible span {
+  opacity: 1;
+}
 .enlaces {
   display: flex;
   gap: 6px;

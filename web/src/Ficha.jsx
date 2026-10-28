@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const fmt = (n, u = "") =>
   n === null || n === undefined ? "dato faltante" : `${Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 })}${u}`;
 
@@ -21,7 +23,15 @@ export default function Ficha({
 }) {
   const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
   const calle = centro && `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}`;
-  const copiar = () => navigator.clipboard?.writeText(window.location.href).catch(() => {});
+  const embebidoSatelite = centro && `https://www.google.com/maps?q=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}&z=19&t=k&output=embed`;
+  // Street View solo se incrusta con la API oficial Maps Embed (gratuita, clave restringida por dominio en
+  // VITE_GOOGLE_MAPS_KEY). Sin clave, la pestaña «Calle» abre Google Maps en otra pestaña.
+  const claveMapas = import.meta.env?.VITE_GOOGLE_MAPS_KEY;
+  const embebidoCalle = centro && claveMapas
+    && `https://www.google.com/maps/embed/v1/streetview?key=${encodeURIComponent(claveMapas)}&location=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}&fov=90`;
+  const [vista, setVista] = useState(null);
+  const [interactivo, setInteractivo] = useState(false);
+  const copiar =() => navigator.clipboard?.writeText(window.location.href).catch(() => {});
 
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
@@ -85,11 +95,41 @@ export default function Ficha({
         <li>
           <div className="paso-cab"><span className="paso-num">2</span><h3>Verificar en imagen</h3></div>
           {centro ? (
-            <div className="enlaces">
-              <a href={satelite} target="_blank" rel="noopener noreferrer">Satélite ↗</a>
-              <a href={calle} target="_blank" rel="noopener noreferrer">Street View ↗</a>
-              <button onClick={copiar}>Copiar enlace</button>
-            </div>
+            <>
+              <div className="vista-tabs" role="tablist" aria-label="Vista de verificación">
+                <button role="tab" aria-selected={vista === "satelite"} className={vista === "satelite" ? "activo" : ""} onClick={() => setVista(vista === "satelite" ? null : "satelite")}>Satélite</button>
+                {embebidoCalle
+                  ? <button role="tab" aria-selected={vista === "calle"} className={vista === "calle" ? "activo" : ""} onClick={() => setVista(vista === "calle" ? null : "calle")}>Calle</button>
+                  : <a className="tab-enlace" href={calle} target="_blank" rel="noopener noreferrer">Calle ↗</a>}
+              </div>
+              {vista && (
+                // Mientras el cursor no esté sobre la vista, una capa deja pasar la rueda y las teclas a la
+                // ficha (el marco se tragaría el desplazamiento y los atajos C/D/N/J/K).
+                <div className="vista-marco" onMouseLeave={() => {
+                  setInteractivo(false);
+                  if (document.activeElement?.tagName === "IFRAME") document.activeElement.blur();
+                }}>
+                  <iframe
+                    key={`${vista}-${p.npn}`}
+                    className="vista-embebida"
+                    title={vista === "calle" ? "Vista de calle del predio" : "Imagen satelital del predio"}
+                    src={vista === "calle" ? embebidoCalle : embebidoSatelite}
+                    referrerPolicy="no-referrer"
+                    allowFullScreen
+                  />
+                  {!interactivo && (
+                    <button className="vista-capa" onClick={() => setInteractivo(true)} aria-label="Activar la vista para moverla">
+                      <span>Clic para mover el mapa</span>
+                    </button>
+                  )}
+                </div>
+              )}
+              <div className="enlaces">
+                <a href={vista === "calle" ? calle : satelite} target="_blank" rel="noopener noreferrer">Abrir en pestaña ↗</a>
+                <button onClick={copiar}>Copiar enlace</button>
+              </div>
+              {vista && <p className="suave">Si la vista no carga, ábrala en una pestaña nueva.</p>}
+            </>
           ) : <p className="suave">Este predio no tiene geometría para ubicarlo.</p>}
         </li>
 
