@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Mapa, { COLORES, COLORES_ACCION, COLORES_ESTADO, pasaFiltros } from "./Mapa.jsx";
+import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, pasaFiltros } from "./Mapa.jsx";
+import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, tieneAlerta, tipoHallazgo } from "./clases.js";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import {
@@ -30,6 +31,7 @@ export default function App() {
   const [tipo, setTipo] = useState("todas");
   const [accion, setAccion] = useState("todas");
   const [niveles, setNiveles] = useState(TODOS_NIVELES);
+  const [sinAlerta, setSinAlerta] = useState(() => new Set()); // clases sin alerta visibles (ninguna por defecto)
   const [etapa, setEtapa] = useState("pendientes"); // todos | pendientes | revisados | confirmado
   const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
   const [ficha, setFicha] = useState(null);
@@ -138,8 +140,25 @@ export default function App() {
       .sort((a, b) => b.puntaje - a.puntaje || (b.area_huella ?? 0) - (a.area_huella ?? 0));
   }, [datos]);
 
-  const filtros = useMemo(() => ({ tipo, niveles, accion }), [tipo, niveles, accion]);
-  const base = useMemo(() => alertas.filter((p) => pasaFiltros(p, filtros)), [alertas, filtros]);
+  // Predios sin alerta: van después de los que tienen alerta; se ordenan por área de huella.
+  const sinAlertas = useMemo(() => {
+    if (!datos) return [];
+    return datos.predios.features
+      .map((f) => f.properties)
+      .filter((p) => !tieneAlerta(p))
+      .sort((a, b) => (b.area_huella ?? 0) - (a.area_huella ?? 0));
+  }, [datos]);
+  const cuentaClase = useMemo(() => {
+    const c = { ok: 0, ph: 0, cartografia: 0 };
+    sinAlertas.forEach((p) => { c[claseSinAlerta(p)]++; });
+    return c;
+  }, [sinAlertas]);
+
+  const filtros = useMemo(() => ({ tipo, niveles, accion, sinAlerta }), [tipo, niveles, accion, sinAlerta]);
+  const base = useMemo(
+    () => [...alertas, ...sinAlertas].filter((p) => pasaFiltros(p, filtros)),
+    [alertas, sinAlertas, filtros],
+  );
 
   const cuentaAccion = useMemo(() => {
     const c = { todas: 0, oficina: 0, campo: 0 };
@@ -186,7 +205,7 @@ export default function App() {
     return true;
   }), [base, revisiones, etapa]);
   const visibles = lista.slice(0, mostrar);
-  useEffect(() => setMostrar(MAX_LISTA), [tipo, niveles, accion, etapa]);
+  useEffect(() => setMostrar(MAX_LISTA), [tipo, niveles, accion, etapa, sinAlerta]);
 
   const progreso = { hechos: etapas.revisados, total: base.length };
   const posicion = useMemo(() => {
@@ -354,8 +373,8 @@ export default function App() {
   /* ---------- Exportar y cargar ---------- */
   const exportarRevisiones = () => {
     const mapa = new Map(datos.predios.features.map((f) => [f.properties.npn, f.properties]));
-    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor }));
-    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["fecha", "fecha"], ["revisor", "revisor"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"]]));
+    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor, tipo_hallazgo: mapa.has(npn) ? tipoHallazgo(mapa.get(npn), r.estado) : "" }));
+    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["tipo_hallazgo", "tipo_hallazgo"], ["fecha", "fecha"], ["revisor", "revisor"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"]]));
   };
   const exportarLista = () =>
     descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["triangulacion", "triangulacion"], ["accion", "accion"], ["razones", "razones"]]));
@@ -388,6 +407,12 @@ export default function App() {
     setNiveles(s.size ? s : TODOS_NIVELES);
   };
 
+  const alternarClase = (k) => {
+    const s = new Set(sinAlerta);
+    if (s.has(k)) s.delete(k); else s.add(k);
+    setSinAlerta(s);
+  };
+
   if (error) {
     return (
       <div className="vacio">
@@ -411,7 +436,7 @@ export default function App() {
             <img src="/favicon.svg" width="36" height="36" alt="" className="marca-logo" />
             <span className="palabra">Suelo<i>·</i>IA</span>
           </a>
-          <span className="sector">Sector 02 · Neiva</span>
+          <span className="sector">Sector catastral 02 · Neiva</span>
           <a className="inicio" href="/">← Inicio</a>
         </header>
 
@@ -454,6 +479,14 @@ export default function App() {
                 </button>
               ))}
             </div>
+            <p className="etiqueta">Predios sin alerta</p>
+            <div className="fichas tipos" role="group" aria-label="Predios sin alerta">
+              {CLASES_SIN_ALERTA.map(([k, t, ayuda]) => (
+                <button key={k} className={sinAlerta.has(k) ? "on" : ""} aria-pressed={sinAlerta.has(k)} onClick={() => alternarClase(k)} title={ayuda}>
+                  <i style={{ background: rgb(COLORES_CLASE[k]) }} />{t} <b>{n(cuentaClase[k])}</b>
+                </button>
+              ))}
+            </div>
             <p className="etiqueta">Tipo de alerta</p>
             <div className="fichas tipos" role="group" aria-label="Tipo de alerta">
               {TIPOS.map(([k, t]) => (
@@ -484,7 +517,11 @@ export default function App() {
               <span><i style={{ background: rgb(COLORES.no_residencial) }} />Revisar destino (NR)</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.oficina) }} />Contorno: oficina</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.campo) }} />Contorno: campo</span>
-              <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta</span>
+              <span><i style={{ background: rgb(COLORES_CLASE.ok) }} />Sin alerta · OK</span>
+              <span><i style={{ background: rgb(COLORES_VERIFICADO_OK) }} />Verificado OK (revisado)</span>
+              <span><i style={{ background: rgb(COLORES_CLASE.ph) }} />PH sin evaluar</span>
+              <span><i style={{ background: rgb(COLORES_CLASE.cartografia) }} />Solo cartografía</span>
+              <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta (oculto por el filtro)</span>
             </div>
           </details>
 
@@ -533,15 +570,16 @@ export default function App() {
           <ol className="lista" aria-label="Predios de la etapa seleccionada">
             {visibles.map((p) => {
               const rev = revisiones[p.npn];
-              const tipos = ["A1", "A2", "A3", "NR"].filter((k) => p[k]).join(" · ");
+              const clase = claseSinAlerta(p);
+              const tipos = clase ? TEXTO_CLASE[clase] : ["A1", "A2", "A3", "NR"].filter((k) => p[k]).join(" · ");
               const fuentes = p.triangulacion && TRI[p.triangulacion] ? ` · ${TRI[p.triangulacion]}` : "";
               return (
                 <li key={p.npn}>
-                  <button className={`${p.npn === sel ? "sel" : ""} n-${p.nivel}`} onClick={() => elegir(p.npn)}>
+                  <button className={`${p.npn === sel ? "sel" : ""} n-${clase ? `clase-${clase}` : p.nivel}`} onClick={() => elegir(p.npn)}>
                     <span className="dir">{p.direccion || p.npn}</span>
                     <span className="meta">{tipos}{fuentes}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
-                    <b className="pt">{p.NR ? "NR" : p.puntaje}</b>
-                    {rev && <em className={`est ${rev.estado}`} title={rev.estado}>{ICONO[rev.estado]}</em>}
+                    <b className="pt">{clase ? ETIQUETA_CLASE[clase] : p.NR ? "NR" : p.puntaje}</b>
+                    {rev && <em className={`est ${clase && rev.estado === "descartado" ? "verificado_ok" : rev.estado}`} title={clase && rev.estado === "descartado" ? "verificado OK" : rev.estado}>{clase && rev.estado === "descartado" ? "✓" : ICONO[rev.estado]}</em>}
                   </button>
                 </li>
               );

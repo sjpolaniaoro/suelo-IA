@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TEXTO_CLASE, claseSinAlerta } from "./clases.js";
 
 const fmt = (n, u = "") =>
   n === null || n === undefined ? "dato faltante" : `${Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 })}${u}`;
@@ -8,6 +9,13 @@ export const VEREDICTOS = [
   { k: "descartado", t: "Descartado", tecla: "D", ayuda: "No hay diferencia" },
   { k: "no_concluyente", t: "No concluyente", tecla: "N", ayuda: "No alcanza para decidir" },
 ];
+// En un predio sin alerta, «descartado» es «verificado OK» y «confirmado» es una omisión del sistema
+// (hay diferencia que ninguna regla detectó). El dato guardado sigue siendo el mismo, por eso la
+// base de revisiones, el CSV y las métricas de validación no cambian.
+const VEREDICTOS_SIN_ALERTA = {
+  confirmado: { t: "Hay diferencia", ayuda: "El sistema no alertó, pero el registro no coincide con lo construido" },
+  descartado: { t: "Verificado OK", ayuda: "Revisado: el registro coincide con lo construido" },
+};
 const ACCION = { oficina: "Conciliar en oficina", campo: "Verificar en campo" };
 const TRIANGULO = {
   dos_fuentes: "La cartografía oficial y la imagen coinciden entre sí y contradicen el registro.",
@@ -33,6 +41,8 @@ export default function Ficha({
   const [interactivo, setInteractivo] = useState(false);
   const copiar =() => navigator.clipboard?.writeText(window.location.href).catch(() => {});
 
+  const clase = claseSinAlerta(p);
+  const veredictos = clase ? VEREDICTOS.map((v) => ({ ...v, ...VEREDICTOS_SIN_ALERTA[v.k] })) : VEREDICTOS;
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
   const cart = p.area_cart ?? 0;
@@ -53,7 +63,7 @@ export default function Ficha({
         <h2>{p.direccion || "Sin dirección"}</h2>
         <p className="npn">{p.npn}</p>
         <div className="chips">
-          <span className={`chip-nivel ${p.nivel}`}>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</span>
+          <span className={`chip-nivel ${p.nivel}`}>{clase ? TEXTO_CLASE[clase] : <>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</>}</span>
           <span className={`chip ${p.confianza === "baja" ? "baja" : ""}`}>Confianza {p.confianza}</span>
           {p.ph && <span className="chip">Propiedad horizontal</span>}
           {p.accion && <span className={`chip chip-accion ${p.accion}`}>{ACCION[p.accion]}</span>}
@@ -136,7 +146,7 @@ export default function Ficha({
         <li className={hecho ? "hecho" : ""}>
           <div className="paso-cab"><span className="paso-num">{hecho ? "✓" : "3"}</span><h3>Decidir</h3></div>
           <div className="veredictos">
-            {VEREDICTOS.map((v) => (
+            {veredictos.map((v) => (
               <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} aria-pressed={revision?.estado === v.k} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
                 {v.t}<kbd>{v.tecla}</kbd>
               </button>
@@ -144,7 +154,7 @@ export default function Ficha({
           </div>
           {revision && (
             <p className="nota">
-              Marcado «{VEREDICTOS.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}` : ""}.{" "}
+              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}` : ""}.{" "}
               <button className="enlace" onClick={() => onQuitar(p.npn)}>Quitar</button>
             </p>
           )}
@@ -159,7 +169,7 @@ export default function Ficha({
           </button>
         )}
         <label className="auto"><input type="checkbox" checked={auto} onChange={(e) => onAuto(e.target.checked)} /> Avanzar al siguiente al decidir</label>
-        <p className="atajos">Atajos: <kbd>C</kbd> confirmar · <kbd>D</kbd> descartar · <kbd>N</kbd> no concluyente · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
+        <p className="atajos">Atajos: <kbd>C</kbd> {clase ? "hay diferencia" : "confirmar"} · <kbd>D</kbd> {clase ? "verificado OK" : "descartar"} · <kbd>N</kbd> no concluyente · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
         <details className="fuentes">
           <summary>Fuentes y fechas</summary>
           <ul>

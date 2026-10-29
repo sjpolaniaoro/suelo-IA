@@ -168,3 +168,24 @@ test("leerNube distingue errores de datos, de configuración, de red y de códig
     globalThis.fetch = original;
   }
 });
+
+test("los predios sin alerta se separan en OK, PH sin evaluar y solo cartografía", async () => {
+  const { claseSinAlerta } = await import("../src/clases.js");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: false, accion: null }), "ok");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: true, accion: null }), "ph");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: false, accion: "oficina" }), "cartografia");
+  assert.equal(claseSinAlerta({ puntaje: 70, ph: false }), null);
+  assert.equal(claseSinAlerta({ puntaje: 0, NR: true }), null);
+});
+
+test("tipo_hallazgo sigue el árbol de decisión", async () => {
+  const { tipoHallazgo } = await import("../src/clases.js");
+  const con = { puntaje: 70 }, sin = { puntaje: 0, ph: false };
+  assert.equal(tipoHallazgo(con, "confirmado"), "acierto");
+  assert.equal(tipoHallazgo(con, "descartado"), "falso_positivo");
+  assert.equal(tipoHallazgo(sin, "confirmado"), "omision");
+  assert.equal(tipoHallazgo(sin, "descartado"), "conforme");
+  assert.equal(tipoHallazgo(con, "no_concluyente"), "no_concluyente");
+  assert.equal(tipoHallazgo(sin, "no_concluyente"), "no_concluyente");
+  assert.equal(tipoHallazgo({ puntaje: 0, NR: true }, "confirmado"), "acierto");
+});
