@@ -5,6 +5,7 @@ import { MapboxOverlay } from "@deck.gl/mapbox";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import { limites } from "./datos.js";
 import { textoTooltip } from "./tooltip.js";
+import { claseSinAlerta, tieneAlerta } from "./clases.js";
 
 maplibregl.setWorkerUrl(workerUrl);
 
@@ -15,6 +16,12 @@ export const COLORES = {
   amarillo: [250, 204, 21],
   no_residencial: [14, 159, 188],
   sin_alerta: [160, 167, 176],
+};
+// Predios sin alerta cuando su clase está activa en el filtro.
+export const COLORES_CLASE = {
+  ok: [67, 160, 71],
+  ph: [176, 141, 87],
+  cartografia: [43, 122, 150],
 };
 // Cola de trabajo de la triangulación: contorno azul = conciliar en oficina, tinta = verificar en campo.
 export const COLORES_ACCION = {
@@ -58,6 +65,7 @@ const relleno = () => (movil() ? { top: 70, left: 20, right: 20, bottom: Math.ro
 export const pasaAccion = (p, filtros) => !filtros.accion || filtros.accion === "todas" || p.accion === filtros.accion;
 
 export function pasaFiltros(p, filtros) {
+  if (!tieneAlerta(p)) return !!filtros.sinAlerta?.has(claseSinAlerta(p)) && pasaAccion(p, filtros);
   if (p.NR) return filtros.tipo === "NR" && pasaAccion(p, filtros);
   if (!(p.puntaje > 0) || filtros.tipo === "NR") return false;
   return (filtros.tipo === "todas" || p[filtros.tipo]) && filtros.niveles.has(p.nivel) && pasaAccion(p, filtros);
@@ -144,7 +152,10 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
           const est = estados[p.npn]?.estado;
           if (est && COLORES_ESTADO[est]) return [...COLORES_ESTADO[est], 235];
           const vivo = pasaFiltros(p, filtros) || (p.NR && filtros.tipo === "todas" && pasaAccion(p, filtros));
-          if (p.nivel !== "sin_alerta" && !vivo) return [...COLORES.sin_alerta, 55];
+          if (!tieneAlerta(p)) {
+            return pasaFiltros(p, filtros) ? [...COLORES_CLASE[claseSinAlerta(p)], 235] : [...COLORES.sin_alerta, 170];
+          }
+          if (!vivo) return [...COLORES.sin_alerta, 55];
           return [...COLORES[p.nivel], p.nivel === "sin_alerta" ? 170 : 235];
         },
         getLineColor: [255, 255, 255, 90],

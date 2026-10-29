@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TEXTO_CLASE, claseSinAlerta } from "./clases.js";
 
 const fmt = (n, u = "") =>
   n === null || n === undefined ? "dato faltante" : `${Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 })}${u}`;
@@ -33,6 +34,7 @@ export default function Ficha({
   const [interactivo, setInteractivo] = useState(false);
   const copiar =() => navigator.clipboard?.writeText(window.location.href).catch(() => {});
 
+  const clase = claseSinAlerta(p);
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
   const cart = p.area_cart ?? 0;
@@ -53,7 +55,7 @@ export default function Ficha({
         <h2>{p.direccion || "Sin dirección"}</h2>
         <p className="npn">{p.npn}</p>
         <div className="chips">
-          <span className={`chip-nivel ${p.nivel}`}>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</span>
+          <span className={`chip-nivel ${p.nivel}`}>{clase ? TEXTO_CLASE[clase] : <>{NIVEL[p.nivel]}{p.NR ? " · sin puntaje de vivienda" : ` · ${fmt(p.puntaje)}`}</>}</span>
           <span className={`chip ${p.confianza === "baja" ? "baja" : ""}`}>Confianza {p.confianza}</span>
           {p.ph && <span className="chip">Propiedad horizontal</span>}
           {p.accion && <span className={`chip chip-accion ${p.accion}`}>{ACCION[p.accion]}</span>}

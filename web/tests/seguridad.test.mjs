@@ -168,3 +168,12 @@ test("leerNube distingue errores de datos, de configuración, de red y de códig
     globalThis.fetch = original;
   }
 });
+
+test("los predios sin alerta se separan en OK, PH sin evaluar y solo cartografía", async () => {
+  const { claseSinAlerta } = await import("../src/clases.js");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: false, accion: null }), "ok");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: true, accion: null }), "ph");
+  assert.equal(claseSinAlerta({ puntaje: 0, ph: false, accion: "oficina" }), "cartografia");
+  assert.equal(claseSinAlerta({ puntaje: 70, ph: false }), null);
+  assert.equal(claseSinAlerta({ puntaje: 0, NR: true }), null);
+});
