@@ -2,7 +2,7 @@
 
 ## 1. Resumen General
 
-Suelo-IA es una aplicación web que cruza el registro catastral de Neiva con huellas de edificaciones detectadas por visión computacional, y prioriza qué predios revisar en campo. La versión 1 cubre un solo sector urbano (sector 02 del número predial nacional) y lo muestra en un mapa 3D con una ficha por predio. Todo vive en el repositorio `github.com/sjpolaniaoro/suelo-IA`: el proceso de datos en Python, el frontend publicado en Vercel y una API mínima publicada en Render (plan gratuito).
+Suelo-IA es una aplicación web que cruza el registro catastral de Neiva con huellas de edificaciones detectadas por visión computacional, y prioriza qué predios revisar en campo. La versión 1 cubre un solo sector urbano (sector catastral 02 del número predial nacional; no es la comuna 2 de Neiva: en sus predios los dígitos de comuna y barrio son `00`) y lo muestra en un mapa 3D con una ficha por predio. Todo vive en el repositorio `github.com/sjpolaniaoro/suelo-IA`: el proceso de datos en Python, el frontend publicado en Vercel y una API mínima publicada en Render (plan gratuito).
 
 ## 2. Objetivos del Usuario
 

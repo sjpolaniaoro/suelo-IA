@@ -411,7 +411,7 @@ export default function App() {
             <img src="/favicon.svg" width="36" height="36" alt="" className="marca-logo" />
             <span className="palabra">Suelo<i>·</i>IA</span>
           </a>
-          <span className="sector">Sector 02 · Neiva</span>
+          <span className="sector">Sector catastral 02 · Neiva</span>
           <a className="inicio" href="/">← Inicio</a>
         </header>
 

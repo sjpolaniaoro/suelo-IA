@@ -204,7 +204,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
 
   return (
     <>
-      <div ref={contenedor} className="mapa" role="application" aria-label="Mapa 3D del sector 02" />
+      <div ref={contenedor} className="mapa" role="application" aria-label="Mapa 3D del sector catastral 02" />
       <div className="mapa-controles" role="group" aria-label="Vista del mapa">
         <div className="segmento">
           <button className={vista === "3d" ? "on" : ""} aria-pressed={vista === "3d"} onClick={() => cambiarVista("3d")}>3D</button>
