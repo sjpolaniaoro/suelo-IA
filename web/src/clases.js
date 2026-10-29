@@ -22,3 +22,11 @@ export const TEXTO_CLASE = {
   ph: "Sin alerta · propiedad horizontal, sin evaluar",
   cartografia: "Sin alerta de imagen · la cartografía contradice el registro",
 };
+
+// Árbol de decisión de la revisión: cruza lo que dijo el sistema con lo que encontró la persona.
+// Alimenta las métricas: precisión = acierto / (acierto + falso_positivo); exhaustividad = acierto / (acierto + omision).
+export function tipoHallazgo(p, estado) {
+  if (estado === "no_concluyente") return "no_concluyente";
+  if (tieneAlerta(p)) return estado === "confirmado" ? "acierto" : estado === "descartado" ? "falso_positivo" : "";
+  return estado === "confirmado" ? "omision" : estado === "descartado" ? "conforme" : "";
+}

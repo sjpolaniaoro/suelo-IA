@@ -177,3 +177,15 @@ test("los predios sin alerta se separan en OK, PH sin evaluar y solo cartografí
   assert.equal(claseSinAlerta({ puntaje: 70, ph: false }), null);
   assert.equal(claseSinAlerta({ puntaje: 0, NR: true }), null);
 });
+
+test("tipo_hallazgo sigue el árbol de decisión", async () => {
+  const { tipoHallazgo } = await import("../src/clases.js");
+  const con = { puntaje: 70 }, sin = { puntaje: 0, ph: false };
+  assert.equal(tipoHallazgo(con, "confirmado"), "acierto");
+  assert.equal(tipoHallazgo(con, "descartado"), "falso_positivo");
+  assert.equal(tipoHallazgo(sin, "confirmado"), "omision");
+  assert.equal(tipoHallazgo(sin, "descartado"), "conforme");
+  assert.equal(tipoHallazgo(con, "no_concluyente"), "no_concluyente");
+  assert.equal(tipoHallazgo(sin, "no_concluyente"), "no_concluyente");
+  assert.equal(tipoHallazgo({ puntaje: 0, NR: true }, "confirmado"), "acierto");
+});
