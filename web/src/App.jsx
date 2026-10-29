@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, SIN_PRIORIDAD, nivelDe, pasaFiltros } from "./Mapa.jsx";
-import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, tieneAlerta, tipoHallazgo } from "./clases.js";
+import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, claseSinPrioridad, requiereRevision, tieneAlerta, tipoHallazgo } from "./clases.js";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import {
@@ -11,11 +11,12 @@ import { LIMITE_BYTES, validarGeojson } from "./validar.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
 const NIVELES_UI = [...NIVELES, [SIN_PRIORIDAD, "Sin prioridad"]];
+// Sin filtros se ve todo el sector: todas las prioridades, incluida «Sin prioridad», y todas sus clases.
+const TODOS_NIVELES = new Set(NIVELES_UI.map((x) => x[0]));
 const CLASES_TODAS = () => new Set(CLASES_SIN_ALERTA.map((c) => c[0]));
-const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
+const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"], ["ninguna", "Ninguna: predios sin alerta"]];
 const ACCIONES = [["todas", "Todas"], ["oficina", "Conciliar en oficina"], ["campo", "Verificar en campo"], ["ninguna", "Sin cola"]];
 const TRI = { dos_fuentes: "2 fuentes", solo_cartografia: "solo cartografía", solo_imagen: "solo imagen" };
-const TODOS_NIVELES = new Set(NIVELES.map((x) => x[0]));
 const MAX_LISTA = 400;
 
 const n = (x) => (x ?? 0).toLocaleString("es-CO");
@@ -34,7 +35,7 @@ export default function App() {
   const [accion, setAccion] = useState("todas");
   const [niveles, setNiveles] = useState(TODOS_NIVELES);
   const [sinAlerta, setSinAlerta] = useState(CLASES_TODAS); // detalle de «Sin prioridad»; solo actúa con ese botón activo
-  const [etapa, setEtapa] = useState("pendientes"); // todos | pendientes | revisados | confirmado
+  const [etapa, setEtapa] = useState("todos"); // todos | pendientes | revisados | confirmado; abre en «Predios»: sin filtros, la lista coincide con el total
   const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
   const [ficha, setFicha] = useState(null);
   const [revisiones, setRevisiones] = useState(leer);
@@ -167,26 +168,33 @@ export default function App() {
     };
     return {
       nivel: Object.fromEntries(NIVELES_UI.map(([k]) => [k, contar({ niveles: new Set([k]) }, (p) => nivelDe(p) === k)])),
-      clase: Object.fromEntries(CLASES_SIN_ALERTA.map(([k]) => [k, contar({ niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]), tipo: "todas", sinAlerta: new Set([k]) }, (p) => claseSinAlerta(p) === k)])),
-      tipo: Object.fromEntries(TIPOS.map(([k]) => [k, contar({ tipo: k })])),
+      clase: Object.fromEntries(CLASES_SIN_ALERTA.map(([k]) => [k, contar({ niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]), tipo: "todas", sinAlerta: new Set([k]) }, (p) => claseSinPrioridad(p) === k)])),
+      tipo: Object.fromEntries(TIPOS.map(([k]) => [k, contar(k === "ninguna" ? { tipo: k, niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]) } : { tipo: k })])),
       accion: Object.fromEntries(ACCIONES.map(([k]) => [k, contar({ accion: k })])),
     };
   }, [alertas, sinAlertas, filtros]);
 
   /* ---------- Proceso: detectados → por revisar → revisados → confirmados ---------- */
   const etapas = useMemo(() => {
-    const revisados = base.filter((p) => revisiones[p.npn]).length;
+    // «Por revisar» son los predios con alerta (A1 a A3 y NR); los sin alerta solo se revisan como control.
+    const conAlerta = base.filter(requiereRevision);
     return {
       todos: base.length,
-      pendientes: base.length - revisados,
-      revisados,
+      requieren: conAlerta.length,
+      requierenHechos: conAlerta.filter((p) => revisiones[p.npn]).length,
+      pendientes: conAlerta.filter((p) => !revisiones[p.npn]).length,
+      revisados: base.filter((p) => revisiones[p.npn]).length,
       confirmado: base.filter((p) => revisiones[p.npn]?.estado === "confirmado").length,
+      controles: base.filter((p) => !requiereRevision(p) && revisiones[p.npn]).length,
+      vivienda: base.filter((p) => p.puntaje > 0).length,
+      nr: base.filter((p) => p.NR).length,
+      sinAlerta: base.filter((p) => !requiereRevision(p)).length,
     };
   }, [base, revisiones]);
 
   const lista = useMemo(() => base.filter((p) => {
     const r = revisiones[p.npn];
-    if (etapa === "pendientes") return !r;
+    if (etapa === "pendientes") return requiereRevision(p) && !r;
     if (etapa === "revisados") return !!r;
     if (etapa === "confirmado") return r?.estado === "confirmado";
     return true;
@@ -194,7 +202,7 @@ export default function App() {
   const visibles = lista.slice(0, mostrar);
   useEffect(() => setMostrar(MAX_LISTA), [tipo, niveles, accion, etapa, sinAlerta]);
 
-  const progreso = { hechos: etapas.revisados, total: base.length };
+  const progreso = { hechos: etapas.requierenHechos, total: etapas.requieren };
   const posicion = useMemo(() => {
     const i = lista.findIndex((p) => p.npn === sel);
     if (i >= 0) return { texto: `${i + 1} de ${n(lista.length)}`, ok: true };
@@ -249,7 +257,7 @@ export default function App() {
   const siguientePendiente = useCallback((desde = sel, rev = revisiones) => {
     const i = base.findIndex((p) => p.npn === desde);
     const orden = [...base.slice(i + 1), ...base.slice(0, i + 1)];
-    const sig = orden.find((p) => !rev[p.npn] && p.npn !== desde);
+    const sig = orden.find((p) => requiereRevision(p) && !rev[p.npn] && p.npn !== desde);
     if (sig) setSel(sig.npn);
   }, [base, sel, revisiones]);
 
@@ -388,9 +396,15 @@ export default function App() {
     }
   };
 
+  // «Ninguna» (sin alerta) solo tiene sentido con «Sin prioridad»: elegir una enciende la otra y apagar la otra vuelve a «Todas».
+  const elegirTipo = (k) => {
+    setTipo(k);
+    if (k === "ninguna") setEtapa("todos"); // los predios sin alerta no están en «Por revisar»
+    if (k === "ninguna" && !niveles.has(SIN_PRIORIDAD)) setNiveles(new Set([...niveles, SIN_PRIORIDAD]));
+  };
   const alternarNivel = (k) => {
     const s = new Set(niveles);
-    if (s.has(k)) s.delete(k); else s.add(k);
+    if (s.has(k)) { s.delete(k); if (k === SIN_PRIORIDAD && tipo === "ninguna") setTipo("todas"); } else s.add(k);
     setNiveles(s.size ? s : TODOS_NIVELES);
   };
   const hayFiltros = tipo !== "todas" || accion !== "todas" || niveles.size !== TODOS_NIVELES.size || [...TODOS_NIVELES].some((k) => !niveles.has(k)) || sinAlerta.size !== CLASES_SIN_ALERTA.length;
@@ -413,7 +427,7 @@ export default function App() {
   const r = datos?.resumen;
   const tri = r?.triangulacion;
   const hayEvidencia = r?.evidencia_imagenes;
-  const pct = base.length ? (etapas.revisados / base.length) * 100 : 0;
+  const pct = etapas.requieren ? (etapas.requierenHechos / etapas.requieren) * 100 : 0;
 
   return (
     <div className={`app ${sel ? "con-ficha" : ""}`}>
@@ -435,7 +449,7 @@ export default function App() {
             <p className="eyebrow">Proceso de revisión</p>
             <ol className="etapas" style={{ "--progreso": pct / 100 }}>
               {[
-                ["todos", "Detectados", etapas.todos],
+                ["todos", "Predios", etapas.todos],
                 ["pendientes", "Por revisar", etapas.pendientes],
                 ["revisados", "Revisados", etapas.revisados],
                 ["confirmado", "Confirmados", etapas.confirmado],
@@ -452,8 +466,12 @@ export default function App() {
               <i style={{ width: `${pct}%` }} />
             </div>
             <p className="avance-texto" aria-live="polite">
-              {n(etapas.revisados)} de {n(base.length)} predios revisados
-              {etapas.pendientes === 0 && base.length > 0 ? " · ¡cola completa!" : ""}
+              {n(etapas.requierenHechos)} de {n(etapas.requieren)} predios con alerta revisados
+              {etapas.pendientes === 0 && etapas.requieren > 0 ? " · ¡cola completa!" : ""}
+            </p>
+            <p className="avance-detalle">
+              {n(etapas.todos)} predios = {n(etapas.vivienda)} con alerta de vivienda + {n(etapas.nr)} NR (revisar destino) + {n(etapas.sinAlerta)} sin alerta
+              {etapas.controles ? ` · ${n(etapas.controles)} ${etapas.controles === 1 ? "control sin alerta revisado" : "controles sin alerta revisados"}` : ""}
             </p>
           </section>
 
@@ -484,15 +502,15 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                {tipo !== "todas" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas».</p>}
+                {tipo !== "todas" && tipo !== "ninguna" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas» o «Ninguna».</p>}
               </div>
             )}
 
             <p className="etiqueta">Tipo de alerta <em>elige una</em></p>
             <div className="fichas unica tipos-5" role="group" aria-label="Tipo de alerta">
               {TIPOS.map(([k, t]) => (
-                <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => setTipo(k)} title={t}>
-                  <span>{k === "todas" ? "Todas" : k}</span><b>{n(cuenta.tipo[k])}</b>
+                <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => elegirTipo(k)} title={t}>
+                  <span>{k === "todas" ? "Todas" : k === "ninguna" ? "Ninguna" : k}</span><b>{n(cuenta.tipo[k])}</b>
                 </button>
               ))}
             </div>
@@ -588,7 +606,7 @@ export default function App() {
             })}
             {datos && lista.length === 0 && (
               <li className="nada">
-                {etapa === "pendientes" && base.length > 0 ? "No quedan predios por revisar con estos filtros." : "Sin predios en esta etapa."}
+                {etapa === "pendientes" && etapas.requieren > 0 ? "No quedan predios con alerta por revisar con estos filtros." : etapa === "pendientes" && etapas.todos > 0 ? "Estos predios no tienen alerta: están en la etapa «Predios»." : "Sin predios en esta etapa."}
               </li>
             )}
             {lista.length > visibles.length && (

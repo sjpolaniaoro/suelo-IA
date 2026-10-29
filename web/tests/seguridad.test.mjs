@@ -196,10 +196,12 @@ test("los filtros combinan prioridad, tipo y cola con «Sin prioridad» como val
   const ok = { puntaje: 0, nivel: "sin_alerta", ph: false, accion: null };
   const cart = { puntaje: 0, nivel: "sin_alerta", ph: false, accion: "oficina" };
   const nr = { puntaje: 0, NR: true, nivel: "no_residencial", accion: "campo" };
-  const base = { tipo: "todas", accion: "todas", niveles: new Set(["rojo", "naranja", "amarillo"]), sinAlerta: new Set(["ok", "ph", "cartografia"]) };
+  const base = { tipo: "todas", accion: "todas", niveles: new Set(["rojo", "naranja", "amarillo"]), sinAlerta: new Set(["ok", "ph", "cartografia", "nr"]) };
   const con = { ...base, niveles: new Set([...base.niveles, "ninguna"]) };
-  // por defecto solo se ven las alertas, como antes
+  // sin «Sin prioridad» solo se ven las alertas de vivienda
   assert.ok(pasaFiltros(alta, base)); assert.ok(!pasaFiltros(ok, base)); assert.ok(!pasaFiltros(nr, base));
+  // sin ningún filtro (todo encendido) se ve todo
+  for (const p of [alta, ok, cart, nr, { puntaje: 0, ph: true }]) assert.ok(pasaFiltros(p, con));
   // con «Sin prioridad» entran los sin alerta y NR
   assert.ok(pasaFiltros(ok, con)); assert.ok(pasaFiltros(cart, con)); assert.ok(pasaFiltros(nr, con));
   // un tipo concreto deja fuera a los que no tienen tipo
@@ -208,6 +210,11 @@ test("los filtros combinan prioridad, tipo y cola con «Sin prioridad» como val
   // la cola aplica igual a todos, incluida «Sin cola»
   assert.ok(!pasaFiltros(ok, { ...con, accion: "oficina" })); assert.ok(pasaFiltros(cart, { ...con, accion: "oficina" }));
   assert.ok(pasaFiltros(ok, { ...con, accion: "ninguna" })); assert.ok(!pasaFiltros(alta, { ...con, accion: "ninguna" }));
+  // «Ninguna» deja solo los predios sin alerta; excluye alertas y NR
+  const ning = { ...con, tipo: "ninguna" };
+  assert.ok(pasaFiltros(ok, ning)); assert.ok(pasaFiltros(cart, ning));
+  assert.ok(!pasaFiltros(alta, ning)); assert.ok(!pasaFiltros(nr, ning));
+  assert.ok(!pasaFiltros(ok, { ...base, tipo: "ninguna" })); // sin «Sin prioridad» encendido no hay nada
   // el detalle filtra las clases sin alerta
   assert.ok(!pasaFiltros(ok, { ...con, sinAlerta: new Set(["ph"]) }));
 });

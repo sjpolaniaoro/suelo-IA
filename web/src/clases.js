@@ -8,13 +8,23 @@ export const CLASES_SIN_ALERTA = [
   ["cartografia", "Solo cartografía", "Sin alerta de imagen, pero la cartografía oficial contradice el registro"],
 ];
 
+// En el filtro «Sin prioridad» también entra NR (uso probablemente no residencial): no tiene puntaje de vivienda.
+CLASES_SIN_ALERTA.push(["nr", "NR · revisar destino", "Uso probablemente no residencial: sin puntaje de vivienda, pide revisar el destino"]);
+
 export const tieneAlerta = (p) => p.puntaje > 0 || !!p.NR;
+
+// La cola de revisión son los predios con alerta: A1, A2 o A3 (con puntaje) y NR (revisar destino, sin puntaje).
+// El resto del sector (sin alerta) solo se revisa como control. Total del sector = alertas de vivienda + NR + sin alerta.
+export const requiereRevision = tieneAlerta;
 
 export function claseSinAlerta(p) {
   if (tieneAlerta(p)) return null;
   if (p.ph) return "ph";
   return p.accion ? "cartografia" : "ok";
 }
+
+// Clase dentro de «Sin prioridad»: las tres sin alerta más NR.
+export const claseSinPrioridad = (p) => (p.NR ? "nr" : claseSinAlerta(p));
 
 export const ETIQUETA_CLASE = { ok: "OK", ph: "PH", cartografia: "CART" };
 export const TEXTO_CLASE = {

@@ -25,6 +25,7 @@ export const COLORES_CLASE = {
   ok: [160, 197, 166],
   ph: [176, 141, 87],
   cartografia: [43, 122, 150],
+  nr: [14, 159, 188],
 };
 // Cola de trabajo de la triangulación: contorno azul = conciliar en oficina, tinta = verificar en campo.
 export const COLORES_ACCION = {
