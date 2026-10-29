@@ -1173,3 +1173,169 @@ main {
 .estado-sync.codigo {
   color: var(--neiva-rojo);
 }
+
+/* ---------- Filtros: dos lógicas, dos aspectos ---------- */
+.etiqueta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 14px 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sia-ink);
+}
+.etiqueta em {
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--sia-muted);
+}
+.filtros-estado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  background: var(--sia-soft);
+  border-left: 3px solid var(--sia-accent);
+  color: var(--sia-ink);
+}
+.filtros-estado b {
+  font-variant-numeric: tabular-nums;
+}
+.filtros-estado .enlace {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Botones de elección múltiple: casilla con el color de la categoría; encendida = casilla llena. */
+.fichas.multi {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.fichas.multi button {
+  justify-content: flex-start;
+  min-height: 40px;
+  padding: 6px 10px;
+  background: var(--sia-surface);
+  color: var(--sia-muted);
+  border: 1px solid var(--sia-control);
+}
+.fichas.multi button span {
+  flex: 1;
+  text-align: left;
+}
+.fichas.multi button i {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--c);
+  border-radius: 2px;
+  background: transparent;
+}
+.fichas.multi button.on {
+  background: #fff;
+  color: var(--sia-ink);
+  font-weight: 600;
+  border: 1px solid var(--sia-ink);
+  box-shadow: inset 3px 0 0 var(--c);
+}
+.fichas.multi button.on i {
+  background: var(--c);
+}
+.fichas.multi button b {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--sia-soft);
+  color: var(--sia-ink);
+}
+.fichas.multi button.nula:not(.on) {
+  border-style: dashed;
+}
+.sub-filtro {
+  margin: 8px 0 0 10px;
+  padding: 2px 0 8px 12px;
+  border-left: 2px solid var(--sia-control);
+}
+.sub-filtro .etiqueta {
+  margin-top: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: var(--sia-muted);
+}
+.sub-filtro .fichas.multi {
+  grid-template-columns: 1fr;
+}
+.sub-filtro .fichas.multi button {
+  min-height: 34px;
+  padding: 4px 10px;
+}
+
+/* Botones de elección única: control segmentado; la opción activa va en verde sólido. */
+.fichas.unica {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--sia-surface);
+}
+.fichas.unica.tipos-5 {
+  grid-template-columns: 1.3fr repeat(4, 1fr);
+}
+.fichas.unica.cola-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fichas.unica button {
+  flex-direction: column;
+  gap: 2px;
+  border: 0;
+  border-radius: 0;
+  min-height: 44px;
+  padding: 6px 4px;
+  background: transparent;
+  box-shadow: 1px 0 0 var(--sia-soft), 0 1px 0 var(--sia-soft);
+  color: var(--sia-ink);
+}
+.fichas.unica.cola-4 button {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 6px 10px;
+}
+.fichas.unica.cola-4 button span {
+  flex: 1;
+  text-align: left;
+}
+.fichas.unica button b {
+  font-size: 11px;
+  color: var(--sia-muted);
+}
+.fichas.unica.cola-4 button b {
+  font-size: 12px;
+}
+.fichas.unica button.on {
+  background: var(--sia-accent);
+  color: #fff;
+}
+.fichas.unica button.on b {
+  color: #fff;
+}
+.fichas.unica button:hover:not(.on) {
+  background: var(--sia-soft);
+}
+.fichas.unica button i.borde {
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+.fichas.unica button.on i.borde {
+  background: #fff;
+}

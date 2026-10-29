@@ -22,7 +22,7 @@ export const COLORES = {
 export const COLORES_VERIFICADO_OK = [27, 122, 60];
 // Predios sin alerta cuando su clase está activa en el filtro.
 export const COLORES_CLASE = {
-  ok: [129, 199, 132],
+  ok: [160, 197, 166],
   ph: [176, 141, 87],
   cartografia: [43, 122, 150],
 };

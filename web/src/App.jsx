@@ -460,45 +460,51 @@ export default function App() {
           {/* Clasificación */}
           <details className="clasificacion" open={typeof window !== "undefined" && window.innerWidth > 860}>
             <summary>Clasificación y filtros</summary>
-            <p className="etiqueta">Prioridad</p>
-            <div className="fichas" role="group" aria-label="Prioridad">
+            <div className="filtros-estado" aria-live="polite">
+              <span>Mostrando <b>{n(base.length)}</b> de {n(alertas.length + sinAlertas.length)} predios</span>
+              {hayFiltros && <button className="enlace" onClick={limpiarFiltros}>Limpiar filtros</button>}
+            </div>
+
+            <p className="etiqueta">Prioridad <em>elige una o varias</em></p>
+            <div className="fichas multi" role="group" aria-label="Prioridad">
               {NIVELES_UI.map(([k, t]) => (
-                <button key={k} className={niveles.has(k) ? "on" : ""} aria-pressed={niveles.has(k)} onClick={() => alternarNivel(k)}
+                <button key={k} className={`${niveles.has(k) ? "on" : ""} ${k === SIN_PRIORIDAD ? "nula" : ""}`} aria-pressed={niveles.has(k)} onClick={() => alternarNivel(k)}
                   title={k === SIN_PRIORIDAD ? "Predios sin puntaje: sin alerta, o NR (uso no residencial). Solo con el tipo «Todas»" : undefined}>
-                  <i style={{ background: k === SIN_PRIORIDAD ? rgb(COLORES.sin_alerta) : rgb(COLORES[k]) }} />{t} <b>{n(cuenta.nivel[k])}</b>
+                  <i style={{ "--c": k === SIN_PRIORIDAD ? rgb(COLORES.sin_alerta) : rgb(COLORES[k]) }} /><span>{t}</span><b>{n(cuenta.nivel[k])}</b>
                 </button>
               ))}
             </div>
             {niveles.has(SIN_PRIORIDAD) && (
-              <>
-                <p className="etiqueta">Detalle de sin prioridad</p>
-                <div className="fichas tipos" role="group" aria-label="Detalle de sin prioridad">
+              <div className="sub-filtro" role="group" aria-label="Detalle de sin prioridad">
+                <p className="etiqueta">Qué incluye «Sin prioridad»</p>
+                <div className="fichas multi">
                   {CLASES_SIN_ALERTA.map(([k, t, ayuda]) => (
                     <button key={k} className={sinAlerta.has(k) ? "on" : ""} aria-pressed={sinAlerta.has(k)} onClick={() => alternarClase(k)} title={ayuda}>
-                      <i style={{ background: rgb(COLORES_CLASE[k]) }} />{t} <b>{n(cuenta.clase[k])}</b>
+                      <i style={{ "--c": rgb(COLORES_CLASE[k]) }} /><span>{t}</span><b>{n(cuenta.clase[k])}</b>
                     </button>
                   ))}
                 </div>
                 {tipo !== "todas" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas».</p>}
-              </>
+              </div>
             )}
-            <p className="etiqueta">Tipo de alerta</p>
-            <div className="fichas tipos" role="group" aria-label="Tipo de alerta">
+
+            <p className="etiqueta">Tipo de alerta <em>elige una</em></p>
+            <div className="fichas unica tipos-5" role="group" aria-label="Tipo de alerta">
               {TIPOS.map(([k, t]) => (
                 <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => setTipo(k)} title={t}>
-                  {k === "todas" ? "Todas" : k} <b>{n(cuenta.tipo[k])}</b>
+                  <span>{k === "todas" ? "Todas" : k}</span><b>{n(cuenta.tipo[k])}</b>
                 </button>
               ))}
             </div>
-            <p className="etiqueta">Cola de trabajo</p>
-            <div className="fichas tipos" role="group" aria-label="Cola de trabajo">
+
+            <p className="etiqueta">Cola de trabajo <em>elige una</em></p>
+            <div className="fichas unica cola-4" role="group" aria-label="Cola de trabajo">
               {ACCIONES.map(([k, t]) => (
                 <button key={k} className={accion === k ? "on" : ""} aria-pressed={accion === k} onClick={() => setAccion(k)}>
-                  {COLORES_ACCION[k] && <i className="borde" style={{ borderColor: rgb(COLORES_ACCION[k]) }} />}{t} <b>{n(cuenta.accion[k])}</b>
+                  {COLORES_ACCION[k] && <i className="borde" style={{ borderColor: rgb(COLORES_ACCION[k]) }} />}<span>{t}</span><b>{n(cuenta.accion[k])}</b>
                 </button>
               ))}
             </div>
-            {hayFiltros && <button className="enlace" onClick={limpiarFiltros}>Limpiar filtros</button>}
             {tri && (
               <p className="resumen-tri">
                 De {n(tri.universo_sin_area)} predios habitacionales sin área construida registrada: en {n(tri.dos_fuentes)} la
