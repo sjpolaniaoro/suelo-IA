@@ -6,6 +6,7 @@ import { GeoJsonLayer } from "@deck.gl/layers";
 import { limites } from "./datos.js";
 import { textoTooltip } from "./tooltip.js";
 import { claseSinAlerta, tieneAlerta } from "./clases.js";
+import { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros } from "./filtros.js";
 
 maplibregl.setWorkerUrl(workerUrl);
 
@@ -21,7 +22,7 @@ export const COLORES = {
 export const COLORES_VERIFICADO_OK = [27, 122, 60];
 // Predios sin alerta cuando su clase está activa en el filtro.
 export const COLORES_CLASE = {
-  ok: [129, 199, 132],
+  ok: [160, 197, 166],
   ph: [176, 141, 87],
   cartografia: [43, 122, 150],
 };
@@ -63,15 +64,7 @@ function aplicarTema(m) {
 const movil = () => window.innerWidth <= 860;
 const relleno = () => (movil() ? { top: 70, left: 20, right: 20, bottom: Math.round(window.innerHeight * 0.6) } : 60);
 
-// NR (uso probablemente no residencial) no tiene puntaje de vivienda: solo aparece en su propio filtro.
-export const pasaAccion = (p, filtros) => !filtros.accion || filtros.accion === "todas" || p.accion === filtros.accion;
-
-export function pasaFiltros(p, filtros) {
-  if (!tieneAlerta(p)) return !!filtros.sinAlerta?.has(claseSinAlerta(p)) && pasaAccion(p, filtros);
-  if (p.NR) return filtros.tipo === "NR" && pasaAccion(p, filtros);
-  if (!(p.puntaje > 0) || filtros.tipo === "NR") return false;
-  return (filtros.tipo === "todas" || p[filtros.tipo]) && filtros.niveles.has(p.nivel) && pasaAccion(p, filtros);
-}
+export { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros };
 
 export default function Mapa({ predios, huellas, filtros, estados, seleccionado, onSeleccion }) {
   const contenedor = useRef(null);
@@ -154,9 +147,9 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
           const est = estados[p.npn]?.estado;
           if (est === "descartado" && !tieneAlerta(p)) return [...COLORES_VERIFICADO_OK, 255];
           if (est && COLORES_ESTADO[est]) return [...COLORES_ESTADO[est], 235];
-          const vivo = pasaFiltros(p, filtros) || (p.NR && filtros.tipo === "todas" && pasaAccion(p, filtros));
+          const vivo = pasaFiltros(p, filtros);
           if (!tieneAlerta(p)) {
-            return pasaFiltros(p, filtros) ? [...COLORES_CLASE[claseSinAlerta(p)], 235] : [...COLORES.sin_alerta, 170];
+            return vivo ? [...COLORES_CLASE[claseSinAlerta(p)], 235] : [...COLORES.sin_alerta, 170];
           }
           if (!vivo) return [...COLORES.sin_alerta, 55];
           return [...COLORES[p.nivel], p.nivel === "sin_alerta" ? 170 : 235];

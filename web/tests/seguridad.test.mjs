@@ -189,3 +189,25 @@ test("tipo_hallazgo sigue el árbol de decisión", async () => {
   assert.equal(tipoHallazgo(sin, "no_concluyente"), "no_concluyente");
   assert.equal(tipoHallazgo({ puntaje: 0, NR: true }, "confirmado"), "acierto");
 });
+
+test("los filtros combinan prioridad, tipo y cola con «Sin prioridad» como valor nulo", async () => {
+  const { pasaFiltros } = await import("../src/filtros.js");
+  const alta = { puntaje: 70, nivel: "rojo", A1: true, accion: "oficina" };
+  const ok = { puntaje: 0, nivel: "sin_alerta", ph: false, accion: null };
+  const cart = { puntaje: 0, nivel: "sin_alerta", ph: false, accion: "oficina" };
+  const nr = { puntaje: 0, NR: true, nivel: "no_residencial", accion: "campo" };
+  const base = { tipo: "todas", accion: "todas", niveles: new Set(["rojo", "naranja", "amarillo"]), sinAlerta: new Set(["ok", "ph", "cartografia"]) };
+  const con = { ...base, niveles: new Set([...base.niveles, "ninguna"]) };
+  // por defecto solo se ven las alertas, como antes
+  assert.ok(pasaFiltros(alta, base)); assert.ok(!pasaFiltros(ok, base)); assert.ok(!pasaFiltros(nr, base));
+  // con «Sin prioridad» entran los sin alerta y NR
+  assert.ok(pasaFiltros(ok, con)); assert.ok(pasaFiltros(cart, con)); assert.ok(pasaFiltros(nr, con));
+  // un tipo concreto deja fuera a los que no tienen tipo
+  assert.ok(!pasaFiltros(ok, { ...con, tipo: "A1" })); assert.ok(!pasaFiltros(nr, { ...con, tipo: "A1" }));
+  assert.ok(pasaFiltros(nr, { ...base, tipo: "NR" })); assert.ok(!pasaFiltros(alta, { ...base, tipo: "NR" }));
+  // la cola aplica igual a todos, incluida «Sin cola»
+  assert.ok(!pasaFiltros(ok, { ...con, accion: "oficina" })); assert.ok(pasaFiltros(cart, { ...con, accion: "oficina" }));
+  assert.ok(pasaFiltros(ok, { ...con, accion: "ninguna" })); assert.ok(!pasaFiltros(alta, { ...con, accion: "ninguna" }));
+  // el detalle filtra las clases sin alerta
+  assert.ok(!pasaFiltros(ok, { ...con, sinAlerta: new Set(["ph"]) }));
+});
