@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, pasaFiltros } from "./Mapa.jsx";
+import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, SIN_PRIORIDAD, nivelDe, pasaFiltros } from "./Mapa.jsx";
 import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, tieneAlerta, tipoHallazgo } from "./clases.js";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
@@ -10,8 +10,10 @@ import { enviarNube, leerNube, uuid } from "./nube.js";
 import { LIMITE_BYTES, validarGeojson } from "./validar.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
+const NIVELES_UI = [...NIVELES, [SIN_PRIORIDAD, "Sin prioridad"]];
+const CLASES_TODAS = () => new Set(CLASES_SIN_ALERTA.map((c) => c[0]));
 const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
-const ACCIONES = [["todas", "Todas"], ["oficina", "Conciliar en oficina"], ["campo", "Verificar en campo"]];
+const ACCIONES = [["todas", "Todas"], ["oficina", "Conciliar en oficina"], ["campo", "Verificar en campo"], ["ninguna", "Sin cola"]];
 const TRI = { dos_fuentes: "2 fuentes", solo_cartografia: "solo cartografía", solo_imagen: "solo imagen" };
 const TODOS_NIVELES = new Set(NIVELES.map((x) => x[0]));
 const MAX_LISTA = 400;
@@ -31,7 +33,7 @@ export default function App() {
   const [tipo, setTipo] = useState("todas");
   const [accion, setAccion] = useState("todas");
   const [niveles, setNiveles] = useState(TODOS_NIVELES);
-  const [sinAlerta, setSinAlerta] = useState(() => new Set()); // clases sin alerta visibles (ninguna por defecto)
+  const [sinAlerta, setSinAlerta] = useState(CLASES_TODAS); // detalle de «Sin prioridad»; solo actúa con ese botón activo
   const [etapa, setEtapa] = useState("pendientes"); // todos | pendientes | revisados | confirmado
   const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
   const [ficha, setFicha] = useState(null);
@@ -148,43 +150,28 @@ export default function App() {
       .filter((p) => !tieneAlerta(p))
       .sort((a, b) => (b.area_huella ?? 0) - (a.area_huella ?? 0));
   }, [datos]);
-  const cuentaClase = useMemo(() => {
-    const c = { ok: 0, ph: 0, cartografia: 0 };
-    sinAlertas.forEach((p) => { c[claseSinAlerta(p)]++; });
-    return c;
-  }, [sinAlertas]);
-
   const filtros = useMemo(() => ({ tipo, niveles, accion, sinAlerta }), [tipo, niveles, accion, sinAlerta]);
   const base = useMemo(
     () => [...alertas, ...sinAlertas].filter((p) => pasaFiltros(p, filtros)),
     [alertas, sinAlertas, filtros],
   );
 
-  const cuentaAccion = useMemo(() => {
-    const c = { todas: 0, oficina: 0, campo: 0 };
-    alertas.forEach((p) => {
-      if (!pasaFiltros(p, { tipo, niveles, accion: "todas" })) return;
-      c.todas++;
-      if (p.accion) c[p.accion]++;
-    });
-    return c;
-  }, [alertas, tipo, niveles]);
-
-  const cuentaNivel = useMemo(() => {
-    const c = { rojo: 0, naranja: 0, amarillo: 0 };
-    alertas.forEach((p) => { if (!p.NR && (tipo === "todas" || p[tipo])) c[p.nivel]++; });
-    return c;
-  }, [alertas, tipo]);
-  const cuentaTipo = useMemo(() => {
-    const c = { todas: 0, A1: 0, A2: 0, A3: 0, NR: 0 };
-    alertas.forEach((p) => {
-      if (p.NR) { c.NR++; return; }
-      if (!niveles.has(p.nivel)) return;
-      c.todas++;
-      ["A1", "A2", "A3"].forEach((k) => { if (p[k]) c[k]++; });
-    });
-    return c;
-  }, [alertas, niveles]);
+  // Cada contador responde «cuántos predios saldrían si eligiera este botón», con los demás filtros como están.
+  const cuenta = useMemo(() => {
+    const universo = [...alertas, ...sinAlertas];
+    const contar = (cambio, extra = () => true) => {
+      const f = { ...filtros, ...cambio };
+      let c = 0;
+      for (const p of universo) if (extra(p) && pasaFiltros(p, f)) c++;
+      return c;
+    };
+    return {
+      nivel: Object.fromEntries(NIVELES_UI.map(([k]) => [k, contar({ niveles: new Set([k]) }, (p) => nivelDe(p) === k)])),
+      clase: Object.fromEntries(CLASES_SIN_ALERTA.map(([k]) => [k, contar({ niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]), tipo: "todas", sinAlerta: new Set([k]) }, (p) => claseSinAlerta(p) === k)])),
+      tipo: Object.fromEntries(TIPOS.map(([k]) => [k, contar({ tipo: k })])),
+      accion: Object.fromEntries(ACCIONES.map(([k]) => [k, contar({ accion: k })])),
+    };
+  }, [alertas, sinAlertas, filtros]);
 
   /* ---------- Proceso: detectados → por revisar → revisados → confirmados ---------- */
   const etapas = useMemo(() => {
@@ -406,6 +393,8 @@ export default function App() {
     if (s.has(k)) s.delete(k); else s.add(k);
     setNiveles(s.size ? s : TODOS_NIVELES);
   };
+  const hayFiltros = tipo !== "todas" || accion !== "todas" || niveles.size !== TODOS_NIVELES.size || [...TODOS_NIVELES].some((k) => !niveles.has(k)) || sinAlerta.size !== CLASES_SIN_ALERTA.length;
+  const limpiarFiltros = () => { setTipo("todas"); setAccion("todas"); setNiveles(TODOS_NIVELES); setSinAlerta(CLASES_TODAS()); };
 
   const alternarClase = (k) => {
     const s = new Set(sinAlerta);
@@ -473,25 +462,31 @@ export default function App() {
             <summary>Clasificación y filtros</summary>
             <p className="etiqueta">Prioridad</p>
             <div className="fichas" role="group" aria-label="Prioridad">
-              {NIVELES.map(([k, t]) => (
-                <button key={k} className={niveles.has(k) ? "on" : ""} aria-pressed={niveles.has(k)} onClick={() => alternarNivel(k)}>
-                  <i style={{ background: rgb(COLORES[k]) }} />{t} <b>{n(cuentaNivel[k])}</b>
+              {NIVELES_UI.map(([k, t]) => (
+                <button key={k} className={niveles.has(k) ? "on" : ""} aria-pressed={niveles.has(k)} onClick={() => alternarNivel(k)}
+                  title={k === SIN_PRIORIDAD ? "Predios sin puntaje: sin alerta, o NR (uso no residencial). Solo con el tipo «Todas»" : undefined}>
+                  <i style={{ background: k === SIN_PRIORIDAD ? rgb(COLORES.sin_alerta) : rgb(COLORES[k]) }} />{t} <b>{n(cuenta.nivel[k])}</b>
                 </button>
               ))}
             </div>
-            <p className="etiqueta">Predios sin alerta</p>
-            <div className="fichas tipos" role="group" aria-label="Predios sin alerta">
-              {CLASES_SIN_ALERTA.map(([k, t, ayuda]) => (
-                <button key={k} className={sinAlerta.has(k) ? "on" : ""} aria-pressed={sinAlerta.has(k)} onClick={() => alternarClase(k)} title={ayuda}>
-                  <i style={{ background: rgb(COLORES_CLASE[k]) }} />{t} <b>{n(cuentaClase[k])}</b>
-                </button>
-              ))}
-            </div>
+            {niveles.has(SIN_PRIORIDAD) && (
+              <>
+                <p className="etiqueta">Detalle de sin prioridad</p>
+                <div className="fichas tipos" role="group" aria-label="Detalle de sin prioridad">
+                  {CLASES_SIN_ALERTA.map(([k, t, ayuda]) => (
+                    <button key={k} className={sinAlerta.has(k) ? "on" : ""} aria-pressed={sinAlerta.has(k)} onClick={() => alternarClase(k)} title={ayuda}>
+                      <i style={{ background: rgb(COLORES_CLASE[k]) }} />{t} <b>{n(cuenta.clase[k])}</b>
+                    </button>
+                  ))}
+                </div>
+                {tipo !== "todas" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas».</p>}
+              </>
+            )}
             <p className="etiqueta">Tipo de alerta</p>
             <div className="fichas tipos" role="group" aria-label="Tipo de alerta">
               {TIPOS.map(([k, t]) => (
                 <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => setTipo(k)} title={t}>
-                  {k === "todas" ? "Todas" : k} <b>{n(cuentaTipo[k])}</b>
+                  {k === "todas" ? "Todas" : k} <b>{n(cuenta.tipo[k])}</b>
                 </button>
               ))}
             </div>
@@ -499,10 +494,11 @@ export default function App() {
             <div className="fichas tipos" role="group" aria-label="Cola de trabajo">
               {ACCIONES.map(([k, t]) => (
                 <button key={k} className={accion === k ? "on" : ""} aria-pressed={accion === k} onClick={() => setAccion(k)}>
-                  {k !== "todas" && <i className="borde" style={{ borderColor: rgb(COLORES_ACCION[k]) }} />}{t} <b>{n(cuentaAccion[k])}</b>
+                  {COLORES_ACCION[k] && <i className="borde" style={{ borderColor: rgb(COLORES_ACCION[k]) }} />}{t} <b>{n(cuenta.accion[k])}</b>
                 </button>
               ))}
             </div>
+            {hayFiltros && <button className="enlace" onClick={limpiarFiltros}>Limpiar filtros</button>}
             {tri && (
               <p className="resumen-tri">
                 De {n(tri.universo_sin_area)} predios habitacionales sin área construida registrada: en {n(tri.dos_fuentes)} la
