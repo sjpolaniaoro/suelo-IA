@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, SIN_PRIORIDAD, nivelDe, pasaFiltros } from "./Mapa.jsx";
-import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, claseSinPrioridad, tieneAlerta, tipoHallazgo } from "./clases.js";
+import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, claseSinPrioridad, requiereRevision, tieneAlerta, tipoHallazgo } from "./clases.js";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import {
@@ -176,8 +176,8 @@ export default function App() {
 
   /* ---------- Proceso: detectados → por revisar → revisados → confirmados ---------- */
   const etapas = useMemo(() => {
-    // «Por revisar» son los predios con alerta (A1 a A3 o NR); los sin alerta solo se revisan como control.
-    const conAlerta = base.filter(tieneAlerta);
+    // «Por revisar» son los predios con alerta de vivienda; el resto (sin alerta y NR) es «Sin prioridad».
+    const conAlerta = base.filter(requiereRevision);
     return {
       todos: base.length,
       requieren: conAlerta.length,
@@ -185,16 +185,15 @@ export default function App() {
       pendientes: conAlerta.filter((p) => !revisiones[p.npn]).length,
       revisados: base.filter((p) => revisiones[p.npn]).length,
       confirmado: base.filter((p) => revisiones[p.npn]?.estado === "confirmado").length,
-      controles: base.filter((p) => !tieneAlerta(p) && revisiones[p.npn]).length,
-      vivienda: base.filter((p) => p.puntaje > 0).length,
+      controles: base.filter((p) => !requiereRevision(p) && revisiones[p.npn]).length,
+      sinPrioridad: base.filter((p) => !requiereRevision(p)).length,
       nr: base.filter((p) => p.NR).length,
-      sinAlerta: base.filter((p) => !tieneAlerta(p)).length,
     };
   }, [base, revisiones]);
 
   const lista = useMemo(() => base.filter((p) => {
     const r = revisiones[p.npn];
-    if (etapa === "pendientes") return tieneAlerta(p) && !r;
+    if (etapa === "pendientes") return requiereRevision(p) && !r;
     if (etapa === "revisados") return !!r;
     if (etapa === "confirmado") return r?.estado === "confirmado";
     return true;
@@ -257,7 +256,7 @@ export default function App() {
   const siguientePendiente = useCallback((desde = sel, rev = revisiones) => {
     const i = base.findIndex((p) => p.npn === desde);
     const orden = [...base.slice(i + 1), ...base.slice(0, i + 1)];
-    const sig = orden.find((p) => tieneAlerta(p) && !rev[p.npn] && p.npn !== desde);
+    const sig = orden.find((p) => requiereRevision(p) && !rev[p.npn] && p.npn !== desde);
     if (sig) setSel(sig.npn);
   }, [base, sel, revisiones]);
 
@@ -465,12 +464,12 @@ export default function App() {
               <i style={{ width: `${pct}%` }} />
             </div>
             <p className="avance-texto" aria-live="polite">
-              {n(etapas.requierenHechos)} de {n(etapas.requieren)} predios con alerta revisados
+              {n(etapas.requierenHechos)} de {n(etapas.requieren)} alertas de vivienda revisadas
               {etapas.pendientes === 0 && etapas.requieren > 0 ? " · ¡cola completa!" : ""}
             </p>
             <p className="avance-detalle">
-              {n(etapas.todos)} predios = {n(etapas.vivienda)} con alerta de vivienda + {n(etapas.nr)} NR (revisar destino) + {n(etapas.sinAlerta)} sin alerta
-              {etapas.controles ? ` · ${n(etapas.controles)} controles sin alerta revisados` : ""}
+              {n(etapas.todos)} predios = {n(etapas.requieren)} con alerta de vivienda + {n(etapas.sinPrioridad)} sin prioridad{etapas.nr ? ` (incluye ${n(etapas.nr)} NR)` : ""}
+              {etapas.controles ? ` · ${n(etapas.controles)} sin prioridad revisados como control` : ""}
             </p>
           </section>
 

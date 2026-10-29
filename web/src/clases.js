@@ -11,6 +11,10 @@ export const CLASES_SIN_ALERTA = [
 // En el filtro «Sin prioridad» también entra NR (uso probablemente no residencial): no tiene puntaje de vivienda.
 CLASES_SIN_ALERTA.push(["nr", "NR · revisar destino", "Uso probablemente no residencial: sin puntaje de vivienda, pide revisar el destino"]);
 
+// La cola de revisión son los predios con alerta de vivienda (A1, A2 o A3). NR queda en «Sin prioridad»: se revisa
+// el destino, pero no tiene puntaje y no entra en el embudo, para que el total sea 1.283 + sin prioridad = 7.329.
+export const requiereRevision = (p) => p.puntaje > 0;
+
 export const tieneAlerta = (p) => p.puntaje > 0 || !!p.NR;
 
 export function claseSinAlerta(p) {
