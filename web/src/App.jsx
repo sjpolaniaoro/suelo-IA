@@ -35,7 +35,7 @@ export default function App() {
   const [accion, setAccion] = useState("todas");
   const [niveles, setNiveles] = useState(TODOS_NIVELES);
   const [sinAlerta, setSinAlerta] = useState(CLASES_TODAS); // detalle de «Sin prioridad»; solo actúa con ese botón activo
-  const [etapa, setEtapa] = useState("pendientes"); // todos | pendientes | revisados | confirmado
+  const [etapa, setEtapa] = useState("todos"); // todos | pendientes | revisados | confirmado; abre en «Predios»: sin filtros, la lista coincide con el total
   const [sel, setSel] = useState(() => new URLSearchParams(window.location.search).get("predio"));
   const [ficha, setFicha] = useState(null);
   const [revisiones, setRevisiones] = useState(leer);
@@ -176,7 +176,7 @@ export default function App() {
 
   /* ---------- Proceso: detectados → por revisar → revisados → confirmados ---------- */
   const etapas = useMemo(() => {
-    // «Por revisar» son los predios con alerta de vivienda; el resto (sin alerta y NR) es «Sin prioridad».
+    // «Por revisar» son los predios con alerta (A1 a A3 y NR); los sin alerta solo se revisan como control.
     const conAlerta = base.filter(requiereRevision);
     return {
       todos: base.length,
@@ -186,8 +186,9 @@ export default function App() {
       revisados: base.filter((p) => revisiones[p.npn]).length,
       confirmado: base.filter((p) => revisiones[p.npn]?.estado === "confirmado").length,
       controles: base.filter((p) => !requiereRevision(p) && revisiones[p.npn]).length,
-      sinPrioridad: base.filter((p) => !requiereRevision(p)).length,
+      vivienda: base.filter((p) => p.puntaje > 0).length,
       nr: base.filter((p) => p.NR).length,
+      sinAlerta: base.filter((p) => !requiereRevision(p)).length,
     };
   }, [base, revisiones]);
 
@@ -398,6 +399,7 @@ export default function App() {
   // «Ninguna» (sin alerta) solo tiene sentido con «Sin prioridad»: elegir una enciende la otra y apagar la otra vuelve a «Todas».
   const elegirTipo = (k) => {
     setTipo(k);
+    if (k === "ninguna") setEtapa("todos"); // los predios sin alerta no están en «Por revisar»
     if (k === "ninguna" && !niveles.has(SIN_PRIORIDAD)) setNiveles(new Set([...niveles, SIN_PRIORIDAD]));
   };
   const alternarNivel = (k) => {
@@ -464,12 +466,12 @@ export default function App() {
               <i style={{ width: `${pct}%` }} />
             </div>
             <p className="avance-texto" aria-live="polite">
-              {n(etapas.requierenHechos)} de {n(etapas.requieren)} alertas de vivienda revisadas
+              {n(etapas.requierenHechos)} de {n(etapas.requieren)} predios con alerta revisados
               {etapas.pendientes === 0 && etapas.requieren > 0 ? " · ¡cola completa!" : ""}
             </p>
             <p className="avance-detalle">
-              {n(etapas.todos)} predios = {n(etapas.requieren)} con alerta de vivienda + {n(etapas.sinPrioridad)} sin prioridad{etapas.nr ? ` (incluye ${n(etapas.nr)} NR)` : ""}
-              {etapas.controles ? ` · ${n(etapas.controles)} sin prioridad revisados como control` : ""}
+              {n(etapas.todos)} predios = {n(etapas.vivienda)} con alerta de vivienda + {n(etapas.nr)} NR (revisar destino) + {n(etapas.sinAlerta)} sin alerta
+              {etapas.controles ? ` · ${n(etapas.controles)} ${etapas.controles === 1 ? "control sin alerta revisado" : "controles sin alerta revisados"}` : ""}
             </p>
           </section>
 
@@ -604,7 +606,7 @@ export default function App() {
             })}
             {datos && lista.length === 0 && (
               <li className="nada">
-                {etapa === "pendientes" && etapas.requieren > 0 ? "No quedan predios con alerta por revisar con estos filtros." : "Sin predios en esta etapa."}
+                {etapa === "pendientes" && etapas.requieren > 0 ? "No quedan predios con alerta por revisar con estos filtros." : etapa === "pendientes" && etapas.todos > 0 ? "Estos predios no tienen alerta: están en la etapa «Predios»." : "Sin predios en esta etapa."}
               </li>
             )}
             {lista.length > visibles.length && (
