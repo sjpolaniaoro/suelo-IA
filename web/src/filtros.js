@@ -19,7 +19,7 @@ export function pasaFiltros(p, filtros) {
   if (!tieneAlerta(p)) {
     return sinPrioridad && (filtros.tipo === "todas" || filtros.tipo === "ninguna") && !!filtros.sinAlerta?.has(claseSinAlerta(p)) && pasaAccion(p, filtros);
   }
-  if (p.NR) return (filtros.tipo === "NR" || (filtros.tipo === "todas" && sinPrioridad)) && pasaAccion(p, filtros);
+  if (p.NR) return (filtros.tipo === "NR" || (filtros.tipo === "todas" && sinPrioridad && !!filtros.sinAlerta?.has("nr"))) && pasaAccion(p, filtros);
   if (filtros.tipo === "NR" || filtros.tipo === "ninguna") return false;
   return (filtros.tipo === "todas" || p[filtros.tipo]) && filtros.niveles.has(p.nivel) && pasaAccion(p, filtros);
 }
