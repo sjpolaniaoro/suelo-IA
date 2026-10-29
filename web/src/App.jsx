@@ -12,7 +12,7 @@ import { LIMITE_BYTES, validarGeojson } from "./validar.js";
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
 const NIVELES_UI = [...NIVELES, [SIN_PRIORIDAD, "Sin prioridad"]];
 const CLASES_TODAS = () => new Set(CLASES_SIN_ALERTA.map((c) => c[0]));
-const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"]];
+const TIPOS = [["todas", "Todas"], ["A1", "A1 Construcción no registrada"], ["A2", "A2 Área subregistrada"], ["A3", "A3 Avalúo atípico"], ["NR", "NR Revisar destino (uso no residencial)"], ["ninguna", "Ninguna: predios sin alerta"]];
 const ACCIONES = [["todas", "Todas"], ["oficina", "Conciliar en oficina"], ["campo", "Verificar en campo"], ["ninguna", "Sin cola"]];
 const TRI = { dos_fuentes: "2 fuentes", solo_cartografia: "solo cartografía", solo_imagen: "solo imagen" };
 const TODOS_NIVELES = new Set(NIVELES.map((x) => x[0]));
@@ -168,7 +168,7 @@ export default function App() {
     return {
       nivel: Object.fromEntries(NIVELES_UI.map(([k]) => [k, contar({ niveles: new Set([k]) }, (p) => nivelDe(p) === k)])),
       clase: Object.fromEntries(CLASES_SIN_ALERTA.map(([k]) => [k, contar({ niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]), tipo: "todas", sinAlerta: new Set([k]) }, (p) => claseSinAlerta(p) === k)])),
-      tipo: Object.fromEntries(TIPOS.map(([k]) => [k, contar({ tipo: k })])),
+      tipo: Object.fromEntries(TIPOS.map(([k]) => [k, contar(k === "ninguna" ? { tipo: k, niveles: new Set([...filtros.niveles, SIN_PRIORIDAD]) } : { tipo: k })])),
       accion: Object.fromEntries(ACCIONES.map(([k]) => [k, contar({ accion: k })])),
     };
   }, [alertas, sinAlertas, filtros]);
@@ -388,9 +388,14 @@ export default function App() {
     }
   };
 
+  // «Ninguna» (sin alerta) solo tiene sentido con «Sin prioridad»: elegir una enciende la otra y apagar la otra vuelve a «Todas».
+  const elegirTipo = (k) => {
+    setTipo(k);
+    if (k === "ninguna" && !niveles.has(SIN_PRIORIDAD)) setNiveles(new Set([...niveles, SIN_PRIORIDAD]));
+  };
   const alternarNivel = (k) => {
     const s = new Set(niveles);
-    if (s.has(k)) s.delete(k); else s.add(k);
+    if (s.has(k)) { s.delete(k); if (k === SIN_PRIORIDAD && tipo === "ninguna") setTipo("todas"); } else s.add(k);
     setNiveles(s.size ? s : TODOS_NIVELES);
   };
   const hayFiltros = tipo !== "todas" || accion !== "todas" || niveles.size !== TODOS_NIVELES.size || [...TODOS_NIVELES].some((k) => !niveles.has(k)) || sinAlerta.size !== CLASES_SIN_ALERTA.length;
@@ -484,15 +489,15 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                {tipo !== "todas" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas».</p>}
+                {tipo !== "todas" && tipo !== "ninguna" && <p className="suave">Con un tipo de alerta elegido no hay predios sin prioridad: no tienen tipo. Elija «Todas» o «Ninguna».</p>}
               </div>
             )}
 
             <p className="etiqueta">Tipo de alerta <em>elige una</em></p>
             <div className="fichas unica tipos-5" role="group" aria-label="Tipo de alerta">
               {TIPOS.map(([k, t]) => (
-                <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => setTipo(k)} title={t}>
-                  <span>{k === "todas" ? "Todas" : k}</span><b>{n(cuenta.tipo[k])}</b>
+                <button key={k} className={tipo === k ? "on" : ""} aria-pressed={tipo === k} onClick={() => elegirTipo(k)} title={t}>
+                  <span>{k === "todas" ? "Todas" : k === "ninguna" ? "Ninguna" : k}</span><b>{n(cuenta.tipo[k])}</b>
                 </button>
               ))}
             </div>
