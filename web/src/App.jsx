@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, pasaFiltros } from "./Mapa.jsx";
+import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_VERIFICADO_OK, pasaFiltros } from "./Mapa.jsx";
 import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, tieneAlerta } from "./clases.js";
 import Ficha, { VEREDICTOS } from "./Ficha.jsx";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
@@ -518,6 +518,7 @@ export default function App() {
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.oficina) }} />Contorno: oficina</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.campo) }} />Contorno: campo</span>
               <span><i style={{ background: rgb(COLORES_CLASE.ok) }} />Sin alerta · OK</span>
+              <span><i style={{ background: rgb(COLORES_VERIFICADO_OK) }} />Verificado OK (revisado)</span>
               <span><i style={{ background: rgb(COLORES_CLASE.ph) }} />PH sin evaluar</span>
               <span><i style={{ background: rgb(COLORES_CLASE.cartografia) }} />Solo cartografía</span>
               <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta (oculto por el filtro)</span>
@@ -578,7 +579,7 @@ export default function App() {
                     <span className="dir">{p.direccion || p.npn}</span>
                     <span className="meta">{tipos}{fuentes}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
                     <b className="pt">{clase ? ETIQUETA_CLASE[clase] : p.NR ? "NR" : p.puntaje}</b>
-                    {rev && <em className={`est ${rev.estado}`} title={rev.estado}>{ICONO[rev.estado]}</em>}
+                    {rev && <em className={`est ${clase && rev.estado === "descartado" ? "verificado_ok" : rev.estado}`} title={clase && rev.estado === "descartado" ? "verificado OK" : rev.estado}>{clase && rev.estado === "descartado" ? "✓" : ICONO[rev.estado]}</em>}
                   </button>
                 </li>
               );

@@ -302,7 +302,7 @@ kbd {
   background: var(--amarillo);
 }
 .lista li button.n-clase-ok::before {
-  background: rgb(67, 160, 71);
+  background: rgb(129, 199, 132);
 }
 .lista li button.n-clase-ph::before {
   background: rgb(176, 141, 87);
@@ -353,6 +353,10 @@ kbd {
 }
 .est.descartado {
   background: var(--gris);
+}
+.est.verificado_ok {
+  background: rgb(27, 122, 60);
+  color: #fff;
 }
 .est.no_concluyente {
   background: var(--morado);

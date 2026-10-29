@@ -17,9 +17,11 @@ export const COLORES = {
   no_residencial: [14, 159, 188],
   sin_alerta: [160, 167, 176],
 };
+// Predio sin alerta revisado en terreno u oficina y encontrado conforme.
+export const COLORES_VERIFICADO_OK = [27, 122, 60];
 // Predios sin alerta cuando su clase está activa en el filtro.
 export const COLORES_CLASE = {
-  ok: [67, 160, 71],
+  ok: [129, 199, 132],
   ph: [176, 141, 87],
   cartografia: [43, 122, 150],
 };
@@ -150,6 +152,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
           const p = f.properties;
           if (p.npn === seleccionado) return [37, 99, 235, 255];
           const est = estados[p.npn]?.estado;
+          if (est === "descartado" && !tieneAlerta(p)) return [...COLORES_VERIFICADO_OK, 255];
           if (est && COLORES_ESTADO[est]) return [...COLORES_ESTADO[est], 235];
           const vivo = pasaFiltros(p, filtros) || (p.NR && filtros.tipo === "todas" && pasaAccion(p, filtros));
           if (!tieneAlerta(p)) {
