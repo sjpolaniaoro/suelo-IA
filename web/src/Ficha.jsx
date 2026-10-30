@@ -1,34 +1,23 @@
 import { useState } from "react";
 import { TEXTO_CLASE, claseSinAlerta, tieneAlerta } from "./clases.js";
 import { UMBRALES, evaluar, m2 } from "./consistencia.js";
+import { DECISIONES, FUENTES, decisionActiva, etiquetaDecision, etiquetaFuente } from "./decisiones.js";
 
 const fmt = (n, u = "") =>
   n === null || n === undefined ? "dato faltante" : `${Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 })}${u}`;
 
-export const VEREDICTOS = [
-  { k: "confirmado", t: "Confirmado", tecla: "C", ayuda: "Hay diferencia entre el registro y lo construido" },
-  { k: "descartado", t: "Descartado", tecla: "D", ayuda: "No hay diferencia" },
-  { k: "no_concluyente", t: "No concluyente", tecla: "N", ayuda: "No alcanza para decidir" },
-];
-// En un predio sin alerta, «descartado» es «verificado OK» y «confirmado» es una omisión del sistema
-// (hay diferencia que ninguna regla detectó). El dato guardado sigue siendo el mismo, por eso la
-// base de revisiones, el CSV y las métricas de validación no cambian.
-const VEREDICTOS_SIN_ALERTA = {
-  confirmado: { t: "Hay diferencia", ayuda: "El sistema no alertó, pero el registro no coincide con lo construido" },
-  descartado: { t: "Verificado OK", ayuda: "Revisado: el registro coincide con lo construido" },
-};
-const ACCION = { oficina: "Conciliar en oficina", campo: "Verificar en campo" };
+export const ACCION = { oficina: "Conciliar en oficina", campo: "Verificar en campo" };
 const SENTIDO = {
   cartografia_mayor: "La cartografía dibuja más que el registro",
   registro_mayor: "El registro declara más que la cartografía",
   igual: "Registro y cartografía iguales",
 };
 const signo = (x) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${m2(Math.abs(x))}`;
-const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
+export const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
   p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso, puedeDecidir = true,
-  centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES,
+  centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES, puedeRatificar = false, onRatificar, onMinimizar, fuente = null, onFuente,
 }) {
   const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
   const calle = centro && `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}`;
@@ -43,7 +32,8 @@ export default function Ficha({
   const copiar =() => navigator.clipboard?.writeText(window.location.href).catch(() => {});
 
   const clase = claseSinAlerta(p);
-  const veredictos = clase ? VEREDICTOS.map((v) => ({ ...v, ...VEREDICTOS_SIN_ALERTA[v.k] })) : VEREDICTOS;
+  // La fuente con error (opcional) se elige antes de decidir; si ya hay decisión, cambiarla la vuelve a registrar.
+  const activa = decisionActiva(revision);
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
   const cart = p.area_cart ?? 0;
@@ -62,6 +52,7 @@ export default function Ficha({
           <button onClick={() => onMover(-1)} disabled={!posicion?.ok} aria-label="Predio anterior" title="Anterior (K)">‹</button>
           <span>{posicion?.texto}</span>
           <button onClick={() => onMover(1)} disabled={!posicion?.ok} aria-label="Predio siguiente" title="Siguiente (J)">›</button>
+          {onMinimizar && <button className="minimizar" onClick={onMinimizar} aria-label="Volver a la tarjeta corta" title="Tarjeta corta">▾</button>}
           <button className="cerrar" onClick={onCerrar} aria-label="Cerrar ficha" title="Cerrar (Esc)">×</button>
         </div>
         <p className="ficha-rotulo">Hoja de revisión predial</p>
@@ -90,7 +81,7 @@ export default function Ficha({
           )}
           {hecho && (incons || tieneAlerta(p)) && (
             <p className="aviso-revisado">
-              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}»: la revisión no borra los datos. Abajo siguen las tres
+              Marcado «{etiquetaDecision(revision)}»: la revisión no borra los datos. Abajo siguen las tres
               fuentes, la diferencia y los porcentajes de coincidencia, aunque el terreno no levante esta alerta.
             </p>
           )}
@@ -208,20 +199,30 @@ export default function Ficha({
 
         <li className={hecho ? "hecho" : ""}>
           <div className="paso-cab"><span className="paso-num">{hecho ? "✓" : "3"}</span><h3>Decidir</h3></div>
+          <div className="fuente-error" role="radiogroup" aria-label="Fuente con error o desactualizada">
+            <span className="fuente-rotulo">Fuente con error o desactualizada <em>(opcional)</em></span>
+            {FUENTES.map(([k, t]) => (
+              <button key={k} type="button" role="radio" aria-checked={fuente === k} className={fuente === k ? "on" : ""} disabled={!puedeDecidir} onClick={() => onFuente(k)}>{t}</button>
+            ))}
+          </div>
           <div className="veredictos">
-            {veredictos.map((v) => (
-              <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} aria-pressed={revision?.estado === v.k} disabled={!puedeDecidir} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
-                {v.t}<kbd>{v.tecla}</kbd>
+            {DECISIONES.map((d) => (
+              <button key={`${d.k}-${d.motivo ?? ""}`} className={`${d.k} ${activa === d ? "activo" : ""}`} aria-pressed={activa === d} disabled={!puedeDecidir}
+                onClick={() => onDecidir(p.npn, { estado: d.k, motivo: d.motivo ?? null })} title={d.ayuda}>
+                {d.t}<kbd>{d.tecla}</kbd>
               </button>
             ))}
           </div>
           {!puedeDecidir && (
-            <p className="nota aviso-id" role="note">Para registrar la revisión, escribe antes tu nombre y grupo en la barra de arriba.</p>
+            <p className="nota aviso-id" role="note">Para registrar la revisión, identifícate antes en la barra de arriba (invitado o funcionario).</p>
           )}
           {revision && (
             <p className="nota">
-              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}${revision.grupo ? ` (${revision.grupo})` : ""}` : ""}.{" "}
+              Marcado «{etiquetaDecision(revision)}»{revision.fuente ? ` · fuente: ${etiquetaFuente(revision.fuente)}` : ""} el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}${revision.grupo ? ` (${revision.grupo})` : ""}` : ""}.{" "}
               <button className="enlace" onClick={() => onQuitar(p.npn)}>Quitar</button>
+              {revision.rol === "invitado" && (revision.ratificada
+                ? <span className="ratificada"> · ratificada por un funcionario</span>
+                : puedeRatificar && revision.id && <>{" · "}<button className="enlace" onClick={() => onRatificar(p.npn)}>Ratificar decisión de invitado</button></>)}
             </p>
           )}
         </li>
@@ -235,7 +236,7 @@ export default function Ficha({
           </button>
         )}
         <label className="auto"><input type="checkbox" checked={auto} onChange={(e) => onAuto(e.target.checked)} /> Avanzar al siguiente al decidir</label>
-        <p className="atajos">Atajos: <kbd>C</kbd> {clase ? "hay diferencia" : "confirmar"} · <kbd>D</kbd> {clase ? "verificado OK" : "descartar"} · <kbd>N</kbd> no concluyente · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
+        <p className="atajos">Atajos: <kbd>C</kbd> hay error · <kbd>D</kbd> está OK · <kbd>N</kbd> evidencia insuficiente · <kbd>U</kbd> no se pudo ubicar · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
         <details className="fuentes">
           <summary>Fuentes y fechas</summary>
           <ul>

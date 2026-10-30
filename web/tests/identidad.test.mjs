@@ -2,21 +2,46 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { identificado, validarIdentidad } from "../src/identidad.js";
-import { ErrorNube, enviarNube, reiniciarRespaldo, revisorPlano } from "../src/nube.js";
+import { conNube, esFuncionario, identificado, normalizarPerfil, validarIdentidad } from "../src/identidad.js";
+import { ErrorNube, enviarNube, leerEquipoNube, ratificarNube, reiniciarRespaldo, revisorPlano } from "../src/nube.js";
 
 const leer = (ruta) => readFileSync(new URL(ruta, import.meta.url), "utf8");
 
-test("nombre y grupo son obligatorios; el contacto es opcional y debe ser correo o teléfono", () => {
-  const ok = validarIdentidad({ nombre: "  Ana   Pérez ", grupo: " Grupo 3 ", contacto: "" });
-  assert.deepEqual(ok.valores, { nombre: "Ana Pérez", grupo: "Grupo 3", contacto: "" });
-  assert.ok(validarIdentidad({ nombre: "A", grupo: "G", contacto: "" }).error, "nombre de 1 letra");
-  assert.ok(validarIdentidad({ nombre: "Ana", grupo: "  ", contacto: "" }).error, "grupo vacío");
-  assert.ok(validarIdentidad({ nombre: "x".repeat(61), grupo: "G", contacto: "" }).error, "nombre largo");
-  assert.ok(validarIdentidad({ nombre: "Ana", grupo: "G", contacto: "ana@correo.co" }).valores, "correo");
-  assert.ok(validarIdentidad({ nombre: "Ana", grupo: "G", contacto: "+57 300 123 4567" }).valores, "teléfono");
-  assert.ok(validarIdentidad({ nombre: "Ana", grupo: "G", contacto: "ana@" }).error, "correo incompleto");
-  assert.ok(validarIdentidad({ nombre: "Ana", grupo: "G", contacto: "=HYPERLINK(1)" }).error, "fórmula como contacto");
+test("el invitado solo necesita nombre; el funcionario, equipo y código; el contacto es opcional", () => {
+  const inv = validarIdentidad({ nombre: "  Ana   Pérez ", rol: "invitado", equipo: "testing", contacto: "ana@correo.co", codigo: "x" });
+  assert.deepEqual(inv.valores, { nombre: "Ana Pérez", rol: "invitado", equipo: "", grupo: "Invitado", contacto: "" }, "el invitado no deja contacto ni equipo");
+  const fun = validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "testing", contacto: "+57 300 123 4567", codigo: "abc" });
+  assert.deepEqual(fun.valores, { nombre: "Ana", rol: "funcionario", equipo: "testing", grupo: "testing", contacto: "+57 300 123 4567" });
+  assert.ok(validarIdentidad({ nombre: "A", rol: "invitado" }).error, "nombre de 1 letra");
+  assert.ok(validarIdentidad({ nombre: "x".repeat(61), rol: "invitado" }).error, "nombre largo");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "" }).error, "sin elegir rol");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "", codigo: "abc" }).error, "funcionario sin equipo");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "otro", codigo: "abc" }).error, "equipo que no existe");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "testing", codigo: "  " }).error, "funcionario sin código");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "testing", codigo: "c", contacto: "ana@" }).error, "correo incompleto");
+  assert.ok(validarIdentidad({ nombre: "Ana", rol: "funcionario", equipo: "testing", codigo: "c", contacto: "=HYPERLINK(1)" }).error, "fórmula como contacto");
+});
+
+test("los perfiles anteriores a los roles se normalizan: con código, funcionario de testing; sin código, invitado", () => {
+  assert.equal(normalizarPerfil(null), null);
+  assert.deepEqual(normalizarPerfil({ nombre: "Ana", grupo: "Grupo 3", codigo: "c" }), { nombre: "Ana", grupo: "testing", codigo: "c", rol: "funcionario", equipo: "testing" });
+  const inv = normalizarPerfil({ nombre: "Luis", grupo: "Grupo 4", contacto: "x@y.co", codigo: "" });
+  assert.equal(inv.rol, "invitado");
+  assert.equal(inv.grupo, "Invitado");
+  assert.equal(inv.contacto, "", "un invitado no deja contacto");
+  const ya = { nombre: "Ana", rol: "invitado", grupo: "Invitado" };
+  assert.equal(normalizarPerfil(ya), ya, "un perfil con rol no se toca");
+});
+
+test("quién envía y quién lee: el invitado envía sin código; solo el funcionario con código lee", () => {
+  const inv = { nombre: "Luis", rol: "invitado", grupo: "Invitado" };
+  const fun = { nombre: "Ana", rol: "funcionario", grupo: "testing", codigo: "c" };
+  assert.equal(conNube(inv), true);
+  assert.equal(esFuncionario(inv), false);
+  assert.equal(conNube(fun), true);
+  assert.equal(esFuncionario(fun), true);
+  assert.equal(conNube({ nombre: "Ana", rol: "funcionario", grupo: "testing", codigo: "" }), false, "funcionario sin código no envía");
+  assert.equal(conNube(null), false);
 });
 
 test("solo se identifica quien tiene nombre y grupo", () => {
@@ -56,14 +81,23 @@ test("enviarNube manda nombre, grupo, contacto y la fecha de la decisión", asyn
   });
 });
 
-test("sin la migración 0005 (404) reenvía con el grupo dentro del nombre y recuerda el respaldo", async () => {
+test("sin las migraciones 0005 y 0006 reenvía con el grupo dentro del nombre y recuerda el respaldo", async () => {
   await conServidor((c) => ("p_grupo" in c ? json(404, { code: "PGRST202" }) : json(200, { ok: true, nueva: true })), async (cuerpos) => {
     await enviarNube(evento, "codigo");
-    assert.equal(cuerpos.length, 2);
-    assert.ok(!("p_grupo" in cuerpos[1]) && !("p_contacto" in cuerpos[1]), "el respaldo usa la firma anterior");
-    assert.equal(cuerpos[1].p_revisor, "Ana Pérez (Grupo 3)");
+    assert.equal(cuerpos.length, 3, "primero las funciones nuevas, luego las de la 0005 y al final las anteriores");
+    assert.ok(!("p_grupo" in cuerpos[2]) && !("p_contacto" in cuerpos[2]), "el respaldo usa la firma anterior");
+    assert.equal(cuerpos[2].p_revisor, "Ana Pérez (Grupo 3)");
     await enviarNube(evento, "codigo");
-    assert.equal(cuerpos.length, 3, "la segunda vez va directo al respaldo");
+    assert.equal(cuerpos.length, 4, "la segunda vez va directo al respaldo");
+  });
+});
+
+test("con la 0005 pero sin la 0006 usa la función con grupo", async () => {
+  await conServidor((c) => ("p_motivo" in c ? json(404, {}) : json(200, { ok: true, nueva: true })), async (cuerpos) => {
+    await enviarNube(evento, "codigo");
+    assert.equal(cuerpos.length, 2);
+    assert.equal(cuerpos[1].p_grupo, "Grupo 3");
+    assert.ok(!("p_motivo" in cuerpos[1]));
   });
 });
 
@@ -94,4 +128,80 @@ test("la migración 0005 guarda grupo y contacto sin devolver el contacto ni toc
   assert.ok(!/creada_en/.test(sql.replace(/--.*$/gm, "")), "creada_en (hora de recepción) no se modifica");
   const base = leer("../../db/migrations/0001_revisiones.sql");
   assert.match(base, /creada_en timestamptz not null default now\(\)/);
+});
+
+test("enviarNube manda motivo y fuente con error, y sin código el invitado va con p_codigo nulo", async () => {
+  await conServidor(() => json(200, { ok: true, nueva: true, rol: "invitado" }), async (cuerpos) => {
+    await enviarNube({ ...evento, estado: "no_concluyente", motivo: "no_ubicado", fuente: "cartografia", grupo: "Invitado", contacto: null }, "");
+    assert.equal(cuerpos[0].p_codigo, null);
+    assert.equal(cuerpos[0].p_motivo, "no_ubicado");
+    assert.equal(cuerpos[0].p_fuente_error, "cartografia");
+    assert.equal(cuerpos[0].p_grupo, "Invitado");
+    await enviarNube({ ...evento, motivo: null, fuente: null }, "codigo");
+    assert.equal(cuerpos[1].p_codigo, "codigo");
+    assert.equal(cuerpos[1].p_motivo, null);
+  });
+});
+
+test("un invitado no puede enviar si la base aún no tiene la 0006", async () => {
+  await conServidor(() => json(404, {}), async (cuerpos) => {
+    await assert.rejects(() => enviarNube(evento, ""), (e) => e instanceof ErrorNube && e.tipo === "config");
+    assert.equal(cuerpos.length, 1, "no cae a funciones que exigen código");
+  });
+});
+
+test("el tope de envíos de invitado es un error propio y no descarta el evento", async () => {
+  await conServidor(() => json(200, { ok: false, error: "demasiados_envios" }), async () => {
+    await assert.rejects(() => enviarNube(evento, ""), (e) => e instanceof ErrorNube && e.tipo === "limite");
+  });
+});
+
+test("leerEquipoNube trae el equipo y las revisiones; sin la 0006 usa la lectura anterior", async () => {
+  await conServidor(() => json(200, { ok: true, equipo: "testing", es_prueba: true, filas: [{ npn: evento.npn, estado: "confirmado", rol: "invitado", id: evento.id }] }), async (cuerpos) => {
+    const r = await leerEquipoNube("codigo");
+    assert.equal(r.equipo, "testing");
+    assert.equal(r.esPrueba, true);
+    assert.equal(r.filas[0].rol, "invitado");
+    assert.deepEqual(Object.keys(cuerpos[0]), ["p_codigo"]);
+  });
+  await conServidor(() => json(404, {}), async () => {
+    await assert.rejects(() => leerEquipoNube("codigo"), (e) => e.tipo === "config");
+  });
+  const original = globalThis.fetch;
+  const llamadas = [];
+  globalThis.fetch = async (url) => {
+    llamadas.push(String(url));
+    return String(url).includes("leer_revisiones_v2") ? json(404, {}) : json(200, { ok: true, filas: [{ npn: evento.npn, estado: "descartado" }] });
+  };
+  reiniciarRespaldo();
+  try {
+    const r = await leerEquipoNube("codigo");
+    assert.equal(r.equipo, null);
+    assert.equal(r.filas.length, 1);
+    assert.equal(llamadas.length, 2);
+  } finally {
+    globalThis.fetch = original;
+    reiniciarRespaldo();
+  }
+});
+
+test("ratificarNube manda el id de la revisión, el código y quién ratifica", async () => {
+  await conServidor(() => json(200, { ok: true, nueva: true }), async (cuerpos) => {
+    await ratificarNube(evento.id, "codigo", "Ana Pérez");
+    assert.equal(cuerpos[0].p_id, evento.id);
+    assert.equal(cuerpos[0].p_codigo, "codigo");
+    assert.equal(cuerpos[0].p_revisor, "Ana Pérez");
+    assert.match(cuerpos[0].p_ratificacion_id, /^[0-9a-f-]{36}$/);
+  });
+});
+
+test("la migración 0006 deja al servidor decidir el rol, limita a invitados y no los deja leer", () => {
+  const sql = leer("../../db/migrations/0006_roles_y_decisiones.sql").replace(/--.*$/gm, "");
+  assert.match(sql, /create table public\.equipos/);
+  assert.match(sql, /insert into public\.equipos[^;]*select 'testing', codigo_hash, true from public\.equipo_codigo/s, "el código vigente pasa al equipo testing, sin valores en el repositorio");
+  assert.match(sql, /contar_envio_invitado/);
+  assert.match(sql, /v_rol := 'invitado'/);
+  assert.match(sql, /create view public\.revisiones_validas with \(security_invoker = true\)/);
+  assert.match(sql, /grant execute on function public\.leer_revisiones_v2\(text\) to anon/);
+  assert.ok(!/crypt\(\s*'[^']+'/.test(sql), "ningún código de equipo escrito en la migración");
 });

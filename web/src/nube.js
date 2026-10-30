@@ -5,8 +5,8 @@
 const URL_NUBE = import.meta.env?.VITE_SUPABASE_URL || "https://acaexgrlmopqfyxufssa.supabase.co";
 const CLAVE_NUBE = import.meta.env?.VITE_SUPABASE_KEY || "sb_publishable_sAxKTNI5x0OYb3ihfvCpdQ_5l4Q0MlW";
 
-// tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "datos" (rechazó el evento),
-// "config" (acceso o configuración; se reintenta) o "red".
+// tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "limite" (tope diario de invitado),
+// "datos" (rechazó el evento), "config" (acceso o configuración; se reintenta) o "red".
 export class ErrorNube extends Error {
   constructor(mensaje, tipo, estado) {
     super(mensaje);
@@ -59,15 +59,36 @@ export function interpretar(resp) {
     if (resp.ok) return resp;
     if (resp.error === "codigo_invalido") throw new ErrorNube("Código de equipo incorrecto.", "codigo");
     if (resp.error === "demasiados_intentos") throw new ErrorNube("Demasiados intentos con el código. Espera unos minutos.", "bloqueo");
+    if (resp.error === "demasiados_envios") throw new ErrorNube("Llegaste al tope de envíos de invitado por hoy. Se reintenta más tarde.", "limite");
     throw new ErrorNube("El servidor rechazó la solicitud.", "datos");
   }
   return resp;
 }
 
-export const leerNube = async (codigo) => {
+// Con la migración 0006 la lectura trae rol, equipo, motivo y fuente de cada revisión, y el equipo de quien lee.
+// Si la base aún no la tiene (404), se usa la lectura anterior, que no distingue roles.
+let conV2 = true;
+
+export async function leerEquipoNube(codigo) {
+  if (conV2) {
+    try {
+      const r = interpretar(await rpc("leer_revisiones_v2", { p_codigo: codigo }));
+      return { filas: r.filas, equipo: r.equipo ?? null, esPrueba: !!r.es_prueba };
+    } catch (e) {
+      if (!(e instanceof ErrorNube && e.tipo === "config" && e.estado === 404)) throw e;
+      conV2 = false;
+    }
+  }
   const r = interpretar(await rpc("leer_revisiones", { p_codigo: codigo }));
-  return Array.isArray(r) ? r : r.filas;
-};
+  return { filas: Array.isArray(r) ? r : r.filas, equipo: null, esPrueba: false };
+}
+
+export const leerNube = async (codigo) => (await leerEquipoNube(codigo)).filas;
+
+// Un funcionario respalda la decisión de un invitado para que cuente en las métricas.
+export async function ratificarNube(idRevision, codigo, revisor) {
+  return interpretar(await rpc("ratificar_revision", { p_id: idRevision, p_codigo: codigo, p_revisor: revisor, p_ratificacion_id: uuid() }));
+}
 
 // Nombre y grupo en un solo texto de hasta 60 caracteres, para la base sin la migración 0005.
 export function revisorPlano(ev) {
@@ -80,14 +101,14 @@ export function revisorPlano(ev) {
 // revisor: así ninguna revisión se queda sin enviar mientras se aplica la migración. El contacto solo se guarda
 // con la migración.
 let conGrupo = true;
-export const reiniciarRespaldo = () => { conGrupo = true; };
+export const reiniciarRespaldo = () => { conGrupo = true; conV2 = true; };
 
-export async function enviarNube(ev, codigo) {
+export async function enviarNube(ev, codigo = "") {
   const base = {
     p_id: ev.id,
     p_npn: ev.npn,
     p_estado: ev.estado,
-    p_codigo: codigo,
+    p_codigo: codigo || null, // sin código: invitado (el servidor decide el rol)
     p_fecha: ev.fecha,
     p_puntaje: ev.puntaje ?? null,
     p_alertas: ev.alertas ?? null,
@@ -95,6 +116,23 @@ export async function enviarNube(ev, codigo) {
     p_accion: ev.accion ?? null,
     p_version: ev.version ?? null,
   };
+  if (conV2) {
+    try {
+      return interpretar(await rpc("registrar_revision_v2", {
+        ...base,
+        p_revisor: ev.revisor,
+        p_grupo: ev.grupo ?? null,
+        p_contacto: ev.contacto ?? null,
+        p_motivo: ev.motivo ?? null,
+        p_fuente_error: ev.fuente ?? null,
+      }));
+    } catch (e) {
+      if (!(e instanceof ErrorNube && e.tipo === "config" && e.estado === 404)) throw e;
+      conV2 = false;
+    }
+  }
+  // Respaldo sin la 0006: solo con código (los invitados necesitan las funciones nuevas).
+  if (!codigo) throw new ErrorNube("El servidor de revisiones aún no admite invitados.", "config", 404);
   if (conGrupo) {
     try {
       return interpretar(await rpc("registrar_revision", {

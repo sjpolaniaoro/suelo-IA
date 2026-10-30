@@ -190,6 +190,21 @@ test("tipo_hallazgo sigue el árbol de decisión", async () => {
   assert.equal(tipoHallazgo({ puntaje: 0, NR: true }, "confirmado"), "acierto");
 });
 
+test("tipo_hallazgo: solo cartografía cuenta como alerta del sistema y propiedad horizontal queda fuera", async () => {
+  const { tipoHallazgo, esAlertaDelSistema } = await import("../src/clases.js");
+  const cart = { puntaje: 0, ph: false, accion: "oficina", triangulacion: "solo_cartografia" };
+  assert.equal(esAlertaDelSistema(cart), true);
+  assert.equal(tipoHallazgo(cart, "confirmado"), "acierto");
+  assert.equal(tipoHallazgo(cart, "descartado"), "falso_positivo");
+  const ph = { puntaje: 0, ph: true, accion: null };
+  assert.equal(esAlertaDelSistema(ph), false);
+  assert.equal(tipoHallazgo(ph, "confirmado"), "ph_sin_evaluar");
+  assert.equal(tipoHallazgo(ph, "descartado"), "ph_sin_evaluar");
+  assert.equal(tipoHallazgo(ph, "no_concluyente"), "no_concluyente");
+  assert.equal(tipoHallazgo({ puntaje: 10, ph: true, A3: true }, "confirmado"), "acierto", "con alerta A3 la propiedad horizontal sí se mide");
+  assert.equal(tipoHallazgo({ puntaje: 0, ph: false }, "otro"), "");
+});
+
 test("los filtros combinan prioridad, tipo y cola con «Sin prioridad» como valor nulo", async () => {
   const { pasaFiltros } = await import("../src/filtros.js");
   const alta = { puntaje: 70, nivel: "rojo", A1: true, accion: "oficina" };

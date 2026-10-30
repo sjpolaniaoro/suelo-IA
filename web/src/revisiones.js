@@ -1,4 +1,5 @@
 import { ESTADOS } from "./validar.js";
+import { CLAVES_FUENTE, MOTIVOS } from "./decisiones.js";
 
 // Revisiones humanas: viven en el navegador (localStorage) y se exportan a CSV.
 const CLAVE = "suelo-ia-revisiones";
@@ -89,6 +90,7 @@ export function desdeCsv(texto) {
   const parse = (l) => [...l.matchAll(/("([^"]|"")*"|[^,]*)(,|$)/g)].map((m) => m[1].replace(/^"|"$/g, "").replace(/""/g, '"'));
   const cab = parse(lineas[0]);
   const iN = cab.indexOf("npn"), iE = cab.indexOf("estado"), iF = cab.indexOf("fecha"), iR = cab.indexOf("revisor");
+  const iM = cab.indexOf("motivo"), iU = cab.indexOf("fuente_error");
   if (iN < 0 || iE < 0) throw new Error("El CSV debe tener las columnas npn y estado.");
   const r = {};
   for (const l of lineas.slice(1)) {
@@ -98,7 +100,9 @@ export function desdeCsv(texto) {
     const fecha = fechaSegura(c[iF]);
     const revisor = iR >= 0 ? (c[iR] || "").trim().slice(0, 60) : "";
     // origen "csv": lo importado se queda en este navegador; no se sube solo al equipo al activarlo.
-    r[c[iN]] = { estado: c[iE], fecha, origen: "csv", ...(revisor ? { revisor } : {}) };
+    const motivo = iM >= 0 && c[iE] === "no_concluyente" && MOTIVOS.includes(c[iM]) ? c[iM] : "";
+    const fuente = iU >= 0 && CLAVES_FUENTE.includes(c[iU]) ? c[iU] : "";
+    r[c[iN]] = { estado: c[iE], fecha, origen: "csv", ...(revisor ? { revisor } : {}), ...(motivo ? { motivo } : {}), ...(fuente ? { fuente } : {}) };
   }
   if (!Object.keys(r).length) throw new Error("El CSV no trae revisiones válidas (npn de 30 dígitos y estado confirmado, descartado o no_concluyente).");
   return r;
