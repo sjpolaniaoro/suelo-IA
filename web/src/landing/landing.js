@@ -77,6 +77,7 @@ async function mostrarCifras() {
       cola_oficina: number.format(r.triangulacion.cola_oficina),
       cola_campo: number.format(r.triangulacion.cola_campo),
       NR: number.format(r.predios_uso_no_residencial),
+      por_revisar: number.format(r.predios_con_alerta + r.predios_uso_no_residencial),
       tri_dos_fuentes: number.format(r.triangulacion.dos_fuentes),
       tri_solo_imagen: number.format(r.triangulacion.solo_imagen),
       tri_solo_cartografia: number.format(r.triangulacion.solo_cartografia),

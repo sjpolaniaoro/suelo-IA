@@ -61,6 +61,8 @@ for (const [key, valor] of [
   if (!Number.isFinite(valor)) throw new Error("Cifra inválida: " + key);
   valores[key] = numero.format(valor);
 }
+// Lo que el mapa llama «Por revisar»: alertas de vivienda más las NR.
+valores.por_revisar = numero.format(resumen.predios_con_alerta + resumen.predios_uso_no_residencial);
 if (!Number.isFinite(resumen.tasa_cruce)) throw new Error("Cifra inválida: tasa_cruce");
 valores.tasa_cruce = pct.format(resumen.tasa_cruce);
 valores.ctx_pct = pct.format(ctx.sin_area_construida / ctx.habitacionales_no_ph);

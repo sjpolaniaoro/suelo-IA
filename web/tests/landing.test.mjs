@@ -64,8 +64,9 @@ test("las cifras del resumen que usa el pitch existen y son números", () => {
 });
 
 test("no hay cifras de conteo escritas a mano que contradigan el resumen", () => {
-  // El deck decía 1.285 (1.283 de vivienda + 2 NR); la portada las muestra por separado.
-  assert.ok(!html.includes("1.285"));
+  // 1.285 es 1.283 de vivienda + 2 NR («Por revisar» del mapa): solo puede salir del resumen.
+  assert.ok(!html.replace(/<span data-stat="por_revisar">[^<]*<\/span>/, "").includes("1.285"));
+  assert.equal(resumen.predios_con_alerta + resumen.predios_uso_no_residencial, 1285);
   // El titular de prensa de «35 %» y «12 años» no tiene fuente en el proyecto.
   assert.ok(!/35\s?%\s+(requiere|de expansión)/i.test(html));
   assert.ok(!/12 años/.test(html));
