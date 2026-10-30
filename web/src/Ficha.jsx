@@ -27,7 +27,7 @@ const signo = (x) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${m2(Math.abs(x))}`;
 const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
-  p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso,
+  p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso, puedeDecidir = true,
   centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES,
 }) {
   const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
@@ -210,14 +210,17 @@ export default function Ficha({
           <div className="paso-cab"><span className="paso-num">{hecho ? "✓" : "3"}</span><h3>Decidir</h3></div>
           <div className="veredictos">
             {veredictos.map((v) => (
-              <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} aria-pressed={revision?.estado === v.k} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
+              <button key={v.k} className={`${v.k} ${revision?.estado === v.k ? "activo" : ""}`} aria-pressed={revision?.estado === v.k} disabled={!puedeDecidir} onClick={() => onDecidir(p.npn, v.k)} title={v.ayuda}>
                 {v.t}<kbd>{v.tecla}</kbd>
               </button>
             ))}
           </div>
+          {!puedeDecidir && (
+            <p className="nota aviso-id" role="note">Para registrar la revisión, escribe antes tu nombre y grupo en la barra de arriba.</p>
+          )}
           {revision && (
             <p className="nota">
-              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}` : ""}.{" "}
+              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}» el {revision.fecha.slice(0, 10)}{revision.revisor ? ` por ${revision.revisor}${revision.grupo ? ` (${revision.grupo})` : ""}` : ""}.{" "}
               <button className="enlace" onClick={() => onQuitar(p.npn)}>Quitar</button>
             </p>
           )}

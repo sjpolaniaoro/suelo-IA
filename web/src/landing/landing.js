@@ -210,12 +210,14 @@ document.addEventListener("keydown", (event) => {
   }
 });
 window.matchMedia("(min-width: 761px)").addEventListener("change", cerrar);
-// QR flotante: tres estados (normal, ampliado, minimizado) que se recuerdan durante la sesión.
+// QR flotante, sin texto: tres estados (normal, ampliado con un clic en el QR, minimizado a un icono) que se
+// recuerdan durante la sesión. Escape devuelve el QR ampliado a su tamaño normal.
 function iniciarQrFlotante() {
   const caja = $("#qr-flotante");
   if (!caja) return;
-  const ampliar = $("#qr-ampliar");
+  const qr = $("#qr-ampliar");
   const minimizar = $("#qr-minimizar");
+  const mostrar = $("#qr-mostrar");
   let estado = "normal";
   try {
     estado = sessionStorage.getItem("sia-qr") || "normal";
@@ -224,20 +226,22 @@ function iniciarQrFlotante() {
     estado = nuevo;
     caja.classList.toggle("sia-qr-grande", nuevo === "grande");
     caja.classList.toggle("sia-qr-min", nuevo === "min");
-    ampliar.setAttribute("aria-pressed", String(nuevo === "grande"));
-    ampliar.textContent = nuevo === "grande" ? "Reducir" : "Ampliar";
+    qr.setAttribute("aria-pressed", String(nuevo === "grande"));
     minimizar.setAttribute("aria-expanded", String(nuevo !== "min"));
-    minimizar.setAttribute(
-      "aria-label",
-      nuevo === "min" ? "Mostrar el código QR" : "Minimizar el código QR",
-    );
-    minimizar.firstElementChild.textContent = nuevo === "min" ? "QR" : "–";
+    mostrar.hidden = nuevo !== "min";
     try {
       sessionStorage.setItem("sia-qr", nuevo);
     } catch {}
   };
-  ampliar.addEventListener("click", () => aplicar(estado === "grande" ? "normal" : "grande"));
-  minimizar.addEventListener("click", () => aplicar(estado === "min" ? "normal" : "min"));
+  qr.addEventListener("click", () => aplicar(estado === "grande" ? "normal" : "grande"));
+  minimizar.addEventListener("click", () => aplicar("min"));
+  mostrar.addEventListener("click", () => {
+    aplicar("normal");
+    qr.focus();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && estado === "grande") aplicar("normal");
+  });
   aplicar(estado);
   caja.hidden = false;
   // En #demo ya hay otro QR igual a la vista: se oculta el flotante mientras tanto.

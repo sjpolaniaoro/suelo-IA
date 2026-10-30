@@ -608,11 +608,13 @@
           </article>
           <article>
             <p class="sia-pilar-tag">Privacidad · Ley 1581 de 2012</p>
-            <h3>Sin datos personales</h3>
+            <h3>Datos personales mínimos</h3>
             <p>
               El pipeline no lee ni escribe nombres, documentos ni contactos, y
               se detiene con un error si una columna los trae. Lo publicado son
-              datos derivados del sector piloto.
+              datos derivados del sector piloto. Solo quien revisa deja su
+              nombre y grupo, y un contacto si quiere, para identificar su
+              revisión.
             </p>
           </article>
           <article>
@@ -755,13 +757,13 @@
           <details>
             <summary>¿Dónde quedan mis revisiones y qué pasa si la API no responde?</summary>
             <p>
-              Por defecto, las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si el equipo activa la revisión en equipo con su código, también se guardan en una base de datos de solo anexar, con el nombre de quien revisó, y no se pierden. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
+              Por defecto, las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si el equipo activa la revisión en equipo con su código, también se guardan en una base de datos de solo anexar, con el nombre y el grupo de quien revisó, y no se pierden. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
             </p>
           </details>
           <details>
             <summary>¿Qué datos se guardan en la revisión en equipo?</summary>
             <p>
-              Solo el nombre básico de quien revisa, sin documentos, correos ni teléfonos, junto con el veredicto y la foto de la alerta. Los principios de privacidad y supervisión humana están en la sección de IA responsable.
+              El nombre y el grupo de quien revisa y, si esa persona quiere, un correo o teléfono de contacto (opcional), junto con el veredicto, la foto de la alerta y la fecha y hora en que se recibe cada revisión. No se piden documentos de identidad. Los datos de quien revisa sirven para identificar y consultar su revisión, y el contacto solo lo ve el equipo. Los principios de privacidad y supervisión humana están en la sección de IA responsable.
             </p>
           </details>
         </div>
@@ -939,23 +941,23 @@
         revisión humana. No sustituye los actos de la autoridad catastral.
       </p>
     </footer>
-    <aside class="sia-qr-flotante" id="qr-flotante" aria-label="Código QR para probar la herramienta" hidden>
-      <div class="sia-qrf-barra">
-        <p id="qr-flotante-titulo">Pruébalo en tu celular</p>
-        <button type="button" class="sia-qrf-btn" id="qr-ampliar" aria-pressed="false" aria-controls="qr-flotante-cuerpo">Ampliar</button>
+    <aside class="sia-qr-flotante" id="qr-flotante" aria-label="Código QR para probar la herramienta en el celular" hidden>
+      <div class="sia-qrf-cuerpo" id="qr-flotante-cuerpo">
+        <button type="button" class="sia-qrf-qr" id="qr-ampliar" aria-pressed="false" aria-label="Ampliar o reducir el código QR">
+          <img
+            src="/img/qr-demo.svg"
+            width="120"
+            height="120"
+            alt="Código QR que abre en el celular la ficha del predio de ejemplo en el mapa 3D de Suelo-IA"
+          />
+        </button>
         <button type="button" class="sia-qrf-btn" id="qr-minimizar" aria-expanded="true" aria-controls="qr-flotante-cuerpo" aria-label="Minimizar el código QR">
-          <span aria-hidden="true">–</span>
+          <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="M2 6h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
         </button>
       </div>
-      <div class="sia-qrf-cuerpo" id="qr-flotante-cuerpo">
-        <img
-          src="/img/qr-demo.svg"
-          width="184"
-          height="184"
-          alt="Código QR que abre en el celular la ficha del predio de ejemplo en el mapa 3D de Suelo-IA"
-        />
-        <p>Escanéalo y explora la ficha de un predio mientras seguimos.</p>
-      </div>
+      <button type="button" class="sia-qrf-mini" id="qr-mostrar" aria-label="Mostrar el código QR" hidden>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h3v3h-3zm5 0h3v3h-3zm-5 5h3v3h-3zm5 0h3v3h-3z"/></svg>
+      </button>
     </aside>
     <script type="module" src="/src/landing/landing.js"></script>
   </body>

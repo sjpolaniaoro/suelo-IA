@@ -31,8 +31,15 @@ Total del recorrido: 7:15. Quedan 2:45 de margen y preguntas. La Guía suma 6:00
 ## Lista de chequeo del demo
 1. Abrir `https://suelo-ia-knwnic.vercel.app/app/` unos minutos antes. La API de Render (plan gratuito) tarda cerca de 50 s en despertar; el mapa funciona sin ella y lo avisa.
 2. Dejar a mano el enlace de la ficha de ejemplo (botón «Abrir esta ficha» de `#demo`).
-3. Probar el QR de `#demo` con un celular: abre la ficha del predio de ejemplo, no el mapa vacío. Para proyectarlo, abrir `/img/qr-demo.svg` a pantalla completa o ampliar el navegador. Si hay un video de respaldo, decir que lo es. En pantallas de más de 1000 px el QR queda flotante abajo a la derecha durante toda la exposición: usar «Ampliar» cuando se invite al público a escanearlo y «–» para minimizarlo si tapa algo.
+3. Probar el QR de `#demo` con un celular: abre la ficha del predio de ejemplo, no el mapa vacío. Para proyectarlo, abrir `/img/qr-demo.svg` a pantalla completa o ampliar el navegador. Si hay un video de respaldo, decir que lo es. En pantallas de más de 1000 px el QR queda flotante abajo a la derecha durante toda la exposición, sin texto: dar la instrucción de viva voz. Un clic en el QR lo amplía para escanearlo desde lejos y otro lo reduce; el botón redondo lo minimiza.
 4. Las teselas del mapa base y las imágenes de satélite o Street View necesitan internet.
+
+## Antes de que el público pruebe la herramienta
+1. Aplicar la migración `db/migrations/0005_grupo_y_contacto.sql` en el editor SQL de Supabase (si no, las revisiones se guardan con el grupo dentro del nombre y sin contacto) y confirmar que el proyecto de Supabase no está pausado.
+2. Dar el código de equipo de viva voz: sin él, las revisiones quedan solo en el celular de cada persona. No ponerlo en pantalla ni en el QR (la portada es pública).
+3. Decir qué se pide en la barra superior: nombre y grupo (obligatorios) y, si quieren, correo o teléfono. Sin identificarse no se registra nada.
+4. Se pueden recibir revisiones repetidas del mismo predio, por varias personas o por la misma: no se deduplica; cada intento queda con su hora de recepción (`creada_en`).
+5. Probar el QR en un celular en vertical y en horizontal.
 
 ## Diferencias entre el deck en PDF y el repositorio
 La portada sigue al repositorio y a `web/public/data/resumen.json`. Para alinear el deck:

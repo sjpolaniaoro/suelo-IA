@@ -47,7 +47,7 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
   - Color por puntaje: gris (sin alerta), amarillo, naranja, rojo.
   - Panel de cifras del sector, filtro por tipo de alerta y ficha al hacer clic.
 - Ficha por predio: lo registrado frente a lo observado (registro, cartografía e imagen, con la diferencia y el porcentaje de coincidencia entre cada par y la confianza de la imagen; estos datos siguen visibles aunque el predio se marque como OK), qué fuente contradice a cuál, razones, confianza, fuentes con fecha y un botón "Registrar revisión" (confirmado / descartado / no concluyente) que guarda en el navegador y exporta CSV.
-- Revisiones en equipo (opcional, desde el 27-oct-2026): base de datos en Supabase (Postgres) de solo anexar (`db/migrations/`). El navegador solo llama a dos funciones, `registrar_revision` y `leer_revisiones`, que exigen un código de equipo (guardado como hash). Cada evento guarda npn, veredicto, nombre básico de quien revisa y la foto de la alerta (puntaje, alertas, triangulación, cola, versión de los datos). Sin el código, las revisiones siguen quedando solo en el navegador y el frontend funciona sin la base. El pipeline sigue sin leer ni escribir nombres.
+- Revisiones en equipo (opcional, desde el 27-oct-2026): base de datos en Supabase (Postgres) de solo anexar (`db/migrations/`). El navegador solo llama a dos funciones, `registrar_revision` y `leer_revisiones`, que exigen un código de equipo (guardado como hash). Cada evento guarda npn, veredicto, nombre y grupo de quien revisa, un contacto opcional (correo o teléfono), la foto de la alerta (puntaje, alertas, triangulación, cola, versión de los datos) y dos marcas de tiempo: cuándo decidió la persona (`fecha_cliente`) y cuándo recibió el servidor el dato (`creada_en`). Cada persona se identifica en una barra encima de los filtros (nombre y grupo obligatorios; contacto y código de equipo opcionales) y sin identificarse no se registran revisiones. No se deduplica: varias personas, o la misma, pueden revisar el mismo predio y cada intento queda como una fila para analizarlo después. El contacto no se devuelve a otros clientes. Sin el código, las revisiones siguen quedando solo en el navegador y el frontend funciona sin la base. El pipeline sigue sin leer ni escribir nombres.
 - API en Render: `GET /health`, `GET /sectores/02/resumen`, `GET /predios/{npn}`, `GET /alertas?tipo=A1&limit=50`. CORS abierto solo para el dominio de Vercel.
 - Créditos visibles en el mapa: Open Buildings (Google Research), Registro 1 y cartografía (Alcaldía de Neiva) y OpenStreetMap si se usa el mapa base.
 
@@ -56,7 +56,7 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
 - Índice de subutilización del suelo y valor por zona. Son la fase 3.
 - Serie temporal 2016-2023 de Open Buildings (alturas y crecimiento). Pasa a v1.1, antes del 30 de octubre, si alcanza el tiempo.
 - Otros sectores, zona rural y ciudad completa.
-- Cuentas de usuario y autenticación completa. La revisión en equipo usa un código compartido y el nombre básico de quien revisa (ver «Incluye»).
+- Cuentas de usuario y autenticación completa. La revisión en equipo usa un código compartido y el nombre, grupo y contacto opcional de quien revisa (ver «Incluye»).
 - Datos del Observatorio Inmobiliario Catastral.
 - Cualquier cálculo de impuesto, avalúo nuevo o cobro.
 
@@ -91,3 +91,5 @@ Hay además una necesidad inmediata: el equipo radica el Anexo 2 de la convocato
 | El navegador no permite almacenamiento local | Las revisiones se guardan en memoria y se avisa que se pierden al cerrar; el CSV sigue disponible. |
 | GeoJSON mayor a 15 MB | El pipeline simplifica geometrías (tolerancia 0,5 m) y redondea coordenadas a 6 decimales antes de escribir. |
 | Datos personales | El pipeline nunca lee ni escribe nombres o documentos. Si una columna nueva los trae, falla con error explícito. |
+| Una persona intenta registrar una revisión sin nombre y grupo | La ficha deshabilita los botones y los atajos no registran: el foco pasa a la barra de identidad. |
+| Celular en horizontal o en vertical | En vertical, la ficha es una hoja inferior; en horizontal con poca altura, un panel a un lado, y el mapa se vuelve a centrar al girar. |

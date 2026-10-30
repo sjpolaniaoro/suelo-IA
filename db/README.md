@@ -8,7 +8,8 @@ fila nueva; «quitar» una revisión es otro evento. Nada se actualiza ni se bor
 - Esquema: [`migrations/0001_revisiones.sql`](migrations/0001_revisiones.sql),
   [`migrations/0002_endurecer.sql`](migrations/0002_endurecer.sql),
   [`migrations/0003_limite_de_intentos.sql`](migrations/0003_limite_de_intentos.sql),
-  [`migrations/0004_endurecer_ciclo2.sql`](migrations/0004_endurecer_ciclo2.sql). Se aplican en ese orden.
+  [`migrations/0004_endurecer_ciclo2.sql`](migrations/0004_endurecer_ciclo2.sql),
+  [`migrations/0005_grupo_y_contacto.sql`](migrations/0005_grupo_y_contacto.sql). Se aplican en ese orden.
 - Pruebas de la 0003: [`pruebas/0003_limite_de_intentos.sql`](pruebas/0003_limite_de_intentos.sql). Se corren
   después de aplicar la migración y terminan con un `RAISE EXCEPTION` que revierte todo (la tabla es de solo anexar).
 
@@ -33,13 +34,33 @@ por cliente (`cf-connecting-ip`, o el último elemento de `x-forwarded-for`) y e
 la fecha decide qué evento es el vigente y, con la tabla de solo anexar, una fecha lejana no se podría corregir.
 Las funciones con `SECURITY DEFINER` fijan `search_path` vacío y califican sus objetos.
 
+## Quién revisa y cuándo se recibe (migración 0005)
+Cada evento guarda `revisor` (nombre), `grupo` y `contacto` (opcionales en la base; el cliente exige nombre y
+grupo) y dos marcas de tiempo: `fecha_cliente` (cuándo decidió la persona, puede venir de una cola sin conexión)
+y `creada_en` (hora del servidor al recibir el dato, `default now()` desde la 0001). No se deduplica: varias
+personas, o la misma, pueden revisar el mismo predio y cada intento es una fila. Para analizarlo después:
+
+```sql
+select npn, revisor, grupo, estado, fecha_cliente, creada_en
+from public.revisiones order by npn, creada_en;
+```
+
+**Aplicar la 0005** (editor SQL de Supabase): pegar el contenido de `migrations/0005_grupo_y_contacto.sql` y
+ejecutarlo; luego, opcionalmente, correr `pruebas/0005_grupo_y_contacto.sql` con el código real (termina con un
+`RAISE EXCEPTION` que revierte todo y muestra el informe). Hasta que se aplique, el frontend sigue enviando: ante
+un 404 de la función nueva reenvía con la firma anterior y el grupo dentro del nombre del revisor (`Ana (Grupo 3)`),
+y el contacto no se guarda. Aplicarla cuanto antes evita ese respaldo.
+
 ## Cómo se protege
 - Las tablas están cerradas a todos los roles (RLS sin políticas). El navegador no las lee ni las escribe.
 - Solo hay dos funciones públicas, `registrar_revision` y `leer_revisiones`, y ambas exigen el **código de
   equipo**. El código se guarda como hash (bcrypt); no está en el repositorio.
 - Un disparador impide `update`, `delete` y `truncate`.
 - La clave publicable del frontend es pública por diseño: sin el código no da acceso a nada.
-- Datos personales: solo el nombre básico de quien revisa (2 a 60 caracteres).
+- Datos personales: nombre y grupo de quien revisa (2 a 60 y 1 a 60 caracteres) y un contacto opcional, correo o
+  teléfono (hasta 120). No se guardan documentos de identidad. El contacto no se devuelve en `leer_revisiones`:
+  solo se lee en el editor SQL. Es dato personal (Ley 1581 de 2012): se pide con aviso de uso, es opcional y solo
+  sirve para identificar y consultar la revisión.
 
 ## Operación
 Cambiar el código de equipo (en el editor SQL de Supabase):

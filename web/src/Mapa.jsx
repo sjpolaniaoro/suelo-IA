@@ -7,6 +7,7 @@ import { limites } from "./datos.js";
 import { textoTooltip } from "./tooltip.js";
 import { claseSinAlerta, tieneAlerta } from "./clases.js";
 import { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros } from "./filtros.js";
+import { CONSULTA_APAISADO, CONSULTA_MOVIL, esApaisado, esMovil } from "./pantalla.js";
 
 maplibregl.setWorkerUrl(workerUrl);
 
@@ -64,8 +65,20 @@ function aplicarTema(m) {
 }
 
 // En el celular el panel y la ficha tapan la parte baja: el mapa se centra en lo que queda visible.
-const movil = () => window.innerWidth <= 860;
-const relleno = () => (movil() ? { top: 70, left: 20, right: 20, bottom: Math.round(window.innerHeight * 0.6) } : 60);
+// En vertical lo tapan desde abajo; en horizontal, la ficha o la lista desde un lado.
+const movil = esMovil;
+// Relleno al centrar un predio: siempre con los cuatro lados, porque MapLibre conserva los que no se nombran.
+const paddingFicha = () => {
+  const p = { top: 0, left: 0, right: 0, bottom: 0 };
+  if (!movil()) return p;
+  if (esApaisado()) return { ...p, right: Math.round(Math.min(440, window.innerWidth * 0.56)) };
+  return { ...p, bottom: Math.round(window.innerHeight * 0.5) };
+};
+const relleno = () => {
+  if (!movil()) return 60;
+  if (esApaisado()) return { top: 20, bottom: 20, left: 20, right: Math.round(Math.min(440, window.innerWidth * 0.56)) + 20 };
+  return { top: 70, left: 20, right: 20, bottom: Math.round(window.innerHeight * 0.6) };
+};
 
 export { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros };
 
@@ -77,6 +90,14 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
   const [vista, setVista] = useState("3d");
   // Verdadero cuando el control de deck.gl ya está en el mapa: recién entonces se pueden poner capas.
   const [listo, setListo] = useState(false);
+  // Al girar el celular cambia quién tapa el mapa (la hoja inferior o el panel lateral): se vuelve a centrar.
+  const [orientacion, setOrientacion] = useState(0);
+  useEffect(() => {
+    const consultas = [window.matchMedia(CONSULTA_MOVIL), window.matchMedia(CONSULTA_APAISADO)];
+    const alCambiar = () => setOrientacion((n) => n + 1);
+    consultas.forEach((q) => q.addEventListener("change", alCambiar));
+    return () => consultas.forEach((q) => q.removeEventListener("change", alCambiar));
+  }, []);
 
   useEffect(() => {
     const m = new maplibregl.Map({
@@ -220,8 +241,8 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
     const f = predios.features.find((x) => x.properties.npn === seleccionado);
     if (!f?.geometry) return;
     const [[x0, y0], [x1, y1]] = limites({ features: [f] });
-    mapa.current.easeTo({ center: [(x0 + x1) / 2, (y0 + y1) / 2], zoom: 18, duration: 800, padding: movil() ? { bottom: Math.round(window.innerHeight * 0.5) } : { bottom: 0 } });
-  }, [seleccionado, predios]);
+    mapa.current.easeTo({ center: [(x0 + x1) / 2, (y0 + y1) / 2], zoom: 18, duration: 800, padding: paddingFicha() });
+  }, [seleccionado, predios, orientacion]);
 
   const cambiarVista = (v) => {
     setVista(v);

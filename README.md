@@ -41,7 +41,7 @@ El Registro 1 (`CATASTRAL_REGISTRO1_20250505.xlsx`) se copia a `data/raw/`. El p
 Se detiene y reporta si un conteo no coincide con el spec. Con el Registro 1 real ya coinciden: 159.213 predios únicos, 4.111 habitacionales no PH en el sector 02 y 1.064 sin área construida. Falla con error explícito si el insumo trae columnas de datos personales.
 
 ## Revisiones en equipo
-La mesa guarda las revisiones en el navegador. Si el equipo activa «Revisión en equipo» (nombre básico y un código compartido), también se guardan en una base de datos de solo anexar en Supabase, para que no se pierdan y todos vean lo mismo; si no hay conexión, se envían al volver. Detalles, seguridad y operación en [`db/README.md`](db/README.md).
+La mesa guarda las revisiones en el navegador. Cada persona se identifica en la barra superior con su nombre, su grupo y, si quiere, un contacto (correo o teléfono); sin eso no se registran revisiones. Si además escribe el código compartido del equipo, también se guardan en una base de datos de solo anexar en Supabase, para que no se pierdan y todos vean lo mismo; si no hay conexión, se envían al volver. Detalles, seguridad y operación en [`db/README.md`](db/README.md).
 
 ## Pruebas
 `pytest -q` (pipeline y API) y `npm test` dentro de `web/` (validación de archivos importados, CSV y tooltip). Las pruebas de la base de revisiones están en [`db/pruebas/`](db/pruebas/).
