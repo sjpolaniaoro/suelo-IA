@@ -9,3 +9,7 @@ La portada presenta el valor del piloto con una captura real del mapa 3D, acceso
 La franja distingue predios en el mapa, predios con alguna alerta y conteos A1–A3. No presenta A1 como toda la cola de revisión ni suma alertas que pueden solaparse.
 
 El formulario de piloto usa los tres correos indicados por el responsable del proyecto en `data-destino`. Al preparar la solicitud, abre un `mailto:` con los campos codificados y muestra el borrador y un enlace para abrir el correo de nuevo. El visitante debe enviarlo en su aplicación de correo. Hay copia manual si no existe un cliente configurado o se deniega el portapapeles. No se guarda información del formulario ni se envía a un backend. Sin JavaScript se mantiene un enlace directo de correo.
+
+## La portada como pitch (30-oct-2026)
+La portada sigue el orden de la Guía de Pitch: portada, `#problema`, `#solucion`, `#ia` (con `#alertas`), `#demo`, `#impacto`, `#responsable`, `#viabilidad`, `#ruta`, `#equipo` y `#piloto`; la FAQ queda en `#limites`. Los estilos de las secciones nuevas están en `src/landing/pitch.css`. Toda cifra sale de `resumen.json` con `data-stat`, y las claves deben existir en `landing.js` y en `scripts/sincronizar-cifras.mjs` (lo comprueba `tests/landing.test.mjs`). Los montos del incentivo vienen del Anexo 2 §12 y se rotulan como orientadores; lo previsto (RAG, serie temporal, convenio) se rotula como previsto. Los QR de `public/img/` apuntan a la demo y al repositorio. Tiempos y criterios: [`docs/guion-sustentacion.md`](../docs/guion-sustentacion.md).
+

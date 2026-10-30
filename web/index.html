@@ -6,7 +6,7 @@
     <title>Suelo-IA · Del territorio a una revisión con evidencia</title>
     <meta
       name="description"
-      content="Explora el sector urbano 02 de Neiva. Registro catastral, cartografía y huellas de edificaciones para priorizar revisión humana, con razones y fuentes."
+      content="Suelo-IA cruza el registro catastral de Neiva con huellas de edificaciones para priorizar la revisión humana: problema, solución, IA responsable, demostración, impacto y hoja de ruta del piloto en el sector catastral 02."
     />
     <meta name="theme-color" content="#f2f2f3" />
     <meta property="og:title" content="Suelo-IA · Inteligencia territorial" />
@@ -41,8 +41,10 @@
         Menú
       </button>
       <nav id="navegacion" aria-label="Principal">
-        <a href="#alertas">Alertas</a><a href="#metodo">Método</a
-        ><a href="#piloto">Piloto</a><a href="#limites">Límites</a>
+        <a href="#problema">Problema</a><a href="#solucion">Solución</a
+        ><a href="#ia">IA</a><a href="#demo">Demo</a
+        ><a href="#impacto">Impacto</a><a href="#ruta">Ruta</a
+        ><a href="#equipo">Equipo</a>
       </nav>
       <a
         class="sia-button sia-header-cta"
@@ -89,6 +91,10 @@
           <p class="sia-disclaimer">
             Herramienta independiente, no oficial.<br />Alertas para priorizar
             revisión; no son hallazgos confirmados.
+          </p>
+          <p class="sia-autoria">
+            Neiva Fest Reto Innova 2026 · Ámbito institucional<br />Sebastián
+            Polanía · Juan Pablo Escamilla · Guillermo Moreno
           </p>
         </div>
         <figure class="sia-plan sia-frame">
@@ -141,6 +147,234 @@
         </svg>
         <span>Río Magdalena</span>
       </div>
+      <section class="sia-section sia-problem-sec" id="problema" aria-labelledby="problema-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">El problema en Neiva</p>
+            <h2 id="problema-titulo">
+              El registro no siempre<br />ve lo que se construyó.
+            </h2>
+          </div>
+          <p>
+            El catastro sustenta el impuesto predial, la planeación y la
+            inversión pública. Cuando no refleja lo construido, esas decisiones
+            se toman con información incompleta y la carga se reparte de forma
+            desigual.
+          </p>
+        </div>
+        <div class="sia-problem-grid">
+          <dl class="sia-kpis sia-kpis-uno">
+            <div>
+              <dt>
+                predios urbanos habitacionales, sin propiedad horizontal, figuran
+                sin área construida en el Registro 1
+                (<span data-stat="ctx_pct">18,9%</span>).
+                Algunos serán lotes vacíos; otros, construcciones que existen y no
+                están registradas.
+              </dt>
+              <dd>
+                <span data-stat="ctx_sin_area">14.562</span>
+                <small>de <span data-stat="ctx_hab">76.892</span></small>
+              </dd>
+            </div>
+          </dl>
+          <ul class="sia-causas" aria-label="Por qué el problema persiste">
+            <li>
+              <h3>Fuentes separadas</h3>
+              <p>
+                Registro 1, cartografía predial e imágenes están publicados por
+                separado y nadie los cruza de forma sistemática.
+              </p>
+            </li>
+            <li>
+              <h3>Verificar cuesta</h3>
+              <p>
+                Confirmar una diferencia exige una visita de campo, así que no
+                se puede revisar todo.
+              </p>
+            </li>
+            <li>
+              <h3>Fechas distintas</h3>
+              <p>
+                El registro y las imágenes representan momentos diferentes; sin
+                cruzarlos no se sabe cuál quedó atrás.
+              </p>
+            </li>
+          </ul>
+        </div>
+        <div class="sia-benef">
+          <div>
+            <h3>Quién lo usa</h3>
+            <p>
+              Los equipos de Gestión Catastral, Hacienda y Planeación de la
+              Alcaldía.
+            </p>
+          </div>
+          <div>
+            <h3>Quién se beneficia</h3>
+            <p>
+              Los propietarios de los <span data-stat="ctx_registro">159.213</span>
+              predios del registro: su carga tributaria depende de la calidad del
+              registro.
+            </p>
+          </div>
+          <div>
+            <h3>Por qué ahora</h3>
+            <p>
+              La Alcaldía abrió la actualización catastral urbana y rural con el
+              Decreto 892 de 2023. Suelo-IA apoya esa función
+              (<a href="https://radionacional.co/noticias-colombia/huila-en-alerta-por-falsas-rebajas-en-avaluos-catastrales">fuente</a>).
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="sia-method sia-section"
+        id="solucion"
+        aria-labelledby="solucion-titulo"
+      >
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">La solución</p>
+            <h2 id="solucion-titulo">
+              Cruzar lo que ya es público<br />y priorizar la revisión.
+            </h2>
+          </div>
+          <p>
+            Suelo-IA integra fuentes que hoy están separadas y entrega una lista
+            corta y explicada de dónde mirar primero. Los datos orientan; la
+            verificación y las actuaciones corresponden a las personas y a la
+            autoridad catastral.
+          </p>
+        </div>
+        <div class="sia-ecuacion" role="group" aria-label="Registro más huellas igual a alertas priorizadas">
+          <article>
+            <p class="sia-ec-etiqueta">Registro oficial</p>
+            <h3>1. Integra datos</h3>
+            <p>Registro 1 y cartografía predial del municipio, publicados como datos abiertos.</p>
+          </article>
+          <span class="sia-ec-op" aria-hidden="true">+</span>
+          <article>
+            <p class="sia-ec-etiqueta">Huellas de edificaciones</p>
+            <h3>2. Cruza huellas</h3>
+            <p>Contrasta la evidencia física (Open Buildings v3) con la base documental, predio por predio.</p>
+          </article>
+          <span class="sia-ec-op" aria-hidden="true">=</span>
+          <article class="sia-ec-resultado">
+            <p class="sia-ec-etiqueta">Alertas priorizadas</p>
+            <h3>3. Prioriza para la persona</h3>
+            <p>Puntaje y razones por predio, para que se revise primero lo que más probablemente difiere.</p>
+          </article>
+        </div>
+        <ul class="sia-diferenciales" aria-label="Qué la hace distinta">
+          <li>
+            <h3>Triangula tres fuentes</h3>
+            <p>
+              Contrasta el registro con la cartografía oficial de construcciones
+              y con las huellas de imagen: de
+              <span data-stat="tri_universo">1.060</span> predios sin área
+              registrada, en <span data-stat="tri_dos_fuentes">733</span> las dos
+              fuentes contradicen al registro.
+            </p>
+          </li>
+          <li>
+            <h3>Cada alerta lleva su razón</h3>
+            <p>
+              La ficha muestra lo registrado frente a lo observado, la confianza
+              y la fuente con su fecha.
+            </p>
+          </li>
+          <li>
+            <h3>La decisión queda trazada</h3>
+            <p>
+              Cada revisión (confirmado, descartado o no concluyente) se
+              registra y se exporta a CSV.
+            </p>
+          </li>
+        </ul>
+        <h3 class="sia-subtitulo">El recorrido de un predio</h3>
+        <ol class="sia-method-steps">
+          <li>
+            <span>01</span><em>Insumo catastral</em>
+            <h3>Reunir</h3>
+            <p>
+              Registro 1, cartografía predial y huellas de edificaciones.
+            </p>
+          </li>
+          <li>
+            <span>02</span><em>Identificación predial</em>
+            <h3>Cruzar</h3>
+            <p>
+              Relacionar cada número predial con su terreno y la evidencia espacial.
+            </p>
+          </li>
+          <li>
+            <span>03</span><em>Priorización</em>
+            <h3>Priorizar</h3>
+            <p>Aplicar las reglas y conservar las razones de cada alerta.</p>
+          </li>
+          <li>
+            <span>04</span><em>Consulta</em>
+            <h3>Consultar</h3>
+            <p>Explorar el mapa y leer lo registrado frente a lo observado.</p>
+          </li>
+          <li>
+            <span>05</span><em>Verificación en campo</em>
+            <h3>Verificar</h3>
+            <p>Contrastar con imagen o visita, registrar una revisión y exportar.</p>
+          </li>
+          <li class="sia-fuera">
+            <span>06</span><em>Actualización catastral</em>
+            <h3>Decide la autoridad</h3>
+            <p>Fuera de Suelo-IA: la actuación corresponde a quien tiene la competencia.</p>
+          </li>
+        </ol>
+      </section>
+      <section class="sia-section sia-ia" id="ia" aria-labelledby="ia-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Núcleo de inteligencia artificial</p>
+            <h2 id="ia-titulo">
+              Imagen de terceros,<br />reglas propias, decisión humana.
+            </h2>
+          </div>
+          <p>
+            Visitar cada predio no es viable. La visión computacional da
+            evidencia sobre todo el sector, y el cruce con el registro decide a
+            dónde mirar primero.
+          </p>
+        </div>
+        <ol class="sia-capas" aria-label="Tres capas del sistema">
+          <li class="sia-capa-1">
+            <p class="sia-capa-tag">Capa 1 · De terceros</p>
+            <h3>Huellas de edificaciones</h3>
+            <p>
+              Google Open Buildings v3 detecta edificaciones con visión
+              computacional sobre imágenes satelitales. Suelo-IA no entrena ni
+              ajusta ese modelo.
+            </p>
+          </li>
+          <li class="sia-capa-2">
+            <p class="sia-capa-tag">Capa 2 · Propio</p>
+            <h3>Motor Suelo-IA</h3>
+            <p>
+              Cruce geoespacial con el registro y la cartografía, reglas
+              explícitas y un modelo estadístico de anomalías de avalúo, con
+              puntaje de 0 a 100 y razones. No es una red neuronal propia.
+              Las alertas A1, A2, A3 y NR están en los
+              <a href="#alertas">escenarios</a>.
+            </p>
+          </li>
+          <li class="sia-capa-3">
+            <p class="sia-capa-tag">Capa 3 · Humano</p>
+            <h3>Ficha de evidencia</h3>
+            <p>
+              Lo registrado frente a lo observado, con confianza y fuentes. Una
+              persona confirma, descarta o marca no concluyente.
+            </p>
+          </li>
+        </ol>
+      </section>
       <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo">
         <div class="sia-band-in">
           <div class="sia-band-heading">
@@ -284,16 +518,35 @@
       </section>
       <section
         class="sia-example sia-section"
-        id="ficha"
+        id="demo"
         aria-labelledby="ficha-titulo"
       >
         <div class="sia-section-intro">
-          <p class="sia-label">Del territorio a la evidencia</p>
+          <p class="sia-label">Demostración · Del territorio a la evidencia</p>
           <h2 id="ficha-titulo">Cada predio,<br />una razón para revisar.</h2>
           <p>
             Lo que está registrado frente a lo que se observa. Una ficha reúne
             la señal, sus fuentes y el contexto para que una persona decida.
           </p>
+          <ol class="sia-demo-pasos" aria-label="Recorrido de la demostración">
+            <li>Filtrar por tipo de alerta</li>
+            <li>Abrir la ficha de un predio</li>
+            <li>Registrar la revisión y exportar</li>
+          </ol>
+          <div class="sia-qr">
+            <img
+              src="/img/qr-demo.svg"
+              width="132"
+              height="132"
+              alt="Código QR que abre el mapa 3D de Suelo-IA en el celular"
+            />
+            <p>
+              <strong>Pruébalo en tu celular</strong>
+              Escanea el código o abre
+              <a href="/app/">suelo-ia-knwnic.vercel.app/app/</a>. Si la API no
+              responde, el mapa usa los archivos incluidos y lo avisa.
+            </p>
+          </div>
         </div>
         <article
           class="sia-example-sheet"
@@ -341,59 +594,278 @@
           </p>
         </article>
       </section>
-      <section
-        class="sia-method sia-section"
-        id="metodo"
-        aria-labelledby="metodo-titulo"
-      >
+      <section class="sia-section sia-impacto" id="impacto" aria-labelledby="impacto-titulo">
         <div class="sia-section-heading">
           <div>
-            <p class="sia-label">Del registro al predio</p>
-            <h2 id="metodo-titulo">
-              La ruta del trámite catastral,<br />con evidencia en cada paso.
+            <p class="sia-label">Impacto y métricas</p>
+            <h2 id="impacto-titulo">Qué cambia para<br />quien revisa.</h2>
+          </div>
+          <p>
+            Resultados de la corrida del piloto en el sector catastral 02. Son
+            conteos de diferencias detectadas, no hallazgos confirmados.
+          </p>
+        </div>
+        <dl class="sia-kpis sia-kpis-tres">
+          <div>
+            <dt>
+              de los predios del registro del sector cruzan con su terreno:
+              <span data-stat="predios_con_geometria">7.329</span> de
+              <span data-stat="predios_registro">7.597</span> tienen ficha;
+              <span data-stat="predios_sin_geometria">268</span> quedan fuera
+              del mapa.
+            </dt>
+            <dd><span data-stat="tasa_cruce">96,5%</span></dd>
+          </div>
+          <div>
+            <dt>
+              predios con al menos una alerta de vivienda para revisión humana.
+              Otros <span data-stat="NR">2</span> se marcan NR (uso
+              probablemente no residencial).
+            </dt>
+            <dd><span data-stat="predios_con_alerta">1.283</span></dd>
+          </div>
+          <div>
+            <dt>
+              alertas A1 y A2 para conciliar en oficina, frente a
+              <span data-stat="cola_campo">443</span> para verificar en campo:
+              la visita se reserva a lo que la necesita.
+            </dt>
+            <dd><span data-stat="cola_oficina">776</span></dd>
+          </div>
+        </dl>
+        <div class="sia-metas">
+          <h3>Metas del piloto, por validar</h3>
+          <ul>
+            <li>
+              <strong>Calidad de detección.</strong> Muestra de 240 predios con
+              revisión humana; meta inicial de F1 ≥ 0,80.
+            </li>
+            <li>
+              <strong>Tiempo de revisión.</strong> Mediana manual frente a
+              asistida en al menos 10 casos.
+            </li>
+            <li>
+              <strong>Utilidad percibida.</strong> Sesión con 3 a 5 usuarios
+              potenciales; promedio ≥ 4 de 5.
+            </li>
+          </ul>
+          <p class="sia-footnote">
+            Metas propuestas: aún no hay valores observados. El potencial de
+            actualizar avalúos y recaudo no se presenta como recaudo obtenido.
+          </p>
+        </div>
+      </section>
+      <section class="sia-section sia-responsable" id="responsable" aria-labelledby="responsable-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">IA responsable y datos</p>
+            <h2 id="responsable-titulo">
+              Privacidad desde el diseño,<br />supervisión humana.
             </h2>
           </div>
           <p>
-            Un recorrido trazable. Los datos orientan; la verificación y las
-            actuaciones corresponden a las personas y a la autoridad catastral.
+            Suelo-IA emite evidencia indicativa. La decisión final es del
+            servidor público.
           </p>
         </div>
-        <ol class="sia-method-steps">
-          <li>
-            <span>01</span><em>Insumo catastral</em>
-            <h3>Reunir</h3>
+        <div class="sia-pilares">
+          <article>
+            <p class="sia-pilar-tag">Decisión humana</p>
+            <h3>No decide por nadie</h3>
             <p>
-              Registro 1, cartografía predial y huellas de edificaciones.
+              No modifica avalúos, no calcula impuestos ni genera cobros. Cada
+              ficha termina en una persona que confirma, descarta o marca no
+              concluyente.
+            </p>
+          </article>
+          <article>
+            <p class="sia-pilar-tag">Privacidad · Ley 1581 de 2012</p>
+            <h3>Sin datos personales</h3>
+            <p>
+              El pipeline no lee ni escribe nombres, documentos ni contactos, y
+              se detiene con un error si una columna los trae. Lo publicado son
+              datos derivados del sector piloto.
+            </p>
+          </article>
+          <article>
+            <p class="sia-pilar-tag">Errores y sesgos</p>
+            <h3>Dudas a la vista</h3>
+            <p>
+              NR evita leer un equipamiento como vivienda sin registrar. Las
+              <span data-stat="confianza_baja">927</span> fichas de confianza
+              baja se marcan, y cada decisión se exporta a CSV para trazarla.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="sia-section sia-viabilidad" id="viabilidad" aria-labelledby="viabilidad-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Viabilidad y sostenibilidad</p>
+            <h2 id="viabilidad-titulo">Empieza con lo abierto,<br />escala con la institución.</h2>
+          </div>
+          <p>
+            El piloto se sostiene con herramientas abiertas. La continuidad
+            depende de un acuerdo con quien tiene la competencia catastral.
+          </p>
+        </div>
+        <div class="sia-fases">
+          <article>
+            <p class="sia-fase-tag">Hoy · Demostración</p>
+            <ul>
+              <li>
+                <strong>Infraestructura.</strong> Código abierto (licencia MIT);
+                frontend en Vercel y API en Render, ambos en planes gratuitos.
+              </li>
+              <li>
+                <strong>Mantenimiento.</strong> Integración continua en GitHub:
+                revisión de estilo, pruebas del proceso de datos y de la web, y
+                compilación en cada cambio.
+              </li>
+              <li>
+                <strong>Límite conocido.</strong> La API gratuita se suspende y
+                tarda cerca de 50 s en despertar; la demostración funciona sin
+                ella.
+              </li>
+            </ul>
+          </article>
+          <article>
+            <p class="sia-fase-tag">Previsto · Fase institucional</p>
+            <ul>
+              <li>
+                <strong>Sostenibilidad.</strong> Convenio interadministrativo o
+                suscripción con la Alcaldía: implementación, capacitación,
+                soporte y actualización, sujetos a acuerdo.
+              </li>
+              <li>
+                <strong>Actualización anual.</strong> Con imágenes nuevas se
+                marcan construcciones nuevas o modificadas frente al registro.
+              </li>
+              <li>
+                <strong>Ingresos.</strong> Por sectores procesados y servicios;
+                no se comercializan datos de ciudadanos. Hoy no existe un
+                acuerdo de acceso a datos: se solicitaría.
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+      <section class="sia-section sia-ruta" id="ruta" aria-labelledby="ruta-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Plan de implementación</p>
+            <h2 id="ruta-titulo">Hoja de ruta a 12 meses.</h2>
+          </div>
+          <p>
+            Lo que sigue está previsto y condicionado a financiación y acceso a
+            datos. No son funciones del piloto actual.
+          </p>
+        </div>
+        <ol class="sia-hitos">
+          <li>
+            <p class="sia-hito-meses">Meses 1 a 3</p>
+            <h3>Medir y validar</h3>
+            <p>
+              Revisar los 240 predios de la muestra con imagen o visita y
+              calcular precisión ponderada, exhaustividad y F1 del sector.
             </p>
           </li>
           <li>
-            <span>02</span><em>Identificación predial</em>
-            <h3>Cruzar</h3>
+            <p class="sia-hito-meses">Meses 4 a 6</p>
+            <h3>Suelo-IA v2</h3>
             <p>
-              Relacionar cada número predial con su terreno y la evidencia espacial.
+              Consulta normativa sobre el POT con recuperación de documentos
+              (RAG): respuestas con cita de artículo y página, o abstención si
+              no hay sustento.
             </p>
           </li>
           <li>
-            <span>03</span><em>Priorización</em>
-            <h3>Priorizar</h3>
-            <p>Aplicar las reglas y conservar las razones de cada alerta.</p>
-          </li>
-          <li>
-            <span>04</span><em>Consulta</em>
-            <h3>Consultar</h3>
-            <p>Explorar el mapa y leer lo registrado frente a lo observado.</p>
-          </li>
-          <li>
-            <span>05</span><em>Verificación en campo</em>
-            <h3>Verificar</h3>
-            <p>Contrastar con imagen o visita, registrar una revisión y exportar.</p>
-          </li>
-          <li class="sia-fuera">
-            <span>06</span><em>Actualización catastral</em>
-            <h3>Decide la autoridad</h3>
-            <p>Fuera de Suelo-IA: la actuación corresponde a quien tiene la competencia.</p>
+            <p class="sia-hito-meses">Meses 7 a 12</p>
+            <h3>Escala municipal</h3>
+            <p>
+              Ampliar sector por sector hasta cubrir lo urbano, y sumar la
+              serie temporal 2016-2023 de Open Buildings para trazar la
+              evolución constructiva.
+            </p>
           </li>
         </ol>
+        <div class="sia-incentivo">
+          <h3>Uso proyectado del incentivo</h3>
+          <p class="sia-footnote">
+            Escenario de primer puesto ($5.000.000). Montos orientadores, antes
+            de deducciones.
+          </p>
+          <ol>
+            <li style="flex-grow: 35">
+              <strong>35 %</strong>
+              <span>Consulta normativa (RAG)</span>
+              <b>$1.750.000</b>
+            </li>
+            <li style="flex-grow: 25">
+              <strong>25 %</strong>
+              <span>Validación geoespacial</span>
+              <b>$1.250.000</b>
+            </li>
+            <li style="flex-grow: 15">
+              <strong>15 %</strong>
+              <span>Cómputo y alojamiento</span>
+              <b>$750.000</b>
+            </li>
+            <li style="flex-grow: 15">
+              <strong>15 %</strong>
+              <span>Campo y usuarios</span>
+              <b>$750.000</b>
+            </li>
+            <li style="flex-grow: 10">
+              <strong>10 %</strong>
+              <span>Capacitación y documentación</span>
+              <b>$500.000</b>
+            </li>
+          </ol>
+        </div>
+      </section>
+      <section class="sia-section sia-equipo" id="equipo" aria-labelledby="equipo-titulo">
+        <div class="sia-section-heading">
+          <div>
+            <p class="sia-label">Equipo y contacto</p>
+            <h2 id="equipo-titulo">Quienes están<br />detrás de Suelo-IA.</h2>
+          </div>
+          <p>
+            Un equipo interdisciplinario con el código abierto y la
+            documentación a la vista.
+          </p>
+        </div>
+        <div class="sia-equipo-grid">
+          <ul class="sia-personas">
+            <li>
+              <h3>Sebastián Polanía</h3>
+              <p>Representación, arquitectura de datos e implementación.</p>
+              <a href="mailto:sebastianjpolaniao@gmail.com">sebastianjpolaniao@gmail.com</a>
+            </li>
+            <li>
+              <h3>Juan Pablo Escamilla</h3>
+              <p>Metodología analítica, IA responsable y documentación técnica.</p>
+              <a href="mailto:juanpabloescamilla@gmail.com">juanpabloescamilla@gmail.com</a>
+            </li>
+            <li>
+              <h3>Guillermo Moreno</h3>
+              <p>Diagnóstico territorial, indicadores de impacto y sostenibilidad.</p>
+              <a href="mailto:guillermoacmk@gmail.com">guillermoacmk@gmail.com</a>
+            </li>
+          </ul>
+          <div class="sia-qr sia-qr-repo">
+            <img
+              src="/img/qr-repo.svg"
+              width="132"
+              height="132"
+              alt="Código QR que abre el repositorio abierto de Suelo-IA en GitHub"
+            />
+            <p>
+              <strong>Repositorio abierto</strong>
+              <a href="https://github.com/sjpolaniaoro/suelo-IA">github.com/sjpolaniaoro/suelo-IA</a>
+            </p>
+          </div>
+        </div>
       </section>
       <section
         class="sia-pilot sia-section"
@@ -527,15 +999,9 @@
             </p>
           </details>
           <details>
-            <summary>¿Qué es NR, «uso probablemente no residencial»?</summary>
+            <summary>¿Y si la imagen se equivoca o es más antigua que el registro?</summary>
             <p>
-              Un predio registrado como habitacional, sin área construida, con una huella detectada muy grande (más de 1.000 m²). Es más probable que sea otro uso, como un equipamiento. Se separa del puntaje de vivienda y pide revisar el destino.
-            </p>
-          </details>
-          <details>
-            <summary>¿Qué cubre hoy y qué sigue?</summary>
-            <p>
-              Hoy: sector urbano 02, mapa 3D, alertas A1 a A3 y NR, ficha y exportación de revisiones. Previsto: ampliación de cobertura, serie temporal y consulta normativa. Son desarrollos futuros, no funciones del piloto actual.
+              Puede pasar. Por eso ninguna alerta es un hallazgo: la cartografía oficial funciona como segunda fuente, los casos en que solo la imagen contradice al registro van a verificación en campo y las fichas de confianza baja se marcan. Un producto satelital no acredita por sí solo cambios posteriores a su fecha.
             </p>
           </details>
           <details>
@@ -551,9 +1017,9 @@
             </p>
           </details>
           <details>
-            <summary>¿Qué pasa con los datos personales y con el catastro?</summary>
+            <summary>¿Qué datos se guardan en la revisión en equipo?</summary>
             <p>
-              El pipeline excluye nombres, documentos y contactos; si aparecen columnas de datos personales, se detiene. En la revisión en equipo solo se guarda el nombre básico de quien revisa, sin documentos, correos ni teléfonos. Suelo-IA no modifica el catastro, no emite nuevos avalúos y no genera cobros: la decisión es humana.
+              Solo el nombre básico de quien revisa, sin documentos, correos ni teléfonos, junto con el veredicto y la foto de la alerta. Los principios de privacidad y supervisión humana están en la sección de IA responsable.
             </p>
           </details>
         </div>
