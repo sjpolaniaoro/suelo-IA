@@ -1,4 +1,7 @@
-/* Secciones de la sustentación: problema, solución, IA, impacto, IA responsable, viabilidad, y ruta. */
+/* Secciones de la sustentación: problema, solución, IA, impacto, IA responsable y ruta.
+   Niveles de panel: plano (borde de tinta 2 px y sombra: ficha, captura y reglas), de apoyo
+   (superficie y borde --sia-panel-linea: capas, pilares, KPI) y de nota (fondo suave y borde
+   discontinuo: metas y sostenibilidad previstas). */
 .sia-autoria {
   margin-top: 16px;
   font-size: 12px;
@@ -68,14 +71,12 @@ dl.sia-kpis-tres {
   border-bottom: 1px solid var(--sia-line);
 }
 .sia-causas h3,
-.sia-benef h3,
-.sia-diferenciales h3 {
+.sia-benef h3 {
   font-size: 1.05rem;
   margin-bottom: 6px;
 }
 .sia-causas p,
-.sia-benef p,
-.sia-diferenciales p {
+.sia-benef p {
   font-size: 14px;
   color: var(--sia-muted);
 }
@@ -131,24 +132,29 @@ dl.sia-kpis-tres {
 .sia-ec-resultado p:not(.sia-ec-etiqueta) {
   color: var(--sia-accent-200) !important;
 }
-.sia-diferenciales {
-  list-style: none;
-  margin: 32px 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
+
+/* Una frase de diferencia bajo la ecuación de la solución */
+.sia-landing .sia-diferencial {
+  max-width: 72ch;
+  margin: 28px 0 0;
+  padding: 4px 0 4px 16px;
+  border-left: 4px solid var(--neiva-verde);
+  font-size: 15px;
+  color: var(--sia-muted);
 }
-.sia-diferenciales li {
-  padding-top: 16px;
-  border-top: 3px solid var(--sia-accent);
+.sia-diferencial strong {
+  color: var(--sia-ink);
 }
-h3.sia-subtitulo {
-  margin: 56px 0 0;
-  font: 600 1.4rem/1.2 var(--sia-heading);
+.sia-diferencial a {
+  color: var(--sia-accent);
 }
-h3.sia-subtitulo + .sia-method-steps {
-  margin-top: 16px;
+
+/* Cierre: vuelta al ejemplo */
+.sia-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
 }
 
 /* Núcleo de IA */
@@ -190,7 +196,6 @@ h3.sia-subtitulo + .sia-method-steps {
 }
 .sia-capa-tag,
 .sia-pilar-tag,
-.sia-fase-tag,
 .sia-hito-meses {
   font: 500 11px/1.4 var(--sia-mono);
   text-transform: uppercase;
@@ -273,6 +278,7 @@ h3.sia-subtitulo + .sia-method-steps {
 /* Impacto */
 .sia-metas {
   padding: 24px 28px;
+  background: var(--sia-soft);
   border: 1px dashed var(--sia-panel-linea);
 }
 .sia-metas h3 {
@@ -315,31 +321,6 @@ h3.sia-subtitulo + .sia-method-steps {
 }
 
 /* Viabilidad */
-.sia-fases {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-.sia-fases article {
-  padding: 24px 28px;
-  background: var(--sia-surface);
-  border: 1px solid var(--sia-panel-linea);
-}
-.sia-fases article:last-child {
-  border-style: dashed;
-}
-.sia-fases ul {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-  font-size: 14px;
-  color: var(--sia-muted);
-}
-.sia-fases strong {
-  color: var(--sia-ink);
-}
 
 /* Hoja de ruta */
 .sia-hitos {
@@ -347,7 +328,7 @@ h3.sia-subtitulo + .sia-method-steps {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   border-top: 2px solid var(--sia-ink);
 }
@@ -370,6 +351,27 @@ h3.sia-subtitulo + .sia-method-steps {
 .sia-hitos h3 {
   margin: 6px 0 8px;
   font: 600 1.5rem/1.15 var(--sia-heading);
+}
+/* Lo previsto va con el punto vacío; «Hoy» con el punto lleno. */
+.sia-hitos li:not(.sia-hito-hoy)::before {
+  background: var(--sia-paper);
+  border-color: var(--sia-accent);
+  box-shadow: none;
+}
+.sia-landing .sia-sostenibilidad {
+  margin-top: 32px;
+  padding: 20px 24px;
+  background: var(--sia-soft);
+  border: 1px dashed var(--sia-panel-linea);
+}
+.sia-sostenibilidad h3 {
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+.sia-sostenibilidad p {
+  max-width: 90ch;
+  font-size: 14px;
+  color: var(--sia-muted);
 }
 .sia-incentivo {
   margin-top: 48px;
@@ -418,7 +420,6 @@ h3.sia-subtitulo + .sia-method-steps {
   color: var(--sia-ink);
 }
 
-
 @media (max-width: 1000px) {
   .sia-problem-grid {
     grid-template-columns: 1fr;
@@ -441,9 +442,8 @@ h3.sia-subtitulo + .sia-method-steps {
     top: -19px;
     transform: translateX(-50%);
   }
-  .sia-diferenciales,
   .sia-benef,
-  .sia-metas ul {
+.sia-metas ul {
     grid-template-columns: 1fr;
     gap: 20px;
   }
@@ -464,15 +464,9 @@ h3.sia-subtitulo + .sia-method-steps {
     top: 4px;
     left: -9px;
   }
-  .sia-fases {
-    grid-template-columns: 1fr;
-  }
 }
 @media (max-width: 760px) {
   /* Los puntos del trayecto tapaban los números en una columna. */
-  .sia-method-steps li::before {
-    display: none;
-  }
   .sia-con-js .sia-header nav.sia-nav-open {
     flex-wrap: wrap;
     justify-content: flex-start;

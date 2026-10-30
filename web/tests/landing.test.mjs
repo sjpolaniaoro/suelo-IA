@@ -9,7 +9,7 @@ const js = leer("../src/landing/landing.js");
 const sincronizar = leer("../scripts/sincronizar-cifras.mjs");
 const resumen = JSON.parse(leer("../public/data/resumen.json"));
 
-test("las secciones siguen el orden de la guía de presentación", () => {
+test("las secciones siguen el hilo: dolor, solución, mecánica, ejemplo, impacto, confianza, ruta y llamado", () => {
   const ids = [...html.matchAll(/<section[^>]*\bid="([^"]+)"/g)].map((m) => m[1]);
   const orden = [
     "problema",
@@ -19,10 +19,9 @@ test("las secciones siguen el orden de la guía de presentación", () => {
     "demo",
     "impacto",
     "responsable",
-    "viabilidad",
     "ruta",
-    "piloto",
     "limites",
+    "piloto",
   ];
   assert.deepEqual(ids, orden);
 });
@@ -73,14 +72,14 @@ test("no hay cifras de conteo escritas a mano que contradigan el resumen", () =>
 });
 
 test("lo previsto se rotula como previsto y no como función del piloto", () => {
-  const ruta = html.slice(html.indexOf('id="ruta"'), html.indexOf('id="piloto"'));
+  const ruta = html.slice(html.indexOf('id="ruta"'), html.indexOf('id="limites"')).replace(/\s+/g, " ");
   assert.match(ruta, /No son funciones del piloto actual/);
-  const viabilidad = html.slice(html.indexOf('id="viabilidad"'), html.indexOf('id="ruta"'));
-  assert.match(viabilidad, /Previsto/);
+  assert.match(ruta, /Previsto/);
+  assert.match(ruta, /Sostenibilidad · previsto/);
 });
 
 test("el reparto del incentivo suma 100 % y $5.000.000", () => {
-  const bloque = html.slice(html.indexOf('class="sia-incentivo"'), html.indexOf('id="piloto"'));
+  const bloque = html.slice(html.indexOf('class="sia-incentivo"'), html.indexOf('id="limites"'));
   const porcentajes = [...bloque.matchAll(/<strong>(\d+) %<\/strong>/g)].map((m) => Number(m[1]));
   assert.equal(porcentajes.reduce((a, b) => a + b, 0), 100);
   const montos = [...bloque.matchAll(/<b>\$([\d.]+)<\/b>/g)].map((m) => Number(m[1].replaceAll(".", "")));
@@ -94,4 +93,36 @@ test("las imágenes de los QR existen y tienen texto alternativo", () => {
   }
   for (const [etiqueta] of html.matchAll(/<img[^>]*qr-[a-z]+\.svg[^>]*>/g))
     assert.match(etiqueta, /alt="[^"]{10,}"/);
+});
+
+test("la portada abre con el dolor y la cifra de ciudad", () => {
+  const portada = html.slice(html.indexOf('class="sia-cover"'), html.indexOf('class="sia-rio"'));
+  assert.match(portada, /El registro dice que no hay nada construido/);
+  for (const clave of ["ctx_sin_area", "ctx_hab", "ctx_pct"])
+    assert.ok(portada.includes(`data-stat="${clave}"`), "falta " + clave + " en la portada");
+  // El dolor va antes que la descripción de la herramienta.
+  assert.ok(portada.indexOf("sia-problema") < portada.indexOf("sia-lead"));
+});
+
+test("el cierre devuelve al predio de ejemplo", () => {
+  const cierre = html.slice(html.indexOf('class="sia-closing"'), html.indexOf("</main>"));
+  assert.match(cierre, /data-example-link/);
+  assert.match(js, /\?predio=/);
+});
+
+test("ningún panel de la portada se desplaza en horizontal", () => {
+  for (const archivo of ["landing.css", "neiva.css", "pitch.css"])
+    assert.ok(!/overflow-x\s*:\s*(auto|scroll)/.test(leer("../src/landing/" + archivo)), archivo + " usa overflow-x");
+  assert.ok(!/scroll-snap-type/.test(leer("../src/landing/neiva.css")));
+});
+
+test("la barra de triangulación toma sus anchos del resumen", () => {
+  for (const clave of ["dos_fuentes", "solo_cartografia", "solo_imagen", "sin_evidencia"]) {
+    assert.ok(html.includes(`data-tri="${clave}"`), "falta el segmento " + clave);
+    assert.ok(Number.isFinite(resumen.triangulacion[clave]));
+  }
+  const suma = ["dos_fuentes", "solo_cartografia", "solo_imagen", "sin_evidencia"]
+    .map((k) => resumen.triangulacion[k])
+    .reduce((a, b) => a + b, 0);
+  assert.equal(suma, resumen.triangulacion.universo_sin_area);
 });
