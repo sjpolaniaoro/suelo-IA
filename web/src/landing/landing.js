@@ -17,7 +17,7 @@ async function json(path) {
   return response.json();
 }
 async function mostrarCifras() {
-  $(".sia-carrusel").setAttribute("aria-busy", "true");
+  $("#alertas").setAttribute("aria-busy", "true");
   $("#cifras-estado").textContent = "Leyendo el resumen del piloto.";
   try {
     const r = await json("data/resumen.json");
@@ -91,6 +91,11 @@ async function mostrarCifras() {
     document.querySelectorAll("[data-stat]").forEach((el) => {
       el.textContent = values[el.dataset.stat];
     });
+    // Los anchos de la barra salen del resumen; sin ellos la barra no se muestra.
+    document.querySelectorAll("[data-tri]").forEach((el) => {
+      el.style.flexGrow = r.triangulacion[el.dataset.tri];
+    });
+    $(".sia-tri-barra").hidden = false;
     $("#cifras-estado").textContent =
       "Conteos del resumen del piloto. Las alertas orientan la revisión y no confirman hallazgos.";
   } catch {
@@ -100,7 +105,7 @@ async function mostrarCifras() {
     $("#cifras-estado").textContent =
       "Cifras no disponibles. Puedes consultar las fuentes del proyecto o intentar de nuevo al recargar.";
   } finally {
-    $(".sia-carrusel").setAttribute("aria-busy", "false");
+    $("#alertas").setAttribute("aria-busy", "false");
   }
 }
 function mostrarEjemplo() {
@@ -205,39 +210,6 @@ document.addEventListener("keydown", (event) => {
   }
 });
 window.matchMedia("(min-width: 761px)").addEventListener("change", cerrar);
-function iniciarCarrusel() {
-  const pista = $("#escenarios");
-  if (!pista) return;
-  const tarjetas = [...pista.children];
-  const pos = $("#escenario-pos");
-  const ant = $("#escenario-ant");
-  const sig = $("#escenario-sig");
-  const prog = $("#escenario-prog");
-  const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const paso = () =>
-    tarjetas[1] ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft : tarjetas[0].offsetWidth;
-  const indice = () => Math.min(tarjetas.length - 1, Math.max(0, Math.round(pista.scrollLeft / paso())));
-  const actualizar = () => {
-    const i = indice();
-    pos.textContent = "Escenario " + (i + 1) + " de " + tarjetas.length + ": " + tarjetas[i].dataset.nombre;
-    prog.style.width = ((i + 1) / tarjetas.length) * 100 + "%";
-    ant.disabled = pista.scrollLeft <= 2;
-    sig.disabled = pista.scrollLeft + pista.clientWidth >= pista.scrollWidth - 2;
-  };
-  const ir = (d) => pista.scrollBy({ left: d * paso(), behavior: reducir ? "auto" : "smooth" });
-  ant.addEventListener("click", () => ir(-1));
-  sig.addEventListener("click", () => ir(1));
-  pista.addEventListener("scroll", () => requestAnimationFrame(actualizar), { passive: true });
-  pista.addEventListener("scrollend", actualizar);
-  pista.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowRight") { event.preventDefault(); ir(1); }
-    else if (event.key === "ArrowLeft") { event.preventDefault(); ir(-1); }
-  });
-  window.addEventListener("resize", actualizar);
-  $("#escenario-barra").hidden = false;
-  actualizar();
-}
-iniciarCarrusel();
 mostrarCifras();
 mostrarEjemplo();
 json("data/manifiesto.json")

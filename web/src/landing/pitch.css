@@ -25,7 +25,7 @@
   min-width: 0;
   padding: 24px 28px;
   background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
 }
 .sia-kpis dd {
   font: 500 clamp(2.6rem, 4.6vw, 4.4rem) / 1.05 var(--sia-heading);
@@ -99,7 +99,7 @@ dl.sia-kpis-tres {
 .sia-ecuacion article {
   padding: 22px 24px;
   background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
 }
 .sia-ecuacion article h3 {
   margin: 4px 0 8px;
@@ -165,7 +165,7 @@ h3.sia-subtitulo + .sia-method-steps {
   position: relative;
   padding: 24px;
   background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
   border-top-width: 6px;
 }
 .sia-capas li + li::before {
@@ -251,7 +251,7 @@ h3.sia-subtitulo + .sia-method-steps {
   width: 132px;
   height: 132px;
   background: #fff;
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
   padding: 4px;
   image-rendering: pixelated;
 }
@@ -273,7 +273,7 @@ h3.sia-subtitulo + .sia-method-steps {
 /* Impacto */
 .sia-metas {
   padding: 24px 28px;
-  border: 1px dashed var(--sia-line-strong);
+  border: 1px dashed var(--sia-panel-linea);
 }
 .sia-metas h3 {
   font-size: 1.05rem;
@@ -302,7 +302,7 @@ h3.sia-subtitulo + .sia-method-steps {
 .sia-pilares article {
   padding: 24px;
   background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
 }
 .sia-pilares article:nth-child(1) {
   border-top: 6px solid var(--neiva-amarillo);
@@ -323,7 +323,7 @@ h3.sia-subtitulo + .sia-method-steps {
 .sia-fases article {
   padding: 24px 28px;
   background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
+  border: 1px solid var(--sia-panel-linea);
 }
 .sia-fases article:last-child {
   border-style: dashed;

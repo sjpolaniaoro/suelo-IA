@@ -2,25 +2,6 @@
    (rojo, verde, amarillo) como ornamento y el río Magdalena como hilo. Los colores de prioridad
    del mapa (rojo, naranja, amarillo) no cambian: aquí solo son identidad, nunca estado. */
 body.sia-landing {
-  --neiva-rojo: #c8272d;
-  --neiva-verde: #1b6b3a;
-  --neiva-verde-900: #12342a;
-  --neiva-amarillo: #f4b82e;
-  --neiva-rio: #2b7a96;
-  --sia-paper: #f7f1e3;
-  --sia-surface: #fffdf7;
-  --sia-ink: #1f2a22;
-  --sia-muted: #55594f;
-  --sia-accent: #1b6b3a;
-  --sia-accent-hover: #12502b;
-  --sia-accent-900: #12342a;
-  --sia-accent-600: #3f8a5b;
-  --sia-accent-300: #bfe3c9;
-  --sia-accent-200: #dff0e3;
-  --sia-soft: #ece4cf;
-  --sia-line: #ddd3bb;
-  --sia-line-strong: #a89f86;
-  --sia-grid: color-mix(in srgb, #8a6a2b 9%, transparent);
   background: var(--sia-paper);
 }
 
@@ -254,7 +235,7 @@ body.sia-landing {
   font: 600 11px/1.3 var(--sia-body);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--neiva-rio);
+  color: var(--sia-rio-texto);
   font-style: normal;
 }
 .sia-method-steps span {
@@ -298,10 +279,6 @@ body.sia-landing {
 }
 
 /* ---------- Sistema de marca: tipografía, firma y trama ---------- */
-body.sia-landing {
-  --sia-heading: "Fraunces", Georgia, "Times New Roman", serif;
-  --sia-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
-}
 /* Títulos en serif cálida (Fraunces); cifras y códigos catastrales en monoespaciada. */
 .sia-landing h1,
 .sia-landing h2 {
@@ -434,7 +411,7 @@ body.sia-landing {
   justify-content: flex-end;
 }
 
-/* ---------- Carrusel de escenarios: se recorre de lado, sin bajar por la página ---------- */
+/* ---------- Mecánica (#alertas): reglas en filas y triangulación en una barra; todo cabe sin deslizar ---------- */
 .sia-band-heading {
   display: flex;
   flex-wrap: wrap;
@@ -447,95 +424,55 @@ body.sia-landing {
   font-size: 15px;
   color: var(--sia-accent-200);
 }
-.sia-band-total strong {
-  display: block;
-  font: 600 clamp(2.4rem, 4vw, 3.4rem)/1 var(--sia-heading);
-  font-variant-numeric: lining-nums tabular-nums;
-  color: var(--neiva-amarillo);
-}
-.sia-carrusel {
-  margin-top: 28px;
-}
-.sia-carrusel-barra {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-.sia-carrusel-pos {
-  font: 600 12px/1.4 var(--sia-body);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--neiva-amarillo);
-}
-.sia-carrusel-botones {
-  display: flex;
-  gap: 8px;
-}
-.sia-car-btn {
-  width: 44px;
-  height: 44px;
-  border: 2px solid var(--neiva-amarillo);
-  background: transparent;
-  color: var(--neiva-amarillo);
-  font-size: 20px;
-  line-height: 1;
-}
-.sia-car-btn:hover:not(:disabled) {
-  background: var(--neiva-amarillo);
-  color: var(--neiva-verde-900);
-}
-.sia-car-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-.sia-carrusel-prog {
-  height: 3px;
-  margin-bottom: 18px;
-  background: color-mix(in srgb, var(--neiva-amarillo) 25%, transparent);
-}
-.sia-carrusel-prog i {
-  display: block;
-  height: 100%;
-  width: 10%;
-  background: var(--neiva-amarillo);
-  transition: width 0.25s;
-}
-.sia-carrusel-pista {
-  display: flex;
-  gap: 20px;
-  margin: 0;
-  padding: 4px 8px 20px 2px;
+.sia-reglas {
   list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: 2px;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--neiva-amarillo) transparent;
+  margin: 28px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
 }
-.sia-carrusel-pista:focus-visible {
-  outline: 3px solid var(--neiva-amarillo);
-  outline-offset: 4px;
-}
-.sia-escenario {
-  flex: 0 0 min(400px, 86%);
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 22px 24px 24px;
+.sia-regla,
+.sia-tri {
   background: var(--sia-surface);
   color: var(--sia-ink);
   border: 2px solid var(--sia-ink);
   box-shadow: 6px 6px 0 var(--neiva-amarillo);
 }
-.sia-esc-cab {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.sia-regla {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.5fr) minmax(0, 1fr) auto;
+  gap: 12px 28px;
+  align-items: start;
+  padding: 20px 24px;
+}
+.sia-regla-id {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.sia-regla h3,
+.sia-tri h3 {
+  font: 600 1.3rem/1.2 var(--sia-heading);
+  color: var(--sia-ink);
+}
+.sia-regla-id p,
+.sia-tri-intro,
+.sia-regla-cuando,
+.sia-tri-leyenda p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sia-regla-cuando b,
+.sia-cola b {
+  display: block;
+  font: 600 11px/1.3 var(--sia-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sia-rio-texto);
+  margin-bottom: 2px;
+}
+.sia-cola b {
+  color: var(--sia-ink);
 }
 .sia-esc-codigo {
   padding: 4px 10px;
@@ -544,75 +481,140 @@ body.sia-landing {
   font: 500 15px/1.2 var(--sia-mono);
   white-space: nowrap;
 }
-.sia-esc-tipo {
-  font: 600 11px/1.3 var(--sia-body);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--sia-muted);
+.sia-regla-n {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
 }
-.sia-escenario h3 {
-  font: 600 1.35rem/1.2 var(--sia-heading);
-  color: var(--sia-ink);
-}
-.sia-esc-num {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-}
-.sia-esc-num strong {
-  font: 600 2.6rem/1 var(--sia-heading);
+.sia-regla-n strong,
+.sia-tri-leyenda strong {
+  font: 600 2.4rem/1 var(--sia-heading);
   font-variant-numeric: lining-nums tabular-nums;
   color: var(--neiva-verde);
 }
-.sia-esc-num span {
+.sia-regla-n span {
   font-size: 13px;
   color: var(--sia-muted);
 }
-.sia-escenario dl {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-.sia-escenario dt {
-  font: 600 11px/1.3 var(--sia-body);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--neiva-rio);
-}
-.sia-escenario dd {
-  margin: 2px 0 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.sia-esc-cola {
-  margin-top: auto;
+.sia-cola {
   padding: 10px 12px;
-  border-left: 4px solid var(--sia-line-strong);
+  border-left: 4px solid var(--sia-ink);
   background: var(--sia-soft);
   font-size: 13px;
   line-height: 1.4;
 }
-.sia-esc-cola b {
+.sia-cola.oficina {
+  border-left-color: var(--sia-rio-texto);
+}
+.sia-cola.campo {
+  border-left-style: solid;
+}
+.sia-cola.mixta {
+  border-left-style: double;
+  border-left-width: 6px;
+}
+.sia-cola.ninguna {
+  border-left-style: dotted;
+}
+
+.sia-tri {
+  margin-top: 28px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+.sia-tri-intro {
+  max-width: 78ch;
+  color: var(--sia-muted);
+}
+.sia-tri-barra {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+  border: 2px solid var(--sia-ink);
+  background: var(--sia-surface);
+}
+.sia-tri-barra i {
   display: block;
-  font: 600 11px/1.3 var(--sia-body);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  flex: 1 1 0;
+  min-width: 4px;
+}
+.sia-tri-dos {
+  background: var(--neiva-rio);
+}
+.sia-tri-cart {
+  background: repeating-linear-gradient(135deg, var(--neiva-rio) 0 5px, var(--sia-surface) 5px 8px);
+}
+.sia-tri-img {
+  background: var(--sia-ink);
+}
+.sia-tri-nada {
+  background: var(--sia-line-strong);
+}
+.sia-tri-leyenda {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+.sia-tri-leyenda li {
+  display: grid;
+  grid-template-columns: 20px 4.5rem minmax(0, 1fr) minmax(0, 16rem);
+  gap: 8px 16px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid var(--sia-line-strong);
+}
+.sia-tri-leyenda li > i {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 2px solid var(--sia-ink);
+}
+.sia-tri-leyenda strong {
+  font-size: 1.8rem;
+}
+.sia-tri-leyenda h4 {
+  font: 600 15px/1.3 var(--sia-body);
   margin-bottom: 2px;
 }
-.sia-esc-cola.oficina {
-  border-left-color: var(--neiva-rio);
+.sia-tri-leyenda p {
+  color: var(--sia-muted);
 }
-.sia-esc-cola.campo {
-  border-left-color: var(--sia-ink);
+.sia-tri-leyenda .sia-cola {
+  margin: 0;
 }
-.sia-esc-cola.variable {
-  border-left-color: var(--neiva-amarillo);
+
+@media (max-width: 1000px) {
+  .sia-regla {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .sia-regla-n {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .sia-regla-cuando,
+  .sia-regla .sia-cola {
+    grid-column: 1 / -1;
+  }
+  .sia-tri-leyenda li {
+    grid-template-columns: 20px 4rem minmax(0, 1fr);
+  }
+  .sia-tri-leyenda .sia-cola {
+    grid-column: 2 / -1;
+  }
 }
-@media (prefers-reduced-motion: reduce) {
-  .sia-carrusel-prog i {
-    transition: none;
+@media (max-width: 520px) {
+  .sia-regla,
+  .sia-tri {
+    padding: 16px;
+    box-shadow: 4px 4px 0 var(--neiva-amarillo);
+  }
+  .sia-regla-n strong {
+    font-size: 2rem;
   }
 }
 
