@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TEXTO_CLASE, claseSinAlerta, tieneAlerta } from "./clases.js";
 import { UMBRALES, evaluar, m2 } from "./consistencia.js";
 import { DECISIONES, FUENTES, decisionActiva, etiquetaDecision, etiquetaFuente } from "./decisiones.js";
@@ -16,8 +16,8 @@ const signo = (x) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${m2(Math.abs(x))}`;
 export const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
-  p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso, puedeDecidir = true,
-  centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES, puedeRatificar = false, onRatificar, onMinimizar, fuente = null, onFuente,
+  p, revision, onElegir, onEnviar, seleccion = {}, hayCambio = false, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso, puedeDecidir = true,
+  centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES, puedeRatificar = false, onRatificar, onMinimizar, onFuente,
 }) {
   const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
   const calle = centro && `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}`;
@@ -33,7 +33,13 @@ export default function Ficha({
 
   const clase = claseSinAlerta(p);
   // La fuente con error (opcional) se elige antes de decidir; si ya hay decisión, cambiarla la vuelve a registrar.
-  const activa = decisionActiva(revision);
+  const activa = decisionActiva(seleccion);
+  const fuente = seleccion.fuente ?? null;
+  // Al cambiar de predio la ficha vuelve arriba: quien envía no debe recorrer las secciones de nuevo para decidir.
+  const raiz = useRef(null);
+  useEffect(() => {
+    raiz.current?.scrollTo({ top: 0 });
+  }, [p.npn]);
   const reg = p.area_construida_reg ?? 0;
   const obs = p.area_huella ?? 0;
   const cart = p.area_cart ?? 0;
@@ -46,7 +52,7 @@ export default function Ficha({
   const incons = ev.estado === "inconsistente";
 
   return (
-    <aside className={`ficha nivel-${p.nivel}`} aria-label="Ficha del predio">
+    <aside ref={raiz} className={`ficha nivel-${p.nivel}`} aria-label="Ficha del predio">
       <header className="ficha-cab">
         <div className="ficha-nav">
           <button onClick={() => onMover(-1)} disabled={!posicion?.ok} aria-label="Predio anterior" title="Anterior (K)">‹</button>
@@ -208,11 +214,16 @@ export default function Ficha({
           <div className="veredictos">
             {DECISIONES.map((d) => (
               <button key={`${d.k}-${d.motivo ?? ""}`} className={`${d.k} ${activa === d ? "activo" : ""}`} aria-pressed={activa === d} disabled={!puedeDecidir}
-                onClick={() => onDecidir(p.npn, { estado: d.k, motivo: d.motivo ?? null })} title={d.ayuda}>
+                onClick={() => onElegir({ estado: d.k, motivo: d.motivo ?? null })} title={d.ayuda}>
                 {d.t}<kbd>{d.tecla}</kbd>
               </button>
             ))}
           </div>
+          <button type="button" className="enviar-registro" disabled={!puedeDecidir || !hayCambio} onClick={onEnviar}>
+            {revision && !hayCambio ? "Registro enviado ✓" : revision ? "Enviar cambio" : "Enviar registro"}
+            {hayCambio && <kbd>Enter</kbd>}
+          </button>
+          {puedeDecidir && !seleccion.estado && <p className="nota">Elige una decisión; el registro se envía con el botón.</p>}
           {!puedeDecidir && (
             <p className="nota aviso-id" role="note">Para registrar la revisión, identifícate antes en la barra de arriba (invitado o funcionario).</p>
           )}
@@ -235,8 +246,8 @@ export default function Ficha({
             <small>{progreso.hechos} de {progreso.total} revisados</small>
           </button>
         )}
-        <label className="auto"><input type="checkbox" checked={auto} onChange={(e) => onAuto(e.target.checked)} /> Avanzar al siguiente al decidir</label>
-        <p className="atajos">Atajos: <kbd>C</kbd> hay error · <kbd>D</kbd> está OK · <kbd>N</kbd> evidencia insuficiente · <kbd>U</kbd> no se pudo ubicar · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
+        <label className="auto"><input type="checkbox" checked={auto} onChange={(e) => onAuto(e.target.checked)} /> Pasar al siguiente al enviar</label>
+        <p className="atajos">Atajos: <kbd>C</kbd> hay error · <kbd>D</kbd> está OK · <kbd>N</kbd> evidencia insuficiente · <kbd>U</kbd> no se pudo ubicar · <kbd>Enter</kbd> enviar · <kbd>S</kbd> siguiente sin revisar · <kbd>J</kbd>/<kbd>K</kbd> mover · <kbd>Esc</kbd> cerrar</p>
         <details className="fuentes">
           <summary>Fuentes y fechas</summary>
           <ul>

@@ -6,7 +6,7 @@ import Desplegable from "./Desplegable.jsx";
 import Identidad from "./Identidad.jsx";
 import TarjetaMovil from "./TarjetaMovil.jsx";
 import { conNube, esFuncionario, identificado, normalizarPerfil, validarIdentidad } from "./identidad.js";
-import { decisionDeTecla, etiquetaDecision } from "./decisiones.js";
+import { decisionDeTecla, etiquetaDecision, hayCambio, seleccionActual } from "./decisiones.js";
 import { CONSULTA_APAISADO, CONSULTA_MOVIL, esApaisado, esMovil } from "./pantalla.js";
 import { UMBRALES, enriquecer } from "./consistencia.js";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
@@ -88,7 +88,9 @@ export default function App() {
   const [panel, setPanel] = useState(() => !(esMovil() && !esApaisado()));
   const [fichaCompleta, setFichaCompleta] = useState(false);
   const [filtrosMovil, setFiltrosMovil] = useState(false);
-  const [fuenteBorrador, setFuenteBorrador] = useState(null); // fuente elegida antes de decidir
+  // Borrador de la decisión del predio abierto: nada se registra hasta pulsar «Enviar registro».
+  const [borrador, setBorrador] = useState({});
+  const [aviso, setAviso] = useState("");
   const [auto, setAuto] = useState(leerAuto);
   const [mostrar, setMostrar] = useState(MAX_LISTA);
   const entrada = useRef(null);
@@ -278,7 +280,7 @@ export default function App() {
   // Celular en vertical: al elegir un predio la lista se cierra y aparece la tarjeta corta sobre el mapa.
   useEffect(() => {
     setFichaCompleta(false);
-    setFuenteBorrador(null);
+    setBorrador({});
     if (vertical && sel) setPanel(false);
   }, [sel, vertical]);
 
@@ -369,7 +371,7 @@ export default function App() {
     }
     const fecha = new Date().toISOString();
     const motivo = d.estado === "no_concluyente" ? d.motivo ?? null : null;
-    const fuente = "fuente" in d ? d.fuente : fuenteBorrador ?? revisiones[npn]?.fuente ?? null;
+    const fuente = d.fuente ?? null;
     const nueva = {
       estado: d.estado, fecha, revisor: equipo.nombre, grupo: equipo.grupo, rol: equipo.rol,
       ...(motivo ? { motivo } : {}), ...(fuente ? { fuente } : {}),
@@ -377,19 +379,39 @@ export default function App() {
     const sig = { ...revisiones, [npn]: nueva };
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
-    setFuenteBorrador(null);
+    setBorrador({});
     if (conNube(equipo)) encolar(eventoDe(npn, d.estado, fecha, { motivo, fuente }));
     if (auto && avanzar) siguientePendiente(npn, sig);
-  }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe, fuenteBorrador]);
+  }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe]);
 
-  // Elegir la fuente con error: antes de decidir queda de borrador; con una decisión ya tomada, la actualiza.
-  const elegirFuente = (k) => {
-    const actual = revisiones[sel]?.fuente ?? fuenteBorrador;
-    const nueva = actual === k ? null : k;
-    const r = revisiones[sel];
-    if (r && identificado(equipo)) decidir(sel, { estado: r.estado, motivo: r.motivo ?? null, fuente: nueva }, { avanzar: false });
-    else setFuenteBorrador(nueva);
-  };
+  // Elegir decisión o fuente solo arma el borrador (no registra nada).
+  const elegirDecision = useCallback((d) => setBorrador((b) => ({ ...b, estado: d.estado, motivo: d.motivo ?? null })), []);
+  const elegirFuente = (k) => setBorrador((b) => {
+    const actual = "fuente" in b ? b.fuente : revisiones[sel]?.fuente ?? null;
+    return { ...b, fuente: actual === k ? null : k };
+  });
+  const seleccion = seleccionActual(revisiones[sel], borrador);
+  const porEnviar = hayCambio(revisiones[sel], seleccion);
+
+  // Registra el borrador, pasa al siguiente predio (con «Avanzar al enviar») y avisa qué se envió.
+  const enviar = useCallback(() => {
+    if (!sel) return;
+    if (!identificado(equipo)) {
+      document.querySelector(".barra-identidad input, .barra-identidad .id-abrir")?.focus();
+      return;
+    }
+    const sl = seleccionActual(revisiones[sel], borrador);
+    if (!hayCambio(revisiones[sel], sl)) return;
+    const dir = porNpn.get(sel)?.direccion || sel;
+    decidir(sel, sl);
+    setAviso(`Enviado: ${etiquetaDecision(sl)} · ${dir}${auto ? " — siguiente predio" : ""}`);
+  }, [sel, equipo, revisiones, borrador, porNpn, decidir, auto]);
+
+  useEffect(() => {
+    if (!aviso) return undefined;
+    const t = setTimeout(() => setAviso(""), 3500);
+    return () => clearTimeout(t);
+  }, [aviso]);
 
   const quitar = (npn) => {
     if (!identificado(equipo)) return;
@@ -490,14 +512,18 @@ export default function App() {
       else {
         const d = decisionDeTecla(k);
         if (d) {
-          e.preventDefault(); // sin identidad el foco pasa a la barra de nombre: la tecla no debe escribirse allí
-          decidir(sel, { estado: d.k, motivo: d.motivo ?? null });
+          e.preventDefault();
+          elegirDecision({ estado: d.k, motivo: d.motivo ?? null });
+        } else if (k === "enter" && (!t.closest?.("button, a, summary") || t.closest?.(".lista, .veredictos, .fuente-error"))) {
+          // Enter envía; en otros botones (incluido «Enviar») conserva su función normal.
+          e.preventDefault();
+          enviar();
         }
       }
     };
     window.addEventListener("keydown", alTecla);
     return () => window.removeEventListener("keydown", alTecla);
-  }, [sel, mover, siguientePendiente, decidir]);
+  }, [sel, mover, siguientePendiente, elegirDecision, enviar]);
 
   /* ---------- Exportar y cargar ---------- */
   const exportarRevisiones = () => {
@@ -751,6 +777,7 @@ export default function App() {
       </header>
 
       <div className="cuerpo">
+        {aviso && <div className="aviso-envio" role="status">✓ {aviso}</div>}
         <button className="menu" hidden={vertical} onClick={() => setPanel(!panel)} aria-label="Mostrar u ocultar la lista de predios" aria-expanded={panel}>☰</button>
 
         <section className={`panel ${panel ? "" : "oculto"}`} aria-label="Lista de predios">
@@ -833,7 +860,10 @@ export default function App() {
             p={ficha}
             revision={revisiones[ficha.npn]}
             puedeDecidir={identificado(equipo)}
-            onDecidir={decidir}
+            seleccion={seleccion}
+            hayCambio={porEnviar}
+            onElegir={elegirDecision}
+            onEnviar={enviar}
             onExpandir={() => setFichaCompleta(true)}
             onCerrar={() => setSel(null)}
             onMover={mover}
@@ -860,9 +890,11 @@ export default function App() {
             <Ficha
               p={ficha}
               revision={revisiones[ficha.npn]}
-              onDecidir={decidir}
+              seleccion={seleccion}
+              hayCambio={porEnviar}
+              onElegir={elegirDecision}
+              onEnviar={enviar}
               puedeDecidir={identificado(equipo)}
-              fuente={revisiones[ficha.npn]?.fuente ?? fuenteBorrador}
               onFuente={elegirFuente}
               puedeRatificar={esFuncionario(equipo)}
               onRatificar={ratificar}
