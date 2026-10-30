@@ -4,7 +4,7 @@
    discontinuo: metas y sostenibilidad previstas). */
 .sia-autoria {
   margin-top: 16px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--sia-muted);
 }
@@ -40,7 +40,7 @@
   color: var(--sia-muted);
 }
 .sia-kpis dt {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.55;
   color: var(--sia-muted);
 }
@@ -77,7 +77,7 @@ dl.sia-kpis-tres {
 }
 .sia-causas p,
 .sia-benef p {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
 }
 .sia-benef {
@@ -107,11 +107,11 @@ dl.sia-kpis-tres {
   color: var(--sia-accent);
 }
 .sia-ecuacion article p:not(.sia-ec-etiqueta) {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
 }
 .sia-ec-etiqueta {
-  font: 500 11px/1.4 var(--sia-mono);
+  font: 500 13px/1.4 var(--sia-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--sia-ink);
@@ -139,7 +139,7 @@ dl.sia-kpis-tres {
   margin: 28px 0 0;
   padding: 4px 0 4px 16px;
   border-left: 4px solid var(--neiva-verde);
-  font-size: 15px;
+  font-size: 17px;
   color: var(--sia-muted);
 }
 .sia-diferencial strong {
@@ -182,7 +182,7 @@ dl.sia-kpis-tres {
   transform: translateY(-50%);
   width: 18px;
   text-align: center;
-  font: 600 18px/1 var(--sia-heading);
+  font: 600 20px/1 var(--sia-heading);
   color: var(--sia-ink);
 }
 .sia-capa-1 {
@@ -197,7 +197,7 @@ dl.sia-kpis-tres {
 .sia-capa-tag,
 .sia-pilar-tag,
 .sia-hito-meses {
-  font: 500 11px/1.4 var(--sia-mono);
+  font: 500 13px/1.4 var(--sia-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--sia-accent);
@@ -210,7 +210,7 @@ dl.sia-kpis-tres {
 .sia-capas p:not(.sia-capa-tag),
 .sia-pilares p:not(.sia-pilar-tag),
 .sia-hitos p:not(.sia-hito-meses) {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
 }
 .sia-capas a {
@@ -225,7 +225,7 @@ dl.sia-kpis-tres {
   counter-reset: paso;
   display: grid;
   gap: 6px;
-  font-size: 14px;
+  font-size: 16px;
 }
 .sia-demo-pasos li {
   counter-increment: paso;
@@ -243,7 +243,7 @@ dl.sia-kpis-tres {
   flex: none;
   border: 1px solid var(--sia-accent);
   color: var(--sia-accent);
-  font: 600 13px/1 var(--sia-heading);
+  font: 600 15px/1 var(--sia-heading);
 }
 .sia-qr {
   display: flex;
@@ -261,14 +261,14 @@ dl.sia-kpis-tres {
   image-rendering: pixelated;
 }
 .sia-qr p {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--sia-muted);
 }
 .sia-qr strong {
   display: block;
   color: var(--sia-ink);
-  font-size: 14px;
+  font-size: 16px;
 }
 .sia-qr a {
   color: var(--sia-accent);
@@ -292,7 +292,7 @@ dl.sia-kpis-tres {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
 }
 .sia-metas strong {
@@ -370,7 +370,7 @@ dl.sia-kpis-tres {
 }
 .sia-sostenibilidad p {
   max-width: 90ch;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
 }
 .sia-incentivo {
@@ -395,7 +395,7 @@ dl.sia-kpis-tres {
   padding: 14px 12px;
   background: var(--sia-accent-200);
   border-top: 5px solid var(--sia-accent);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.35;
 }
 .sia-incentivo li:nth-child(2) {
@@ -416,7 +416,7 @@ dl.sia-kpis-tres {
 }
 .sia-incentivo li b {
   margin-top: auto;
-  font: 500 13px/1.2 var(--sia-mono);
+  font: 500 15px/1.2 var(--sia-mono);
   color: var(--sia-ink);
 }
 

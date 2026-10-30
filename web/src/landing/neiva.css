@@ -52,6 +52,20 @@ body.sia-landing {
   border-color: var(--neiva-verde-900);
   transform: translate(-1px, -1px);
 }
+/* Botón claro: contraste sobre la franja verde de las reglas */
+.sia-button-claro {
+  background: #fff;
+  border-color: #fff;
+  color: var(--neiva-verde-900) !important;
+  box-shadow: 4px 4px 0 var(--neiva-amarillo);
+}
+.sia-button-claro:hover {
+  background: var(--sia-paper);
+  border-color: var(--sia-paper);
+}
+.sia-band-actions {
+  margin-top: 32px;
+}
 .sia-text-link {
   color: var(--neiva-verde);
 }
@@ -102,7 +116,7 @@ body.sia-landing {
   position: absolute;
   right: 48px;
   bottom: 14px;
-  font: 500 12px/1 var(--sia-body);
+  font: 500 14px/1 var(--sia-body);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--neiva-amarillo);
@@ -126,7 +140,7 @@ body.sia-landing {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 12px;
+  font-size: 14px;
 }
 .sia-section {
   border-top: 2px solid var(--sia-ink);
@@ -236,7 +250,7 @@ body.sia-landing {
   letter-spacing: 0;
 }
 .sia-alert-code {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* Firma: marca + palabra. El punto medio es el río que cruza el predio. */
@@ -261,7 +275,7 @@ body.sia-landing {
 .sia-word small {
   display: block;
   margin-top: 6px;
-  font: 600 10px/1 var(--sia-body);
+  font: 600 13px/1 var(--sia-body);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--sia-muted);
@@ -319,7 +333,7 @@ body.sia-landing {
 }
 .sia-problema dt {
   margin-top: 6px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.5;
   color: var(--sia-muted);
 }
@@ -335,7 +349,7 @@ body.sia-landing {
 }
 .sia-band-total {
   max-width: 34ch;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--sia-accent-200);
 }
 .sia-reglas {
@@ -373,13 +387,13 @@ body.sia-landing {
 .sia-tri-intro,
 .sia-regla-cuando,
 .sia-tri-leyenda p {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 .sia-regla-cuando b,
 .sia-cola b {
   display: block;
-  font: 600 11px/1.3 var(--sia-body);
+  font: 600 13px/1.3 var(--sia-body);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--sia-rio-texto);
@@ -392,7 +406,7 @@ body.sia-landing {
   padding: 4px 10px;
   border: 2px solid var(--neiva-verde);
   color: var(--neiva-verde);
-  font: 500 15px/1.2 var(--sia-mono);
+  font: 500 17px/1.2 var(--sia-mono);
   white-space: nowrap;
 }
 .sia-regla-n {
@@ -408,14 +422,14 @@ body.sia-landing {
   color: var(--neiva-verde);
 }
 .sia-regla-n span {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--sia-muted);
 }
 .sia-cola {
   padding: 10px 12px;
   border-left: 4px solid var(--sia-ink);
   background: var(--sia-soft);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
 }
 .sia-cola.oficina {
@@ -492,7 +506,7 @@ body.sia-landing {
   font-size: 1.8rem;
 }
 .sia-tri-leyenda h4 {
-  font: 600 15px/1.3 var(--sia-body);
+  font: 600 17px/1.3 var(--sia-body);
   margin-bottom: 2px;
 }
 .sia-tri-leyenda p {
