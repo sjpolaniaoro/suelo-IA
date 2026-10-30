@@ -11,6 +11,8 @@ Aprobado el 30-oct-2026. Una persona revisa un predio con imagen o visita y elig
 | Evidencia insuficiente | N | `no_concluyente`, motivo `insuficiente` | Se pudo mirar, pero no alcanza para decidir. |
 | No se pudo ubicar | U | `no_concluyente`, motivo `no_ubicado` | No se ubicó el predio o no hubo acceso. |
 
+**Elegir no es registrar.** Pulsar una decisión (o su atajo) y elegir la fuente solo arma un borrador. La revisión se registra al pulsar **Enviar registro** (atajo Enter); con una revisión ya enviada el botón dice «Enviar cambio» y solo se habilita si algo cambió. Al enviar, la ficha pasa al siguiente predio sin revisar (si «Pasar al siguiente al enviar» está activo), **vuelve arriba** y un aviso confirma qué se envió. La lista, el avance y el CSV solo cuentan lo enviado.
+
 **Fuente con error o desactualizada** (opcional, en toda decisión): `registro`, `cartografia`, `imagen` o `ninguna` («todas coinciden»). Con «Hay error» dice cuál fuente falla; con «Está OK», si todas coinciden o alguna está desactualizada.
 
 ## Escenarios (predios del sector 02)

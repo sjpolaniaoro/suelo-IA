@@ -33,3 +33,22 @@ export const etiquetaFuente = (clave) => FUENTES.find((f) => f[0] === clave)?.[1
 
 // Para el atajo de teclado (C, D, N, U).
 export const decisionDeTecla = (tecla) => DECISIONES.find((d) => d.tecla.toLowerCase() === tecla);
+
+// Elegir una decisión solo arma un borrador; la revisión se registra al pulsar «Enviar registro».
+// `borrador` trae lo elegido en el predio abierto ({ estado, motivo, fuente }, cada campo solo si se tocó);
+// lo no tocado se toma de la revisión ya enviada, para poder corregir solo la fuente o solo la decisión.
+export function seleccionActual(revision, borrador = {}) {
+  const estado = borrador.estado ?? revision?.estado ?? null;
+  const motivo = borrador.estado ? borrador.motivo ?? null : revision?.motivo ?? null;
+  const fuente = "fuente" in borrador ? borrador.fuente ?? null : revision?.fuente ?? null;
+  return { estado, motivo: estado === "no_concluyente" ? motivo : null, fuente };
+}
+
+// ¿Hay algo nuevo por enviar? Sin decisión elegida no; con una revisión ya enviada, solo si algo cambió.
+export function hayCambio(revision, seleccion) {
+  if (!seleccion.estado) return false;
+  if (!revision) return true;
+  return revision.estado !== seleccion.estado
+    || (revision.motivo ?? null) !== (seleccion.motivo ?? null)
+    || (revision.fuente ?? null) !== (seleccion.fuente ?? null);
+}

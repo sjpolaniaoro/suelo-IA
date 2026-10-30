@@ -1810,3 +1810,48 @@ main {
 .app.vertical .menu {
   display: none;
 }
+
+/* ---------- Enviar el registro (la decisión es un borrador hasta pulsarlo) ---------- */
+.enviar-registro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 8px;
+  border: 1px solid var(--sia-accent);
+  border-radius: 3px;
+  background: var(--sia-accent);
+  color: #fff;
+  font: 600 15px var(--sia-body);
+}
+.enviar-registro:hover:not(:disabled) {
+  background: var(--sia-accent-hover);
+}
+.enviar-registro:disabled {
+  background: var(--sia-soft);
+  border-color: var(--sia-line-strong);
+  color: var(--sia-muted);
+}
+.enviar-registro kbd {
+  border-color: #ffffff99;
+  color: #fff;
+}
+.aviso-envio {
+  position: absolute;
+  z-index: 9;
+  top: 10px;
+  left: 50%;
+  max-width: min(560px, calc(100% - 24px));
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border: 1px solid var(--sia-accent);
+  border-radius: 3px;
+  background: var(--sia-accent-200);
+  color: var(--sia-accent-900);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px #1d1f2030;
+  pointer-events: none;
+}
