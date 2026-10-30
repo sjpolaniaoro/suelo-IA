@@ -9,3 +9,11 @@ La portada presenta el valor del piloto con una captura real del mapa 3D, acceso
 La franja distingue predios en el mapa, predios con alguna alerta y conteos A1–A3. No presenta A1 como toda la cola de revisión ni suma alertas que pueden solaparse.
 
 El formulario de piloto usa los tres correos indicados por el responsable del proyecto en `data-destino`. Al preparar la solicitud, abre un `mailto:` con los campos codificados y muestra el borrador y un enlace para abrir el correo de nuevo. El visitante debe enviarlo en su aplicación de correo. Hay copia manual si no existe un cliente configurado o se deniega el portapapeles. No se guarda información del formulario ni se envía a un backend. Sin JavaScript se mantiene un enlace directo de correo.
+
+# Mesa de revisión: barra superior y ficha acoplada
+
+Los filtros (prioridad, tipo de alerta, cola de trabajo y registro vs cartografía), la leyenda, el equipo y «Exportar y créditos» viven en una barra horizontal superior. Cada uno es un desplegable que muestra el valor elegido y abre sus opciones con conteos; solo hay uno abierto a la vez. En pantallas angostas la fila de filtros se desplaza en horizontal y el desplegable se fija a todo el ancho.
+
+La lista de predios queda a la izquierda y la ficha se acopla a la derecha como tercera columna: el mapa cambia de tamaño en lugar de quedar tapado. Su ancho se arrastra desde el borde (o con las flechas del teclado; doble clic lo restablece) y se recuerda en el navegador. En el celular la ficha sigue siendo una hoja inferior.
+
+«Registro vs cartografía» (`src/consistencia.js`) compara el área construida del registro con la de la cartografía en ambos sentidos, con los umbrales de `pipeline/config.yaml` que el pipeline copia a `resumen.json` (`umbrales_consistencia`). Propiedad horizontal queda como «No aplica». La ficha muestra siempre las tres fuentes, la diferencia y el porcentaje de coincidencia de cada par, y la confianza de la imagen, también para predios marcados OK; los CSV exportados incluyen esas columnas.

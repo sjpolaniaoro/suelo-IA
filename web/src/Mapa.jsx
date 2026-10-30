@@ -32,6 +32,8 @@ export const COLORES_ACCION = {
   oficina: [43, 122, 150],
   campo: [31, 42, 34],
 };
+// Contorno ancho de los predios donde el área del registro y la de la cartografía no coinciden.
+export const COLORES_INCONSISTENCIA = [190, 52, 132];
 export const COLORES_ESTADO = {
   confirmado: [63, 203, 147],
   descartado: [124, 141, 160],
@@ -67,7 +69,7 @@ const relleno = () => (movil() ? { top: 70, left: 20, right: 20, bottom: Math.ro
 
 export { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros };
 
-export default function Mapa({ predios, huellas, filtros, estados, seleccionado, onSeleccion }) {
+export default function Mapa({ predios, huellas, filtros, estados, seleccionado, onSeleccion, resaltar = false, onResaltar }) {
   const contenedor = useRef(null);
   const mapa = useRef(null);
   const overlay = useRef(null);
@@ -115,8 +117,12 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
     if (m.isStyleLoaded()) agregarOverlay();
     else m.once("style.load", agregarOverlay);
     mapa.current = m;
+    // La ficha se acopla a un lado y el mapa cambia de ancho sin que cambie la ventana: se avisa a MapLibre.
+    const observador = new ResizeObserver(() => m.resize());
+    observador.observe(contenedor.current);
     if (new URLSearchParams(window.location.search).has("debug")) window.__suelo = { mapa: m, overlay: overlay.current };
     return () => {
+      observador.disconnect();
       m.off("style.load", agregarOverlay);
       setListo(false);
       m.remove();
@@ -162,6 +168,21 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
         onClick: (info) => info.object && onSeleccion(info.object.properties.npn),
       }),
     ];
+    // Contorno ancho: registro ≠ cartografía. Va debajo del contorno de la cola de trabajo para que ambos se lean.
+    if (resaltar) {
+      capas.push(
+        new GeoJsonLayer({
+          id: "inconsistencias",
+          data: predios.features.filter((f) => f.properties.cons === "inconsistente" && pasaFiltros(f.properties, filtros)),
+          filled: false,
+          stroked: true,
+          extruded: false,
+          getLineColor: [...COLORES_INCONSISTENCIA, 255],
+          getLineWidth: 6,
+          lineWidthUnits: "pixels",
+        })
+      );
+    }
     // Contorno según la cola de trabajo de la triangulación (solo predios que pasan los filtros).
     const marcadas = predios.features.filter((f) => f.properties.accion && pasaFiltros(f.properties, filtros));
     capas.push(
@@ -192,7 +213,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
     // No se condiciona a map.isStyleLoaded(): devuelve falso mientras cargan teselas y, si el evento
     // style.load ya pasó, las capas nunca se aplicaban y el mapa quedaba sin predios dibujados.
     overlay.current.setProps({ layers: capas });
-  }, [predios, huellas, filtros, estados, seleccionado, onSeleccion, vista, listo]);
+  }, [predios, huellas, filtros, estados, seleccionado, onSeleccion, vista, listo, resaltar]);
 
   useEffect(() => {
     if (!seleccionado || !predios || !mapa.current) return;
@@ -219,6 +240,11 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
           <button className={vista === "2d" ? "on" : ""} aria-pressed={vista === "2d"} onClick={() => cambiarVista("2d")}>Cenital</button>
         </div>
         <button className="pildora" onClick={recentrar}>Ver todo el sector</button>
+        {onResaltar && (
+          <button className={`pildora ${resaltar ? "on" : ""}`} aria-pressed={resaltar} onClick={() => onResaltar(!resaltar)} title="Contorno ancho en los predios donde el área del registro y la de la cartografía no coinciden">
+            Resaltar registro ≠ cartografía
+          </button>
+        )}
       </div>
     </>
   );

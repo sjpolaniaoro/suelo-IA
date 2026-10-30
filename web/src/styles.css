@@ -56,7 +56,8 @@ kbd {
 }
 .app {
   display: grid;
-  grid-template-columns: 372px 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
   height: 100dvh;
   overflow: hidden;
@@ -65,17 +66,10 @@ kbd {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: auto;
   background: var(--sia-paper);
   border-right: 1px solid var(--sia-control);
   z-index: 2;
-}
-.panel-cab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--sia-line);
 }
 .marca {
   display: flex;
@@ -105,19 +99,6 @@ kbd {
 }
 .inicio:hover {
   background: var(--sia-soft);
-}
-.panel-cuerpo {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-}
-.eyebrow {
-  margin: 0 0 12px;
-  color: var(--sia-accent);
-  font-size: 12px;
-  font-weight: 600;
 }
 .proceso {
   padding: 16px;
@@ -183,59 +164,6 @@ kbd {
   margin: 8px 0 0;
   font-size: 12px;
   color: var(--sia-muted);
-}
-.clasificacion {
-  padding: 4px 16px 12px;
-  border-top: 1px solid var(--sia-line);
-}
-.clasificacion summary,
-.panel-pie summary {
-  cursor: pointer;
-  padding: 12px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--sia-accent);
-  min-height: 44px;
-}
-.etiqueta {
-  margin: 8px 0 6px;
-  font-size: 11px;
-  color: var(--sia-muted);
-}
-.fichas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.fichas button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 7px 10px;
-  border: 1px solid var(--sia-control);
-  border-radius: 3px;
-  background: var(--sia-surface);
-  font-size: 12px;
-}
-.fichas button b {
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.fichas button i {
-  width: 9px;
-  height: 9px;
-  border: 1px solid #595959;
-  flex: none;
-}
-.fichas button.on {
-  background: var(--sia-accent);
-  border-color: var(--sia-accent);
-  color: #fff;
-}
-.fichas button:hover:not(.on) {
-  background: var(--sia-soft);
 }
 .leyenda {
   display: flex;
@@ -375,10 +303,6 @@ kbd {
 .lista .mas::before {
   display: none;
 }
-.panel-pie {
-  padding: 0 16px 12px;
-  border-top: 1px solid var(--sia-control);
-}
 .acciones {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -394,13 +318,6 @@ kbd {
 }
 .acciones button:hover:not(:disabled) {
   background: var(--sia-soft);
-}
-.panel-pie small {
-  display: block;
-  color: var(--sia-muted);
-  font-size: 10px;
-  line-height: 1.5;
-  padding: 10px 0 0;
 }
 main {
   position: relative;
@@ -469,18 +386,12 @@ main {
   background: var(--sia-soft);
 }
 .ficha {
-  position: absolute;
-  z-index: 4;
-  top: 12px;
-  right: 56px;
-  width: 380px;
-  max-height: calc(100% - 24px);
+  width: 100%;
+  height: 100%;
   overflow: auto;
   background: #fff;
   color: var(--sia-ink);
-  border: 1px solid var(--sia-control);
-  border-top: 2px solid var(--gris);
-  box-shadow: 0 4px 16px #1d1f2010;
+  border-top: 3px solid var(--gris);
 }
 .ficha.nivel-rojo {
   border-top-color: var(--rojo);
@@ -631,6 +542,11 @@ main {
   margin: 0 0 8px;
   font-size: 13px;
 }
+.leyenda i.borde {
+  background: transparent;
+  border-width: 2px;
+  border-style: solid;
+}
 .barras {
   display: grid;
   gap: 8px;
@@ -658,11 +574,6 @@ main {
 .barra .cart {
   background: #2b7a96;
 }
-.triangulo {
-  margin: 0 0 12px;
-  font-size: 13px;
-  color: var(--sia-muted);
-}
 .chips .chip-accion {
   font-weight: 600;
   border-left: 4px solid var(--sia-ink);
@@ -675,12 +586,6 @@ main {
   font-size: 12px;
   line-height: 1.5;
   color: var(--sia-muted);
-}
-.fichas button i.borde,
-.leyenda i.borde {
-  background: transparent;
-  border-width: 2px;
-  border-style: solid;
 }
 .barra b {
   font: 600 12px var(--sia-body);
@@ -918,29 +823,19 @@ main {
   color: var(--sia-ink);
 }
 @media (max-width: 1100px) and (min-width: 861px) {
-  .app {
-    grid-template-columns: 320px 1fr;
-  }
-  .panel-cab {
-    gap: 6px;
+  .cuerpo {
+    grid-template-columns: 300px minmax(0, 1fr) auto;
   }
   .sector {
-    font-size: 10px;
-  }
-  .marca {
-    font-size: 1.2rem;
-  }
-  .ficha {
-    width: 340px;
-    right: 48px;
+    display: none;
   }
   .etapa-nombre {
     font-size: 9px;
   }
 }
 @media (max-width: 860px) {
-  .app {
-    grid-template-columns: 1fr;
+  .cuerpo {
+    grid-template-columns: minmax(0, 1fr);
   }
   .panel {
     position: absolute;
@@ -959,12 +854,6 @@ main {
   .app.con-ficha .panel {
     display: none;
   }
-  .panel-cab {
-    padding: 8px 12px;
-  }
-  .panel-cuerpo {
-    overscroll-behavior: contain;
-  }
   .proceso {
     padding: 8px 12px;
   }
@@ -976,16 +865,6 @@ main {
   }
   .etapa-nombre {
     font-size: 11px;
-  }
-  .panel-pie {
-    padding: 0 12px 8px;
-  }
-  .clasificacion {
-    padding: 0 12px 8px;
-  }
-  .clasificacion summary,
-  .panel-pie summary {
-    padding: 10px 0;
   }
   .menu {
     display: block;
@@ -1007,6 +886,8 @@ main {
   .mapa-controles {
     top: 10px;
     left: 10px;
+    right: 64px;
+    flex-wrap: wrap;
     gap: 6px;
   }
   .segmento button {
@@ -1018,16 +899,22 @@ main {
     font-size: 11px;
     min-height: 44px;
   }
-  .ficha {
-    top: auto;
-    bottom: 0;
-    right: 0;
+  .ficha-col {
+    position: absolute;
+    z-index: 4;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
     max-height: 72%;
-    border: 1px solid var(--sia-control);
-    border-top: 4px solid var(--gris);
+    border-left: 0;
     box-shadow: 0 -4px 20px #1d1f201a;
+  }
+  .asa {
+    display: none;
+  }
+  .ficha {
+    border-top-width: 4px;
     overscroll-behavior: contain;
   }
   .ficha-cab {
@@ -1035,9 +922,6 @@ main {
   }
   .atajos {
     display: none;
-  }
-  .fichas button {
-    min-height: 44px;
   }
   .inicio {
     min-height: 44px;
@@ -1081,7 +965,6 @@ main {
 /* Cifras en Fraunces con números lineales; códigos catastrales en monoespaciada. */
 .nodo,
 .pt,
-.fichas button b,
 .resumen-tri,
 .barra b {
   font-variant-numeric: lining-nums tabular-nums;
@@ -1095,10 +978,6 @@ main {
   font-family: var(--sia-heading);
   font-weight: 600;
 }
-.panel-cab,
-.ficha {
-  border-color: var(--sia-line-strong);
-}
 
 /* ---------- Revisión en equipo ---------- */
 .equipo {
@@ -1107,17 +986,6 @@ main {
   border: 1px solid var(--sia-line-strong);
   background: var(--sia-surface);
   font-size: 13px;
-}
-.equipo summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--sia-accent);
-}
-.equipo form,
-.equipo > div {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
 }
 .equipo p {
   margin: 0;
@@ -1175,24 +1043,6 @@ main {
 }
 
 /* ---------- Filtros: dos lógicas, dos aspectos ---------- */
-.etiqueta {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 14px 0 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--sia-ink);
-}
-.etiqueta em {
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--sia-muted);
-}
 .filtros-estado {
   display: flex;
   align-items: center;
@@ -1214,135 +1064,387 @@ main {
 }
 
 /* Botones de elección múltiple: casilla con el color de la categoría; encendida = casilla llena. */
-.fichas.multi {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-}
-.fichas.multi button {
-  justify-content: flex-start;
-  min-height: 40px;
-  padding: 6px 10px;
-  background: var(--sia-surface);
-  color: var(--sia-muted);
-  border: 1px solid var(--sia-control);
-}
-.fichas.multi button span {
-  flex: 1;
-  text-align: left;
-}
-.fichas.multi button i {
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--c);
-  border-radius: 2px;
-  background: transparent;
-}
-.fichas.multi button.on {
-  background: #fff;
-  color: var(--sia-ink);
-  font-weight: 600;
-  border: 1px solid var(--sia-ink);
-  box-shadow: inset 3px 0 0 var(--c);
-}
-.fichas.multi button.on i {
-  background: var(--c);
-}
-.fichas.multi button b {
-  font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 8px;
-  background: var(--sia-soft);
-  color: var(--sia-ink);
-}
-.fichas.multi button.nula:not(.on) {
-  border-style: dashed;
-}
-.sub-filtro {
-  margin: 8px 0 0 10px;
-  padding: 2px 0 8px 12px;
-  border-left: 2px solid var(--sia-control);
-}
-.sub-filtro .etiqueta {
-  margin-top: 4px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 500;
-  color: var(--sia-muted);
-}
-.sub-filtro .fichas.multi {
-  grid-template-columns: 1fr;
-}
-.sub-filtro .fichas.multi button {
-  min-height: 34px;
-  padding: 4px 10px;
-}
 
 /* Botones de elección única: control segmentado; la opción activa va en verde sólido. */
-.fichas.unica {
-  display: grid;
-  gap: 0;
-  border: 1px solid var(--sia-control);
-  border-radius: 3px;
-  overflow: hidden;
-  background: var(--sia-surface);
-}
-.fichas.unica.tipos-5 {
-  grid-template-columns: 1.1fr repeat(4, 0.8fr) 1.3fr;
-}
-.fichas.unica.cola-4 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.fichas.unica button {
-  flex-direction: column;
-  gap: 2px;
-  border: 0;
-  border-radius: 0;
-  min-height: 44px;
-  padding: 6px 4px;
-  background: transparent;
-  box-shadow: 1px 0 0 var(--sia-soft), 0 1px 0 var(--sia-soft);
-  color: var(--sia-ink);
-}
-.fichas.unica.cola-4 button {
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 6px 10px;
-}
-.fichas.unica.cola-4 button span {
-  flex: 1;
-  text-align: left;
-}
-.fichas.unica button b {
-  font-size: 11px;
-  color: var(--sia-muted);
-}
-.fichas.unica.cola-4 button b {
-  font-size: 12px;
-}
-.fichas.unica button.on {
-  background: var(--sia-accent);
-  color: #fff;
-}
-.fichas.unica button.on b {
-  color: #fff;
-}
-.fichas.unica button:hover:not(.on) {
-  background: var(--sia-soft);
-}
-.fichas.unica button i.borde {
-  width: 12px;
-  height: 12px;
-  flex: none;
-}
-.fichas.unica button.on i.borde {
-  background: #fff;
-}
 
 .avance-detalle {
   margin: 2px 0 0;
   font-size: 11px;
   line-height: 1.4;
   color: var(--sia-muted);
+}
+
+/* ---------- Barra superior: marca, acciones y filtros desplegables ---------- */
+.barra-sup {
+  position: relative;
+  z-index: 20;
+  padding-top: 6px;
+  background: var(--sia-paper);
+  border-bottom: 1px solid var(--sia-line-strong);
+}
+.barra-fila,
+.barra-filtros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+}
+.barra-fila {
+  padding-bottom: 4px;
+}
+.barra-filtros {
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid var(--sia-line);
+}
+.barra-acciones {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.barra-acciones .inicio {
+  margin-left: 0;
+  min-height: 38px;
+}
+.filtros-rotulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sia-muted);
+}
+.filtros-estado {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--sia-ink);
+}
+.filtros-estado .enlace {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.filtros-estado b {
+  font-variant-numeric: tabular-nums;
+}
+
+.desp {
+  position: relative;
+}
+.desp-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  max-width: 260px;
+  padding: 6px 10px;
+  border: 1px solid var(--sia-control);
+  border-radius: var(--sia-radius);
+  background: var(--sia-surface);
+  font-size: 12px;
+  color: var(--sia-muted);
+}
+.desp-boton:hover,
+.desp.abierto .desp-boton {
+  background: var(--sia-soft);
+}
+.desp-valor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--sia-ink);
+}
+.desp-boton.activo {
+  border-color: var(--sia-accent);
+  box-shadow: inset 3px 0 0 var(--sia-accent);
+}
+.desp-insignia {
+  font-style: normal;
+  font-size: 11px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--sia-accent);
+  color: #fff;
+  text-align: center;
+}
+.desp-flecha {
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+.desp.abierto .desp-flecha {
+  transform: rotate(180deg);
+}
+.desp-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 340px;
+  max-width: calc(100vw - 16px);
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  padding: 10px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-control);
+  box-shadow: 0 8px 24px #1d1f2022;
+}
+.desp-panel.der {
+  left: auto;
+  right: 0;
+}
+.desp-nota {
+  margin: 0 0 6px;
+  font-size: 11px;
+  color: var(--sia-muted);
+}
+
+/* Lista de opciones dentro de un desplegable: casilla (varias) o círculo (una). */
+.opciones {
+  display: grid;
+  gap: 2px;
+}
+.opciones button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  font-size: 13px;
+  text-align: left;
+  color: var(--sia-ink);
+}
+.opciones button span {
+  flex: 1;
+}
+.opciones button:hover {
+  background: var(--sia-soft);
+}
+.opciones button.on {
+  font-weight: 600;
+  background: var(--sia-accent-200);
+}
+.opciones button b {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--sia-soft);
+  font-variant-numeric: tabular-nums;
+}
+.marca-casilla,
+.marca-radio {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--c, var(--sia-control));
+}
+.marca-casilla {
+  border-radius: 2px;
+}
+.opciones button.on .marca-casilla {
+  background: var(--c);
+}
+.marca-radio {
+  border-radius: 50%;
+}
+.opciones button.on .marca-radio {
+  border-color: var(--sia-accent);
+  background: radial-gradient(var(--sia-accent) 45%, transparent 50%);
+}
+.sub-filtro {
+  margin: 8px 0 0 8px;
+  padding-left: 10px;
+  border-left: 2px solid var(--sia-control);
+}
+.desp-panel .resumen-tri {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--sia-line);
+}
+.desp-panel .equipo {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.desp-panel .leyenda {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  font-size: 12px;
+}
+.archivo {
+  display: grid;
+  gap: 8px;
+}
+.archivo .acciones {
+  grid-template-columns: 1fr;
+}
+.archivo small {
+  color: var(--sia-muted);
+  font-size: 11px;
+}
+
+/* ---------- Cuerpo: lista | mapa | ficha acoplada (el mapa cambia de tamaño, nada lo tapa) ---------- */
+.cuerpo {
+  position: relative;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr) auto;
+  min-height: 0;
+}
+.ficha-col {
+  position: relative;
+  z-index: 4;
+  width: var(--ancho-ficha, 400px);
+  min-height: 0;
+  background: #fff;
+  border-left: 1px solid var(--sia-line-strong);
+}
+.asa {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+}
+.asa:hover,
+.asa:focus-visible {
+  background: color-mix(in srgb, var(--sia-accent) 35%, transparent);
+  outline: none;
+}
+.pildora.on {
+  background: var(--sia-accent);
+  color: #fff;
+}
+
+/* ---------- Contraste de fuentes en la ficha ---------- */
+.contraste h4 {
+  margin: 0 0 8px;
+  font: 600 13px var(--sia-body);
+}
+.diagnostico {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-left: 4px solid var(--sia-control);
+  background: var(--sia-paper);
+  font-size: 13px;
+}
+.diagnostico p {
+  margin: 4px 0 0;
+  color: var(--sia-muted);
+}
+.diagnostico.alto {
+  border-left-color: var(--rojo);
+}
+.diagnostico.medio {
+  border-left-color: var(--naranja);
+}
+.diagnostico.bajo {
+  border-left-color: var(--gris);
+}
+.aviso-revisado {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  font-size: 12px;
+  border: 1px dashed var(--sia-control);
+  background: var(--sia-accent-200);
+}
+.chips .chip-cons {
+  font-weight: 600;
+  border-left: 4px solid rgb(190, 52, 132);
+}
+.pares {
+  width: 100%;
+  margin: 0 0 12px;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.pares th,
+.pares td {
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--sia-line);
+}
+.pares thead th {
+  font-weight: 500;
+  color: var(--sia-muted);
+}
+.pares tbody th {
+  font-weight: 600;
+}
+.pares tr.mal td:last-child {
+  color: #9b1c27;
+  font-weight: 600;
+}
+.pares tr.bien td:last-child {
+  color: var(--sia-accent);
+}
+.datos.exactitud {
+  margin-bottom: 12px;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--sia-line);
+}
+.datos.exactitud dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Barra superior en pantallas angostas: la fila de filtros se desplaza en horizontal. */
+@media (max-width: 860px) {
+  .barra-fila,
+  .barra-filtros {
+    padding: 4px 10px;
+  }
+  .barra-fila {
+    flex-wrap: wrap;
+  }
+  .sector,
+  .filtros-rotulo,
+  .barra-acciones .inicio {
+    display: none;
+  }
+  .barra-filtros {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filtros-estado {
+    margin-left: 0;
+    flex: none;
+    white-space: nowrap;
+  }
+  .desp-boton {
+    white-space: nowrap;
+  }
+  .desp-panel,
+  .desp-panel.der {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 60vh;
+  }
+}
+.desp-etiqueta {
+  white-space: nowrap;
 }

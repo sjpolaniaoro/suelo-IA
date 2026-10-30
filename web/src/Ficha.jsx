@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TEXTO_CLASE, claseSinAlerta } from "./clases.js";
+import { TEXTO_CLASE, claseSinAlerta, tieneAlerta } from "./clases.js";
+import { UMBRALES, evaluar, m2 } from "./consistencia.js";
 
 const fmt = (n, u = "") =>
   n === null || n === undefined ? "dato faltante" : `${Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 })}${u}`;
@@ -17,17 +18,17 @@ const VEREDICTOS_SIN_ALERTA = {
   descartado: { t: "Verificado OK", ayuda: "Revisado: el registro coincide con lo construido" },
 };
 const ACCION = { oficina: "Conciliar en oficina", campo: "Verificar en campo" };
-const TRIANGULO = {
-  dos_fuentes: "La cartografía oficial y la imagen coinciden entre sí y contradicen el registro.",
-  solo_cartografia: "Solo la cartografía oficial contradice el registro; la imagen no lo confirma.",
-  solo_imagen: "Solo la imagen contradice el registro; la cartografía oficial no lo respalda.",
-  sin_evidencia: "Ni la cartografía ni la imagen contradicen el registro (probable lote vacío).",
+const SENTIDO = {
+  cartografia_mayor: "La cartografía dibuja más que el registro",
+  registro_mayor: "El registro declara más que la cartografía",
+  igual: "Registro y cartografía iguales",
 };
+const signo = (x) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${m2(Math.abs(x))}`;
 const NIVEL = { rojo: "Prioridad alta", naranja: "Prioridad media", amarillo: "Prioridad baja", no_residencial: "Revisar destino", sin_alerta: "Sin alerta" };
 
 export default function Ficha({
   p, revision, onDecidir, onQuitar, onCerrar, onSiguiente, onMover, posicion, progreso,
-  centro, manifiesto, hayEvidencia, auto, onAuto,
+  centro, manifiesto, hayEvidencia, auto, onAuto, umbrales = UMBRALES,
 }) {
   const satelite = centro && `https://www.google.com/maps/@${centro.lat.toFixed(6)},${centro.lon.toFixed(6)},19z/data=!3m1!1e3`;
   const calle = centro && `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${centro.lat.toFixed(6)},${centro.lon.toFixed(6)}`;
@@ -47,8 +48,12 @@ export default function Ficha({
   const obs = p.area_huella ?? 0;
   const cart = p.area_cart ?? 0;
   const escala = Math.max(reg, obs, cart, 1);
-  const verBarras = hayEvidencia && !p.ph;
+  const verBarras = !p.ph;
   const hecho = !!revision;
+  // Los datos de las tres fuentes se muestran siempre, también tras marcar el predio como OK:
+  // que el terreno no confirme la alerta no borra la inconsistencia entre registro, cartografía e imagen.
+  const ev = evaluar(p, umbrales, hayEvidencia);
+  const incons = ev.estado === "inconsistente";
 
   return (
     <aside className={`ficha nivel-${p.nivel}`} aria-label="Ficha del predio">
@@ -67,6 +72,7 @@ export default function Ficha({
           <span className={`chip ${p.confianza === "baja" ? "baja" : ""}`}>Confianza {p.confianza}</span>
           {p.ph && <span className="chip">Propiedad horizontal</span>}
           {p.accion && <span className={`chip chip-accion ${p.accion}`}>{ACCION[p.accion]}</span>}
+          {ev.pares?.regCart.discrepa && <span className="chip chip-cons">Registro ≠ cartografía</span>}
           {["A1", "A2", "A3", "NR"].filter((k) => p[k]).map((k) => <span key={k} className="chip chip-alerta">{k}</span>)}
         </div>
       </header>
@@ -82,18 +88,75 @@ export default function Ficha({
               No cuenta en el puntaje de vivienda.
             </p>
           )}
-          {verBarras ? (
-            <div className="barras">
-              <div className="barra"><span>Registrado</span><i className="reg" style={{ width: `${Math.max(2, (reg / escala) * 100)}%` }} /><b>{fmt(reg, " m²")}</b></div>
-              {p.triangulacion && (
-                <div className="barra"><span>Cartografía</span><i className="cart" style={{ width: `${Math.max(2, (cart / escala) * 100)}%` }} /><b>{fmt(cart, " m²")}</b></div>
-              )}
-              <div className="barra"><span>Imagen</span><i className="obs" style={{ width: `${Math.max(2, (obs / escala) * 100)}%` }} /><b>{fmt(obs, " m²")}</b></div>
-            </div>
-          ) : (
-            <p className="suave">{p.ph ? "El área de propiedad horizontal se registra por unidad." : "Evidencia de imágenes pendiente."}</p>
+          {hecho && (incons || tieneAlerta(p)) && (
+            <p className="aviso-revisado">
+              Marcado «{veredictos.find((v) => v.k === revision.estado)?.t}»: la revisión no borra los datos. Abajo siguen las tres
+              fuentes, la diferencia y los porcentajes de coincidencia, aunque el terreno no levante esta alerta.
+            </p>
           )}
-          {p.triangulacion && TRIANGULO[p.triangulacion] && <p className="triangulo">{TRIANGULO[p.triangulacion]}</p>}
+          <section className="contraste" aria-label="Contraste de fuentes">
+            <h4>Contraste de fuentes</h4>
+            {ev.diagnostico && (
+              <div className={`diagnostico ${ev.diagnostico.nivel}`}>
+                <b>{ev.diagnostico.titulo}</b>
+                <p>{ev.diagnostico.detalle}</p>
+              </div>
+            )}
+            {verBarras ? (
+              <div className="barras">
+                <div className="barra"><span>Registrado</span><i className="reg" style={{ width: `${Math.max(2, (reg / escala) * 100)}%` }} /><b>{fmt(reg, " m²")}</b></div>
+                <div className="barra"><span>Cartografía</span><i className="cart" style={{ width: `${Math.max(2, (cart / escala) * 100)}%` }} /><b>{fmt(cart, " m²")}</b></div>
+                {hayEvidencia
+                  ? <div className="barra"><span>Imagen</span><i className="obs" style={{ width: `${Math.max(2, (obs / escala) * 100)}%` }} /><b>{fmt(obs, " m²")}</b></div>
+                  : <p className="suave">Evidencia de imágenes pendiente.</p>}
+              </div>
+            ) : (
+              <>
+                <p className="suave">El área de propiedad horizontal se registra por unidad: no se compara con la cartografía.</p>
+                <dl className="datos">
+                  <dt>Registrado</dt><dd>{fmt(reg, " m²")}</dd>
+                  <dt>Cartografía</dt><dd>{fmt(cart, " m²")}</dd>
+                  {hayEvidencia && <><dt>Imagen</dt><dd>{fmt(obs, " m²")}</dd></>}
+                </dl>
+              </>
+            )}
+            {ev.pares && (
+              <table className="pares">
+                <caption className="solo-lector">Comparación entre pares de fuentes</caption>
+                <thead><tr><th scope="col">Par</th><th scope="col">Diferencia</th><th scope="col">Coinciden</th><th scope="col">Resultado</th></tr></thead>
+                <tbody>
+                  <tr className={ev.pares.regCart.discrepa ? "mal" : "bien"}>
+                    <th scope="row">Registro ↔ cartografía</th>
+                    <td>{signo(ev.pares.regCart.diff)}</td>
+                    <td>{ev.pares.regCart.conc} %</td>
+                    <td>{ev.pares.regCart.discrepa ? SENTIDO[ev.pares.regCart.sentido] : "Coinciden"}</td>
+                  </tr>
+                  {ev.pares.regImg && (
+                    <tr className={ev.pares.regImg.discrepa ? "mal" : "bien"}>
+                      <th scope="row">Registro ↔ imagen</th>
+                      <td>{signo(ev.pares.regImg.diff)}</td>
+                      <td>{ev.pares.regImg.conc} %</td>
+                      <td>{ev.pares.regImg.discrepa ? "La imagen contradice el registro" : "No contradice"}</td>
+                    </tr>
+                  )}
+                  {ev.pares.cartImg && (
+                    <tr className={p.triangulacion && !ev.pares.cartImg.coinciden ? "mal" : "bien"}>
+                      <th scope="row">Cartografía ↔ imagen</th>
+                      <td>{signo(ev.pares.cartImg.diff)}</td>
+                      <td>{ev.pares.cartImg.conc} %</td>
+                      <td>{ev.pares.cartImg.coinciden ? "Coinciden entre sí" : p.triangulacion === "solo_cartografia" || p.triangulacion === "solo_imagen" ? "Una no respalda a la otra" : "Sin contradicción"}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+            {ev.confianzaImagen !== null && (
+              <dl className="datos exactitud">
+                <dt>Confianza de la imagen</dt><dd>{ev.confianzaImagen} %{ev.nHuellas ? ` · ${fmt(ev.nHuellas)} ${ev.nHuellas === 1 ? "huella" : "huellas"}` : ""}</dd>
+                {ev.pares && <><dt>Coincidencia registro–cartografía</dt><dd>{ev.pares.regCart.conc} %</dd></>}
+              </dl>
+            )}
+          </section>
           <dl className="datos">
             <dt>Destino</dt><dd>{p.destino}</dd>
             <dt>Terreno</dt><dd>{fmt(p.area_terreno, " m²")}</dd>
