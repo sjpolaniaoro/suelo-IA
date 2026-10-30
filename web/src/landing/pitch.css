@@ -1,0 +1,510 @@
+/* Secciones de la sustentación: problema, solución, IA, impacto, IA responsable, viabilidad, y ruta. */
+.sia-autoria {
+  margin-top: 16px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--sia-muted);
+}
+
+/* Encabezado: siete enlaces caben sin desbordar. */
+.sia-header nav {
+  gap: 20px;
+}
+@media (max-width: 1320px) {
+  .sia-location {
+    display: none;
+  }
+}
+
+/* Cifras grandes (problema e impacto) */
+.sia-kpis > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+  padding: 24px 28px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-line-strong);
+}
+.sia-kpis dd {
+  font: 500 clamp(2.6rem, 4.6vw, 4.4rem) / 1.05 var(--sia-heading);
+  font-variant-numeric: tabular-nums;
+  color: var(--sia-accent-900);
+}
+.sia-kpis dd small {
+  font: 400 1rem/1.4 var(--sia-body);
+  color: var(--sia-muted);
+}
+.sia-kpis dt {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--sia-muted);
+}
+dl.sia-kpis-tres {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+/* Problema */
+.sia-problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  align-items: stretch;
+}
+.sia-causas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--sia-ink);
+}
+.sia-causas li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--sia-line);
+}
+.sia-causas h3,
+.sia-benef h3,
+.sia-diferenciales h3 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.sia-causas p,
+.sia-benef p,
+.sia-diferenciales p {
+  font-size: 14px;
+  color: var(--sia-muted);
+}
+.sia-benef {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--sia-line);
+}
+
+/* Solución */
+.sia-ecuacion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+.sia-ecuacion article {
+  padding: 22px 24px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-line-strong);
+}
+.sia-ecuacion article h3 {
+  margin: 4px 0 8px;
+  color: var(--sia-accent);
+}
+.sia-ecuacion article p:not(.sia-ec-etiqueta) {
+  font-size: 14px;
+  color: var(--sia-muted);
+}
+.sia-ec-etiqueta {
+  font: 500 11px/1.4 var(--sia-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sia-ink);
+}
+.sia-ec-op {
+  align-self: center;
+  font: 500 2.6rem/1 var(--sia-heading);
+  color: var(--sia-accent);
+}
+.sia-ec-resultado {
+  background: var(--sia-accent-900) !important;
+  border-color: var(--sia-accent-900) !important;
+}
+.sia-ecuacion .sia-ec-resultado h3,
+.sia-ecuacion .sia-ec-resultado .sia-ec-etiqueta {
+  color: var(--neiva-amarillo);
+}
+.sia-ec-resultado p:not(.sia-ec-etiqueta) {
+  color: var(--sia-accent-200) !important;
+}
+.sia-diferenciales {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.sia-diferenciales li {
+  padding-top: 16px;
+  border-top: 3px solid var(--sia-accent);
+}
+h3.sia-subtitulo {
+  margin: 56px 0 0;
+  font: 600 1.4rem/1.2 var(--sia-heading);
+}
+h3.sia-subtitulo + .sia-method-steps {
+  margin-top: 16px;
+}
+
+/* Núcleo de IA */
+.sia-capas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  counter-reset: capa;
+}
+.sia-capas li {
+  position: relative;
+  padding: 24px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-line-strong);
+  border-top-width: 6px;
+}
+.sia-capas li + li::before {
+  content: "→";
+  position: absolute;
+  left: -19px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  text-align: center;
+  font: 600 18px/1 var(--sia-heading);
+  color: var(--sia-ink);
+}
+.sia-capa-1 {
+  border-top-color: var(--neiva-rio) !important;
+}
+.sia-capa-2 {
+  border-top-color: var(--neiva-verde) !important;
+}
+.sia-capa-3 {
+  border-top-color: var(--neiva-amarillo) !important;
+}
+.sia-capa-tag,
+.sia-pilar-tag,
+.sia-fase-tag,
+.sia-hito-meses {
+  font: 500 11px/1.4 var(--sia-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sia-accent);
+}
+.sia-capas h3,
+.sia-pilares h3 {
+  margin: 8px 0;
+  font: 600 1.5rem/1.15 var(--sia-heading);
+}
+.sia-capas p:not(.sia-capa-tag),
+.sia-pilares p:not(.sia-pilar-tag),
+.sia-hitos p:not(.sia-hito-meses) {
+  font-size: 14px;
+  color: var(--sia-muted);
+}
+.sia-capas a {
+  color: var(--sia-accent);
+}
+
+/* Demostración */
+.sia-demo-pasos {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+.sia-demo-pasos li {
+  counter-increment: paso;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sia-demo-pasos li::before {
+  content: counter(paso);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border: 1px solid var(--sia-accent);
+  color: var(--sia-accent);
+  font: 600 13px/1 var(--sia-heading);
+}
+.sia-qr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+.sia-qr img {
+  flex: none;
+  width: 132px;
+  height: 132px;
+  background: #fff;
+  border: 1px solid var(--sia-line-strong);
+  padding: 4px;
+  image-rendering: pixelated;
+}
+.sia-qr p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--sia-muted);
+}
+.sia-qr strong {
+  display: block;
+  color: var(--sia-ink);
+  font-size: 14px;
+}
+.sia-qr a {
+  color: var(--sia-accent);
+  overflow-wrap: anywhere;
+}
+
+/* Impacto */
+.sia-metas {
+  padding: 24px 28px;
+  border: 1px dashed var(--sia-line-strong);
+}
+.sia-metas h3 {
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+}
+.sia-metas ul {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  font-size: 14px;
+  color: var(--sia-muted);
+}
+.sia-metas strong {
+  color: var(--sia-ink);
+}
+
+/* IA responsable */
+.sia-pilares {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.sia-pilares article {
+  padding: 24px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-line-strong);
+}
+.sia-pilares article:nth-child(1) {
+  border-top: 6px solid var(--neiva-amarillo);
+}
+.sia-pilares article:nth-child(2) {
+  border-top: 6px solid var(--neiva-rio);
+}
+.sia-pilares article:nth-child(3) {
+  border-top: 6px solid var(--neiva-verde);
+}
+
+/* Viabilidad */
+.sia-fases {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.sia-fases article {
+  padding: 24px 28px;
+  background: var(--sia-surface);
+  border: 1px solid var(--sia-line-strong);
+}
+.sia-fases article:last-child {
+  border-style: dashed;
+}
+.sia-fases ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  font-size: 14px;
+  color: var(--sia-muted);
+}
+.sia-fases strong {
+  color: var(--sia-ink);
+}
+
+/* Hoja de ruta */
+.sia-hitos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  border-top: 2px solid var(--sia-ink);
+}
+.sia-hitos li {
+  position: relative;
+  padding: 28px 24px 0 0;
+}
+.sia-hitos li::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sia-accent);
+  border: 3px solid var(--sia-paper);
+  box-shadow: 0 0 0 1px var(--sia-accent);
+}
+.sia-hitos h3 {
+  margin: 6px 0 8px;
+  font: 600 1.5rem/1.15 var(--sia-heading);
+}
+.sia-incentivo {
+  margin-top: 48px;
+}
+.sia-incentivo h3 {
+  font-size: 1.05rem;
+}
+.sia-incentivo > ol {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+.sia-incentivo li {
+  flex-basis: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 12px;
+  background: var(--sia-accent-200);
+  border-top: 5px solid var(--sia-accent);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.sia-incentivo li:nth-child(2) {
+  border-top-color: var(--neiva-rio);
+}
+.sia-incentivo li:nth-child(3) {
+  border-top-color: var(--neiva-amarillo);
+}
+.sia-incentivo li:nth-child(4) {
+  border-top-color: var(--neiva-rojo);
+}
+.sia-incentivo li:nth-child(5) {
+  border-top-color: var(--sia-ink);
+}
+.sia-incentivo li strong {
+  font: 600 1.5rem/1 var(--sia-heading);
+  color: var(--sia-accent-900);
+}
+.sia-incentivo li b {
+  margin-top: auto;
+  font: 500 13px/1.2 var(--sia-mono);
+  color: var(--sia-ink);
+}
+
+
+@media (max-width: 1000px) {
+  .sia-problem-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .sia-ecuacion {
+    grid-template-columns: 1fr;
+  }
+  .sia-ec-op {
+    text-align: center;
+    line-height: 0.8;
+  }
+  .sia-capas,
+  .sia-pilares {
+    grid-template-columns: 1fr;
+  }
+  .sia-capas li + li::before {
+    content: "↓";
+    left: 50%;
+    top: -19px;
+    transform: translateX(-50%);
+  }
+  .sia-diferenciales,
+  .sia-benef,
+  .sia-metas ul {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  dl.sia-kpis-tres {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .sia-hitos {
+    grid-template-columns: 1fr;
+    border-top: 0;
+    border-left: 2px solid var(--sia-ink);
+    gap: 28px;
+  }
+  .sia-hitos li {
+    padding: 0 0 0 28px;
+  }
+  .sia-hitos li::before {
+    top: 4px;
+    left: -9px;
+  }
+  .sia-fases {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  /* Los puntos del trayecto tapaban los números en una columna. */
+  .sia-method-steps li::before {
+    display: none;
+  }
+  .sia-con-js .sia-header nav.sia-nav-open {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0 20px;
+  }
+  .sia-incentivo > ol {
+    flex-direction: column;
+  }
+  .sia-incentivo li {
+    flex-direction: row;
+    align-items: center;
+    flex-basis: auto;
+    flex-grow: 0 !important;
+    gap: 12px;
+  }
+  .sia-incentivo li strong {
+    min-width: 3.2ch;
+  }
+  .sia-incentivo li span {
+    flex: 1;
+  }
+  .sia-incentivo li b {
+    margin-top: 0;
+  }
+  .sia-kpis > div {
+    padding: 20px;
+  }
+  .sia-qr {
+    align-items: flex-start;
+  }
+  .sia-qr img {
+    width: 112px;
+    height: 112px;
+  }
+}

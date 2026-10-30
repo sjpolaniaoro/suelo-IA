@@ -1,5 +1,6 @@
 import "./landing.css";
 import "./neiva.css";
+import "./pitch.css";
 import ejemplo from "./ejemplo.json";
 const base = import.meta.env.BASE_URL;
 const number = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 });
@@ -32,6 +33,16 @@ async function mostrarCifras() {
       !["dos_fuentes", "solo_imagen", "solo_cartografia", "sin_evidencia"].every(
         (k) => Number.isFinite(r.triangulacion[k]),
       ) ||
+      !["predios_registro", "predios_sin_geometria"].every((k) =>
+        Number.isFinite(r[k]),
+      ) ||
+      !r.contexto_urbano ||
+      !["predios_registro", "habitacionales_no_ph", "sin_area_construida"].every(
+        (k) => Number.isFinite(r.contexto_urbano[k]),
+      ) ||
+      !["universo_sin_area", "cola_oficina", "cola_campo"].every((k) =>
+        Number.isFinite(r.triangulacion[k]),
+      ) ||
       !Number.isFinite(r.predios_uso_no_residencial) ||
       !Number.isFinite(r.confianza_baja) ||
       !Number.isFinite(Date.parse(r.generado))
@@ -50,7 +61,23 @@ async function mostrarCifras() {
         style: "percent",
         maximumFractionDigits: 1,
       }).format(r.sin_area_construida / r.habitacionales_no_ph),
+      predios_registro: number.format(r.predios_registro),
+      predios_sin_geometria: number.format(r.predios_sin_geometria),
+      ctx_registro: number.format(r.contexto_urbano.predios_registro),
+      ctx_hab: number.format(r.contexto_urbano.habitacionales_no_ph),
+      ctx_sin_area: number.format(r.contexto_urbano.sin_area_construida),
+      ctx_pct: new Intl.NumberFormat("es-CO", {
+        style: "percent",
+        maximumFractionDigits: 1,
+      }).format(
+        r.contexto_urbano.sin_area_construida /
+          r.contexto_urbano.habitacionales_no_ph,
+      ),
+      tri_universo: number.format(r.triangulacion.universo_sin_area),
+      cola_oficina: number.format(r.triangulacion.cola_oficina),
+      cola_campo: number.format(r.triangulacion.cola_campo),
       NR: number.format(r.predios_uso_no_residencial),
+      por_revisar: number.format(r.predios_con_alerta + r.predios_uso_no_residencial),
       tri_dos_fuentes: number.format(r.triangulacion.dos_fuentes),
       tri_solo_imagen: number.format(r.triangulacion.solo_imagen),
       tri_solo_cartografia: number.format(r.triangulacion.solo_cartografia),

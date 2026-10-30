@@ -45,6 +45,27 @@ for (const [key, valor] of [
   if (!Number.isFinite(valor)) throw new Error("Cifra inválida: " + key);
   valores[key] = numero.format(valor);
 }
+// Escala de la ciudad, cobertura y colas de revisión (secciones de problema e impacto).
+const ctx = resumen.contexto_urbano;
+if (!ctx) throw new Error("El resumen no trae el contexto urbano");
+for (const [key, valor] of [
+  ["ctx_registro", ctx.predios_registro],
+  ["ctx_hab", ctx.habitacionales_no_ph],
+  ["ctx_sin_area", ctx.sin_area_construida],
+  ["predios_registro", resumen.predios_registro],
+  ["predios_sin_geometria", resumen.predios_sin_geometria],
+  ["tri_universo", tri.universo_sin_area],
+  ["cola_oficina", tri.cola_oficina],
+  ["cola_campo", tri.cola_campo],
+]) {
+  if (!Number.isFinite(valor)) throw new Error("Cifra inválida: " + key);
+  valores[key] = numero.format(valor);
+}
+// Lo que el mapa llama «Por revisar»: alertas de vivienda más las NR.
+valores.por_revisar = numero.format(resumen.predios_con_alerta + resumen.predios_uso_no_residencial);
+if (!Number.isFinite(resumen.tasa_cruce)) throw new Error("Cifra inválida: tasa_cruce");
+valores.tasa_cruce = pct.format(resumen.tasa_cruce);
+valores.ctx_pct = pct.format(ctx.sin_area_construida / ctx.habitacionales_no_ph);
 valores.generado = fecha.format(new Date(resumen.generado));
 const path = new URL("index.html", root);
 const html = await readFile(path, "utf8");
