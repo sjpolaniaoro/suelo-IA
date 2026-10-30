@@ -9,17 +9,17 @@ const js = leer("../src/landing/landing.js");
 const sincronizar = leer("../scripts/sincronizar-cifras.mjs");
 const resumen = JSON.parse(leer("../public/data/resumen.json"));
 
-test("las secciones siguen el hilo: dolor, solución, mecánica, ejemplo, impacto, confianza, ruta y llamado", () => {
+test("las secciones siguen el hilo: dolor, solución, IA, ejemplo, impacto, confianza, ruta, reglas y llamado", () => {
   const ids = [...html.matchAll(/<section[^>]*\bid="([^"]+)"/g)].map((m) => m[1]);
   const orden = [
     "problema",
     "solucion",
     "ia",
-    "alertas",
     "demo",
     "impacto",
     "responsable",
     "ruta",
+    "alertas",
     "limites",
     "piloto",
   ];

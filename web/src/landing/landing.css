@@ -10,7 +10,7 @@ body.sia-landing {
   margin: 0;
   background: var(--sia-paper);
   color: var(--sia-ink);
-  font: 16px/1.6 var(--sia-body);
+  font: 18px/1.6 var(--sia-body);
 }
 .sia-landing a {
   color: inherit;
@@ -44,7 +44,7 @@ body.sia-landing {
   letter-spacing: -0.02em;
 }
 .sia-landing h3 {
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   line-height: 1.3;
   font-weight: 600;
 }
@@ -87,13 +87,13 @@ body.sia-landing {
 }
 .sia-brand small {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   margin-top: 6px;
   color: var(--sia-muted);
 }
 .sia-location {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--sia-muted);
   padding-left: 24px;
@@ -109,7 +109,7 @@ body.sia-landing {
   align-items: center;
   min-height: 44px;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 16px;
 }
 .sia-header nav a:hover {
   text-decoration: underline;
@@ -125,7 +125,7 @@ body.sia-landing {
   color: #fff !important;
   border: 1px solid var(--sia-accent);
   border-radius: var(--sia-radius);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   text-decoration: none;
   transition:
@@ -147,7 +147,7 @@ body.sia-landing {
   align-items: center;
   gap: 12px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--sia-accent) !important;
 }
@@ -167,7 +167,7 @@ body.sia-landing {
   align-items: flex-start;
 }
 .sia-label {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--sia-accent);
   font-weight: 500;
@@ -189,7 +189,7 @@ body.sia-landing {
 .sia-plancha {
   text-transform: uppercase;
   letter-spacing: 0.065em;
-  font-size: 11px;
+  font-size: 13px;
 }
 .sia-plancha > span {
   width: 24px;
@@ -197,7 +197,7 @@ body.sia-landing {
   background: var(--sia-line-strong);
 }
 .sia-lead {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.65;
   color: var(--sia-muted);
 }
@@ -209,7 +209,7 @@ body.sia-landing {
   margin-top: 28px;
 }
 .sia-disclaimer {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--sia-muted);
   margin-top: 24px !important;
 }
@@ -261,7 +261,7 @@ body.sia-landing {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-accent);
   padding: 14px 20px;
 }
@@ -301,11 +301,11 @@ body.sia-landing {
   padding: 8px 12px;
   background: var(--sia-surface);
   border: 1px solid var(--sia-line-strong);
-  font-size: 11px;
+  font-size: 13px;
   min-height: 44px;
 }
 .sia-map-invite > span {
-  font-size: 18px;
+  font-size: 20px;
 }
 .sia-map-invite:hover {
   background: var(--sia-soft);
@@ -339,17 +339,17 @@ body.sia-landing {
   flex: 1;
 }
 .sia-map-evidence small {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--sia-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .sia-map-evidence strong {
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 600;
 }
 .sia-map-evidence span > span {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-muted);
 }
 .sia-map-evidence b {
@@ -358,7 +358,7 @@ body.sia-landing {
 }
 .sia-plan figcaption {
   border-top: 1px solid var(--sia-line);
-  font-size: 10px;
+  font-size: 13px;
   background: var(--sia-paper);
 }
 .sia-plan figcaption i {
@@ -390,7 +390,7 @@ body.sia-landing {
 .sia-band-heading .sia-label {
   color: var(--sia-accent-300);
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 0.08em;
   padding-top: 8px;
 }
@@ -405,14 +405,14 @@ body.sia-landing {
 }
 .sia-stat-band .sia-footnote {
   color: var(--sia-accent-200);
-  font-size: 11px;
+  font-size: 13px;
   max-width: none;
 }
 .sia-stat-band #cifras-estado {
   margin-top: 18px;
 }
 .sia-footnote {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--sia-muted);
 }
@@ -448,7 +448,7 @@ body.sia-landing {
   padding: 16px 28px;
   border-bottom: 1px solid var(--sia-line);
   color: var(--sia-accent);
-  font-size: 12px;
+  font-size: 14px;
 }
 .sia-alert-code {
   display: inline-flex;
@@ -473,7 +473,7 @@ body.sia-landing {
   font: 600 2rem/1.1 var(--sia-heading);
 }
 .sia-npn {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-muted);
   overflow-wrap: anywhere;
   margin-top: 8px !important;
@@ -493,7 +493,7 @@ body.sia-landing {
   border-left: 1px solid var(--sia-line);
 }
 .sia-comparison dt {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-muted);
 }
 .sia-comparison dd {
@@ -503,12 +503,12 @@ body.sia-landing {
 }
 .sia-comparison small {
   display: block;
-  font: 12px/1.5 var(--sia-body);
+  font: 14px/1.5 var(--sia-body);
   color: var(--sia-muted);
   padding-top: 6px;
 }
 .sia-reason {
-  font-size: 16px;
+  font-size: 18px;
   padding: 24px 0;
 }
 .sia-sheet-bottom {
@@ -518,7 +518,7 @@ body.sia-landing {
   gap: 16px;
   border-top: 1px solid var(--sia-line);
   padding: 12px 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .sia-example-status {
   padding: 28px;
@@ -536,7 +536,7 @@ body.sia-landing {
 .sia-section-heading > p {
   max-width: 44ch;
   color: var(--sia-muted);
-  font-size: 15px;
+  font-size: 17px;
 }
 .sia-faq {
   display: grid;
@@ -557,7 +557,7 @@ body.sia-landing {
   list-style: none;
   padding: 0;
   margin: 28px 0 0;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--sia-muted);
 }
 .sia-pilot-needs li {
@@ -586,7 +586,7 @@ body.sia-landing {
 .sia-pilot label {
   display: grid;
   gap: 8px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 .sia-pilot label > span {
@@ -598,7 +598,7 @@ body.sia-landing {
 .sia-pilot textarea {
   width: 100%;
   min-width: 0;
-  font: 16px/1.5 var(--sia-body);
+  font: 18px/1.5 var(--sia-body);
   border: 1px solid var(--sia-control);
   border-radius: var(--sia-radius);
   padding: 10px 12px;
@@ -621,12 +621,12 @@ body.sia-landing {
   text-decoration: underline;
   text-underline-offset: 4px;
   color: var(--sia-accent);
-  font-size: 13px !important;
+  font-size: 15px !important;
   min-height: 44px;
   padding: 0 4px;
 }
 .sia-form-status {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 16px !important;
   color: var(--sia-accent);
 }
@@ -665,7 +665,7 @@ body.sia-landing {
   content: "−";
 }
 .sia-faq details p {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--sia-muted);
   padding: 0 20px 24px 0;
 }
@@ -695,7 +695,7 @@ body.sia-landing {
   background: transparent;
 }
 .sia-footer-brand p {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--sia-muted);
   margin-top: 20px;
   max-width: 34ch;
@@ -713,12 +713,12 @@ body.sia-landing {
   border-bottom: 1px solid var(--sia-line-strong);
 }
 .sia-footer dt {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-muted);
   margin-bottom: 4px;
 }
 .sia-footer dd {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
 }
 .sia-footer-legal {
@@ -726,7 +726,7 @@ body.sia-landing {
   border-top: 1px solid var(--sia-line-strong);
   padding-top: 20px;
   max-width: none !important;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--sia-muted);
 }
 @media (min-width: 1441px) {
@@ -775,7 +775,7 @@ body.sia-landing {
     font-size: clamp(2.8rem, 5.5vw, 4rem);
   }
   .sia-lead {
-    font-size: 15px;
+    font-size: 17px;
   }
   .sia-section {
     padding: 56px 0;
@@ -814,11 +814,11 @@ body.sia-landing {
     height: 36px;
   }
   .sia-brand small {
-    font-size: 10px;
+    font-size: 13px;
   }
   .sia-header-cta {
     margin-left: auto;
-    font-size: 12px;
+    font-size: 14px;
     padding: 10px 12px;
     gap: 8px;
     min-height: 44px;
@@ -831,7 +831,7 @@ body.sia-landing {
     padding: 8px 12px;
     min-height: 44px;
     border-radius: 3px;
-    font-size: 12px;
+    font-size: 14px;
   }
   .sia-header nav {
     width: 100%;
@@ -862,10 +862,10 @@ body.sia-landing {
     margin: 20px 0;
   }
   .sia-label {
-    font-size: 12px;
+    font-size: 14px;
   }
   .sia-lead {
-    font-size: 16px;
+    font-size: 18px;
     max-width: 46ch !important;
   }
   .sia-cover-actions {
@@ -886,7 +886,7 @@ body.sia-landing {
   .sia-plan-top,
   .sia-plan figcaption {
     padding: 12px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .sia-section,
   .sia-closing {
@@ -933,11 +933,11 @@ body.sia-landing {
     gap: 0;
   }
   .sia-sheet-bottom {
-    font-size: 11px;
+    font-size: 13px;
     gap: 8px;
   }
   .sia-sheet-bottom .sia-text-link {
-    font-size: 13px;
+    font-size: 15px;
   }
   .sia-band-heading {
     display: block;
@@ -963,7 +963,7 @@ body.sia-landing {
     gap: 12px;
   }
   .sia-map-evidence strong {
-    font-size: 15px;
+    font-size: 17px;
   }
   .sia-map-evidence .sia-alert-code {
     height: 38px;
@@ -980,7 +980,7 @@ body.sia-landing {
   .sia-header-cta {
     gap: 6px;
     padding: 8px;
-    font-size: 11px;
+    font-size: 13px;
   }
   .sia-menu {
     padding: 8px !important;
@@ -1012,10 +1012,10 @@ body.sia-landing {
     white-space: nowrap;
   }
   .sia-plan-top {
-    font-size: 9px;
+    font-size: 13px;
   }
   .sia-plan figcaption {
-    font-size: 9px;
+    font-size: 13px;
     flex-direction: column;
     gap: 2px;
   }

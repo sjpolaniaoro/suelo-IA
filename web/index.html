@@ -315,131 +315,6 @@
           </li>
         </ol>
       </section>
-      <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo" aria-busy="false">
-        <div class="sia-band-in">
-          <div class="sia-band-heading">
-            <div>
-              <p class="sia-label">Cómo se decide qué revisar</p>
-              <h2 id="band-titulo">
-                <span data-stat="predios_con_geometria">7.329</span> predios en el
-                mapa.<br /><span>Cuatro reglas y una triangulación.</span>
-              </h2>
-            </div>
-            <p class="sia-band-total">
-              Cada predio guarda las razones por las que se marcó y una acción
-              sugerida. Un predio puede tener más de una alerta.
-            </p>
-          </div>
-          <ol class="sia-reglas" aria-label="Reglas de alerta">
-            <li class="sia-regla">
-              <div class="sia-regla-id">
-                <span class="sia-esc-codigo">A1</span>
-                <h3>Posible construcción no registrada</h3>
-                <p>Aparece una construcción donde el registro no tiene área.</p>
-              </div>
-              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin propiedad horizontal, con área construida registrada igual a cero y una huella de 20 m² o más (confianza de 0,70 o más).</p>
-              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía también la dibuja; campo si solo la imagen la ve</p>
-              <p class="sia-regla-n"><strong data-stat="A1">805</strong><span>predios</span></p>
-            </li>
-            <li class="sia-regla">
-              <div class="sia-regla-id">
-                <span class="sia-esc-codigo">A2</span>
-                <h3>Posible área subregistrada</h3>
-                <p>Lo que se ve es bastante más grande que lo registrado.</p>
-              </div>
-              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio sin propiedad horizontal con área construida registrada y una huella mayor a 1,2 veces esa área.</p>
-              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía lo respalda; campo si solo la imagen</p>
-              <p class="sia-regla-n"><strong data-stat="A2">414</strong><span>predios</span></p>
-            </li>
-            <li class="sia-regla">
-              <div class="sia-regla-id">
-                <span class="sia-esc-codigo">A3</span>
-                <h3>Avalúo atípico</h3>
-                <p>Una diferencia estadística, no un nuevo avalúo ni un cálculo de impuestos.</p>
-              </div>
-              <p class="sia-regla-cuando"><b>Se activa cuando</b>El avalúo se aleja más del doble (o queda por debajo de la mitad) de lo esperado frente a predios comparables de la manzana, con 10 o más predios.</p>
-              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el dato con la autoridad catastral</p>
-              <p class="sia-regla-n"><strong data-stat="A3">90</strong><span>predios</span></p>
-            </li>
-            <li class="sia-regla">
-              <div class="sia-regla-id">
-                <span class="sia-esc-codigo">NR</span>
-                <h3>Uso probablemente no residencial</h3>
-                <p>Es más probable un equipamiento que una vivienda sin registrar; sale del puntaje de vivienda.</p>
-              </div>
-              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin área construida con una huella de 1.000 m² o más.</p>
-              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el destino registrado</p>
-              <p class="sia-regla-n"><strong data-stat="NR">2</strong><span>predios</span></p>
-            </li>
-          </ol>
-          <div class="sia-tri" role="group" aria-labelledby="tri-titulo">
-            <h3 id="tri-titulo">
-              Triangulación de los
-              <span data-stat="tri_universo">1.060</span> predios sin área registrada
-            </h3>
-            <p class="sia-tri-intro">
-              Cada alerta de área se contrasta con la cartografía oficial de
-              construcciones y con las huellas de imagen. Los
-              <span data-stat="tri_universo">1.060</span> predios son los
-              <span data-stat="sec_sin_area">1.064</span> del sector que tienen
-              geometría; el resto no se dibuja en el mapa.
-            </p>
-            <div class="sia-tri-barra" aria-hidden="true" hidden>
-              <i class="sia-tri-dos" data-tri="dos_fuentes"></i>
-              <i class="sia-tri-cart" data-tri="solo_cartografia"></i>
-              <i class="sia-tri-img" data-tri="solo_imagen"></i>
-              <i class="sia-tri-nada" data-tri="sin_evidencia"></i>
-            </div>
-            <ul class="sia-tri-leyenda">
-              <li>
-                <i class="sia-tri-dos" aria-hidden="true"></i>
-                <strong data-stat="tri_dos_fuentes">733</strong>
-                <div>
-                  <h4>Cartografía e imagen contradicen el registro</h4>
-                  <p>El registro dice 0 m² y las dos fuentes muestran construcción: probablemente el registro está desactualizado.</p>
-                </div>
-                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina, sin visita</p>
-              </li>
-              <li>
-                <i class="sia-tri-cart" aria-hidden="true"></i>
-                <strong data-stat="tri_solo_cartografia">152</strong>
-                <div>
-                  <h4>Solo la cartografía contradice el registro</h4>
-                  <p>La cartografía dibuja construcción y la imagen no detecta huella: una inconsistencia interna del catastro.</p>
-                </div>
-                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina</p>
-              </li>
-              <li>
-                <i class="sia-tri-img" aria-hidden="true"></i>
-                <strong data-stat="tri_solo_imagen">74</strong>
-                <div>
-                  <h4>Solo la imagen contradice el registro</h4>
-                  <p>Puede ser una construcción posterior a la cartografía, o un error de la imagen. No hay segunda fuente.</p>
-                </div>
-                <p class="sia-cola campo"><b>Qué se hace</b>Verificar en campo</p>
-              </li>
-              <li>
-                <i class="sia-tri-nada" aria-hidden="true"></i>
-                <strong data-stat="tri_sin_evidencia">101</strong>
-                <div>
-                  <h4>Ninguna fuente contradice el registro</h4>
-                  <p>Probablemente un lote vacío: el caso que menos urge revisar.</p>
-                </div>
-                <p class="sia-cola ninguna"><b>Qué se hace</b>Sin acción por ahora</p>
-              </li>
-            </ul>
-          </div>
-          <p id="cifras-estado" class="sia-footnote" role="status">
-            Cifras del resumen del piloto; se actualizan al cargar la página.
-          </p>
-          <p class="sia-footnote">
-            Propiedad horizontal no recibe A1 ni A2: el área se registra por
-            unidad y casi no hay geometría de unidades en los datos abiertos.
-            Los tipos de alerta pueden solaparse. Procesado:
-            <span data-stat="generado">27 de octubre de 2026</span>.
-          </p>
-        </div>
-      </section>
       <section
         class="sia-example sia-section"
         id="demo"
@@ -722,6 +597,136 @@
               <b>$500.000</b>
             </li>
           </ol>
+        </div>
+      </section>
+      <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo" aria-busy="false">
+        <div class="sia-band-in">
+          <div class="sia-band-heading">
+            <div>
+              <p class="sia-label">Cómo se decide qué revisar</p>
+              <h2 id="band-titulo">
+                <span data-stat="predios_con_geometria">7.329</span> predios en el
+                mapa.<br /><span>Cuatro reglas y una triangulación.</span>
+              </h2>
+            </div>
+            <p class="sia-band-total">
+              Cada predio guarda las razones por las que se marcó y una acción
+              sugerida. Un predio puede tener más de una alerta.
+            </p>
+          </div>
+          <ol class="sia-reglas" aria-label="Reglas de alerta">
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A1</span>
+                <h3>Posible construcción no registrada</h3>
+                <p>Aparece una construcción donde el registro no tiene área.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin propiedad horizontal, con área construida registrada igual a cero y una huella de 20 m² o más (confianza de 0,70 o más).</p>
+              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía también la dibuja; campo si solo la imagen la ve</p>
+              <p class="sia-regla-n"><strong data-stat="A1">805</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A2</span>
+                <h3>Posible área subregistrada</h3>
+                <p>Lo que se ve es bastante más grande que lo registrado.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio sin propiedad horizontal con área construida registrada y una huella mayor a 1,2 veces esa área.</p>
+              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía lo respalda; campo si solo la imagen</p>
+              <p class="sia-regla-n"><strong data-stat="A2">414</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A3</span>
+                <h3>Avalúo atípico</h3>
+                <p>Una diferencia estadística, no un nuevo avalúo ni un cálculo de impuestos.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>El avalúo se aleja más del doble (o queda por debajo de la mitad) de lo esperado frente a predios comparables de la manzana, con 10 o más predios.</p>
+              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el dato con la autoridad catastral</p>
+              <p class="sia-regla-n"><strong data-stat="A3">90</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">NR</span>
+                <h3>Uso probablemente no residencial</h3>
+                <p>Es más probable un equipamiento que una vivienda sin registrar; sale del puntaje de vivienda.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin área construida con una huella de 1.000 m² o más.</p>
+              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el destino registrado</p>
+              <p class="sia-regla-n"><strong data-stat="NR">2</strong><span>predios</span></p>
+            </li>
+          </ol>
+          <div class="sia-tri" role="group" aria-labelledby="tri-titulo">
+            <h3 id="tri-titulo">
+              Triangulación de los
+              <span data-stat="tri_universo">1.060</span> predios sin área registrada
+            </h3>
+            <p class="sia-tri-intro">
+              Cada alerta de área se contrasta con la cartografía oficial de
+              construcciones y con las huellas de imagen. Los
+              <span data-stat="tri_universo">1.060</span> predios son los
+              <span data-stat="sec_sin_area">1.064</span> del sector que tienen
+              geometría; el resto no se dibuja en el mapa.
+            </p>
+            <div class="sia-tri-barra" aria-hidden="true" hidden>
+              <i class="sia-tri-dos" data-tri="dos_fuentes"></i>
+              <i class="sia-tri-cart" data-tri="solo_cartografia"></i>
+              <i class="sia-tri-img" data-tri="solo_imagen"></i>
+              <i class="sia-tri-nada" data-tri="sin_evidencia"></i>
+            </div>
+            <ul class="sia-tri-leyenda">
+              <li>
+                <i class="sia-tri-dos" aria-hidden="true"></i>
+                <strong data-stat="tri_dos_fuentes">733</strong>
+                <div>
+                  <h4>Cartografía e imagen contradicen el registro</h4>
+                  <p>El registro dice 0 m² y las dos fuentes muestran construcción: probablemente el registro está desactualizado.</p>
+                </div>
+                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina, sin visita</p>
+              </li>
+              <li>
+                <i class="sia-tri-cart" aria-hidden="true"></i>
+                <strong data-stat="tri_solo_cartografia">152</strong>
+                <div>
+                  <h4>Solo la cartografía contradice el registro</h4>
+                  <p>La cartografía dibuja construcción y la imagen no detecta huella: una inconsistencia interna del catastro.</p>
+                </div>
+                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina</p>
+              </li>
+              <li>
+                <i class="sia-tri-img" aria-hidden="true"></i>
+                <strong data-stat="tri_solo_imagen">74</strong>
+                <div>
+                  <h4>Solo la imagen contradice el registro</h4>
+                  <p>Puede ser una construcción posterior a la cartografía, o un error de la imagen. No hay segunda fuente.</p>
+                </div>
+                <p class="sia-cola campo"><b>Qué se hace</b>Verificar en campo</p>
+              </li>
+              <li>
+                <i class="sia-tri-nada" aria-hidden="true"></i>
+                <strong data-stat="tri_sin_evidencia">101</strong>
+                <div>
+                  <h4>Ninguna fuente contradice el registro</h4>
+                  <p>Probablemente un lote vacío: el caso que menos urge revisar.</p>
+                </div>
+                <p class="sia-cola ninguna"><b>Qué se hace</b>Sin acción por ahora</p>
+              </li>
+            </ul>
+          </div>
+          <div class="sia-band-actions">
+            <a class="sia-button sia-button-claro" href="/app/"
+              >Abrir el mapa nuevamente <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <p id="cifras-estado" class="sia-footnote" role="status">
+            Cifras del resumen del piloto; se actualizan al cargar la página.
+          </p>
+          <p class="sia-footnote">
+            Propiedad horizontal no recibe A1 ni A2: el área se registra por
+            unidad y casi no hay geometría de unidades en los datos abiertos.
+            Los tipos de alerta pueden solaparse. Procesado:
+            <span data-stat="generado">27 de octubre de 2026</span>.
+          </p>
         </div>
       </section>
       <section class="sia-faq sia-section" id="limites" aria-labelledby="preguntas-titulo">
