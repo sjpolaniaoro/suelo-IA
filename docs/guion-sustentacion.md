@@ -31,7 +31,7 @@ Total del recorrido: 7:15. Quedan 2:45 de margen y preguntas. La Guía suma 6:00
 ## Lista de chequeo del demo
 1. Abrir `https://suelo-ia-knwnic.vercel.app/app/` unos minutos antes. La API de Render (plan gratuito) tarda cerca de 50 s en despertar; el mapa funciona sin ella y lo avisa.
 2. Dejar a mano el enlace de la ficha de ejemplo (botón «Abrir esta ficha» de `#demo`).
-3. Probar el QR de `#demo` con un celular; si hay un video de respaldo, decir que lo es.
+3. Probar el QR de `#demo` con un celular: abre la ficha del predio de ejemplo, no el mapa vacío. Para proyectarlo, abrir `/img/qr-demo.svg` a pantalla completa o ampliar el navegador. Si hay un video de respaldo, decir que lo es. En pantallas de más de 1000 px el QR queda flotante abajo a la derecha durante toda la exposición: usar «Ampliar» cuando se invite al público a escanearlo y «–» para minimizarlo si tapa algo.
 4. Las teselas del mapa base y las imágenes de satélite o Street View necesitan internet.
 
 ## Diferencias entre el deck en PDF y el repositorio

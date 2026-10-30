@@ -126,3 +126,25 @@ test("la barra de triangulación toma sus anchos del resumen", () => {
     .reduce((a, b) => a + b, 0);
   assert.equal(suma, resumen.triangulacion.universo_sin_area);
 });
+
+test("el QR de #demo abre la ficha del predio de ejemplo", () => {
+  const demo = html.slice(html.indexOf('id="demo"'), html.indexOf('id="impacto"'));
+  assert.match(demo, /abre en el celular la ficha del predio de ejemplo/);
+  const svg = leer("../public/img/qr-demo.svg");
+  assert.match(svg, /^<svg /);
+  // La URL codificada se comprueba al regenerar el QR (ver DISENO.md); aquí, que el NPN del ejemplo exista.
+  const ejemplo = JSON.parse(leer("../src/landing/ejemplo.json"));
+  assert.match(ejemplo.npn, /^\d{30}$/);
+});
+
+test("el QR flotante sigue el scroll en pantallas anchas, se puede ampliar y minimizar", () => {
+  const caja = html.slice(html.indexOf('id="qr-flotante"'), html.indexOf("</aside>"));
+  assert.match(caja, /id="qr-ampliar"/);
+  assert.match(caja, /id="qr-minimizar"/);
+  assert.match(caja, /\/img\/qr-demo\.svg/);
+  assert.match(caja, /alt="[^"]{10,}"/);
+  const css = leer("../src/landing/pitch.css");
+  assert.match(css, /\.sia-qr-flotante\s*\{[^}]*position:\s*fixed/);
+  assert.match(css, /@media \(max-width: 1000px\), print\s*\{\s*\.sia-qr-flotante\s*\{\s*display:\s*none/);
+  assert.match(js, /iniciarQrFlotante\(\)/);
+});

@@ -210,6 +210,44 @@ document.addEventListener("keydown", (event) => {
   }
 });
 window.matchMedia("(min-width: 761px)").addEventListener("change", cerrar);
+// QR flotante: tres estados (normal, ampliado, minimizado) que se recuerdan durante la sesión.
+function iniciarQrFlotante() {
+  const caja = $("#qr-flotante");
+  if (!caja) return;
+  const ampliar = $("#qr-ampliar");
+  const minimizar = $("#qr-minimizar");
+  let estado = "normal";
+  try {
+    estado = sessionStorage.getItem("sia-qr") || "normal";
+  } catch {}
+  const aplicar = (nuevo) => {
+    estado = nuevo;
+    caja.classList.toggle("sia-qr-grande", nuevo === "grande");
+    caja.classList.toggle("sia-qr-min", nuevo === "min");
+    ampliar.setAttribute("aria-pressed", String(nuevo === "grande"));
+    ampliar.textContent = nuevo === "grande" ? "Reducir" : "Ampliar";
+    minimizar.setAttribute("aria-expanded", String(nuevo !== "min"));
+    minimizar.setAttribute(
+      "aria-label",
+      nuevo === "min" ? "Mostrar el código QR" : "Minimizar el código QR",
+    );
+    minimizar.firstElementChild.textContent = nuevo === "min" ? "QR" : "–";
+    try {
+      sessionStorage.setItem("sia-qr", nuevo);
+    } catch {}
+  };
+  ampliar.addEventListener("click", () => aplicar(estado === "grande" ? "normal" : "grande"));
+  minimizar.addEventListener("click", () => aplicar(estado === "min" ? "normal" : "min"));
+  aplicar(estado);
+  caja.hidden = false;
+  // En #demo ya hay otro QR igual a la vista: se oculta el flotante mientras tanto.
+  const enDemo = $(".sia-qr");
+  if (enDemo && "IntersectionObserver" in window)
+    new IntersectionObserver(([e]) => {
+      caja.hidden = e.isIntersecting;
+    }).observe(enDemo);
+}
+iniciarQrFlotante();
 mostrarCifras();
 mostrarEjemplo();
 json("data/manifiesto.json")
