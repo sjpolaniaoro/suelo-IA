@@ -15,12 +15,17 @@
   --sia-line-strong: #a89f86;
   --sia-grid: color-mix(in srgb, #8a6a2b 9%, transparent);
   --sia-control: #7a7560;
+  /* Borde de panel: 3,69:1 sobre papel y 4,09:1 sobre superficie (WCAG 1.4.11). */
+  --sia-panel-linea: #857c60;
+  /* Texto en azul río: 5,39:1 sobre papel. El azul #2b7a96 queda para líneas y rellenos. */
+  --sia-rio-texto: #216a84;
   --sia-heading: "Fraunces", Georgia, "Times New Roman", serif;
   --sia-body: "Barlow", system-ui, sans-serif;
   --sia-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
   --sia-radius: 3px;
   --neiva-rojo: #c8272d;
   --neiva-verde: #1b6b3a;
+  --neiva-verde-900: #12342a;
   --neiva-amarillo: #f4b82e;
   --neiva-rio: #2b7a96;
 }

@@ -1,26 +1,26 @@
 # Guion de sustentación (30-oct-2026)
 
-La portada (`/`) hace de pitch: se presenta haciendo scroll, en el orden de la Guía de Pitch de la convocatoria. Este documento dice qué sección cubre cada criterio, cuánto tiempo darle y qué verificar antes de entrar. No contiene datos personales.
+La portada (`/`) hace de pitch: se presenta haciendo scroll. Sigue un hilo narrativo (dolor, causa, idea, mecánica, ejemplo, impacto, confianza, camino y llamado) que cubre las diapositivas de la Guía de Pitch de la convocatoria, con el ejemplo (`#demo`) como clímax tras la mecánica. Este documento dice qué sección cubre cada criterio, cuánto tiempo darle y qué verificar antes de entrar. No contiene datos personales.
 
 ## Sección, criterio y tiempo
-Supuesto: 10 minutos en total. Si incluyen las preguntas, recortar la demo a 1:15 y la solución a 1:15.
+Supuesto: 10 minutos en total. Si incluyen las preguntas, recortar la demo a 1:15 y la ruta a 0:30.
 
 | Sección (ancla) | Diapositiva de la Guía | Criterio que cubre | Tiempo |
 |---|---|---|---|
-| Portada | 1. Portada | Comunicación (Anexo 8) | 0:20 |
-| `#problema` | 2. El problema en Neiva | Pertinencia (Anexo 7, 10) | 0:40 |
-| `#solucion` | 3. La solución | Innovación y diferenciación (8) | 0:50 |
-| `#ia` y `#alertas` | 4. Núcleo de IA | IA y calidad técnica (14) | 0:55 |
+| Portada (el dolor: 14.562 predios sin área construida) | 1. Portada | Comunicación (Anexo 8) | 0:30 |
+| `#problema` (escala del piloto y causas) | 2. El problema en Neiva | Pertinencia (Anexo 7, 10) | 0:40 |
+| `#solucion` | 3. La solución | Innovación y diferenciación (8) | 0:40 |
+| `#ia` y `#alertas` (capas, cuatro reglas y triangulación) | 4. Núcleo de IA | IA y calidad técnica (14) | 1:00 |
 | `#demo` y `/app/` | 5. Demostración | Funcionamiento y demo (Anexo 8, 12) | 2:00 |
 | `#impacto` | 6. Impacto y métricas | Impacto (12) y evidencias (Anexo 8, 6) | 0:45 |
 | `#responsable` | 7. IA responsable y datos | IA responsable (10) | 0:30 |
-| `#viabilidad` | 8. Viabilidad y sostenibilidad | Viabilidad (8) y sostenibilidad (8) | 0:30 |
-| `#ruta` | 9. Plan de implementación | Plan de implementación (Anexo 8, 4) | 0:45 |
+| `#ruta` (viabilidad y plan, fusionados) | 8. Viabilidad y sostenibilidad; 9. Plan de implementación | Viabilidad (8), sostenibilidad (8) y plan de implementación (Anexo 8, 4) | 0:50 |
 | `#limites` | — | Respuestas al jurado, dominio técnico (Anexo 8, 4) | preguntas |
+| `#piloto` y cierre | — | Llamado: solicitud de piloto y vuelta a la ficha de ejemplo | — |
 
 Equipo y contacto (diapositiva 10) no está en esta portada: lo cubre la sección «Socios» del sitio corporativo de Knwbic.
 
-Total del recorrido: 7:15. Quedan 2:45 de margen y preguntas. La Guía suma 6:00; los 90 s de más van a la demo porque pesa 12 de 30 puntos en la planilla de sustentación.
+Total del recorrido: 7:15. Quedan 2:45 de margen y preguntas. La Guía suma 6:00; los 90 s de más van a la demo porque pesa 12 de 30 puntos en la planilla de sustentación. La demo queda en el centro del recorrido, no al final, para que no se recorte si el tiempo se acorta.
 
 ## Qué decir de lo propio y de lo de terceros
 - De terceros: la detección de edificaciones (Google Open Buildings v3). No se entrena ni se ajusta.

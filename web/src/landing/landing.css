@@ -175,15 +175,6 @@ body.sia-landing {
   align-items: center;
   gap: 8px;
 }
-.sia-mark {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 1px solid var(--sia-accent);
-  box-shadow:
-    3px -3px 0 var(--sia-paper),
-    4px -4px 0 var(--sia-accent);
-}
 .sia-cover h1 {
   font-size: clamp(3.2rem, 4.9vw, 4.6rem);
   max-width: 19ch;
@@ -221,34 +212,6 @@ body.sia-landing {
   font-size: 12px;
   color: var(--sia-muted);
   margin-top: 24px !important;
-}
-.sia-roles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  list-style: none;
-  padding: 20px 0 0;
-  margin: 32px 0 0;
-  border-top: 1px solid var(--sia-line);
-  width: 100%;
-  gap: 16px;
-}
-.sia-roles li {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-}
-.sia-roles strong {
-  font-size: 12px;
-  font-weight: 600;
-}
-.sia-roles li > span {
-  font-size: 12px;
-  color: var(--sia-muted);
-  line-height: 1.45;
-}
-.sia-roles li + li {
-  padding-left: 16px;
-  border-left: 1px solid var(--sia-line);
 }
 .sia-plan {
   border: 1px solid var(--sia-line-strong);
@@ -448,35 +411,6 @@ body.sia-landing {
 .sia-stat-band #cifras-estado {
   margin-top: 18px;
 }
-.sia-stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-.sia-stats > div {
-  padding: 20px 24px;
-  border-top: 1px solid var(--sia-accent-600);
-  border-right: 1px solid var(--sia-accent);
-  min-width: 0;
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: end;
-  gap: 10px;
-}
-.sia-stats > div:first-child {
-  padding-left: 0;
-}
-.sia-stats > div:last-child {
-  border-right: 0;
-}
-.sia-stats dt {
-  font-size: 12px;
-  color: var(--sia-accent-200);
-  margin-bottom: 0;
-}
-.sia-stats dd {
-  font: 500 clamp(2rem, 3.7vw, 3.8rem)/1.1 var(--sia-heading);
-  font-variant-numeric: tabular-nums;
-}
 .sia-footnote {
   font-size: 12px;
   line-height: 1.6;
@@ -495,12 +429,6 @@ body.sia-landing {
 .sia-section-intro > p:not(.sia-label) {
   max-width: 39ch;
   color: var(--sia-muted);
-}
-.sia-audience {
-  font-size: 13px;
-  border-top: 1px solid var(--sia-line);
-  padding-top: 16px;
-  margin-top: 28px !important;
 }
 .sia-example {
   display: grid;
@@ -609,96 +537,6 @@ body.sia-landing {
   max-width: 44ch;
   color: var(--sia-muted);
   font-size: 15px;
-}
-.sia-alert-row {
-  display: grid;
-  grid-template-columns: 60px 1fr 160px;
-  gap: 24px;
-  align-items: center;
-  padding: 28px 0;
-  border-top: 1px solid var(--sia-line);
-}
-.sia-alert-row p {
-  max-width: 65ch;
-  font-size: 14px;
-  color: var(--sia-muted);
-  margin-top: 8px;
-}
-.sia-alert-count {
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.sia-alert-count strong {
-  font: 500 3rem/1.1 var(--sia-heading);
-}
-.sia-alert-count span {
-  font-size: 11px;
-  color: var(--sia-muted);
-}
-.sia-method-steps {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: 40px 0 0;
-  padding: 0;
-  border-top: 1px solid var(--sia-ink);
-}
-.sia-method-steps li {
-  padding: 24px 24px 0 0;
-}
-.sia-method-steps li + li {
-  padding-left: 24px;
-  border-left: 1px solid var(--sia-line);
-}
-.sia-method-steps span {
-  font: 500 2.5rem/1 var(--sia-heading);
-  color: var(--sia-accent);
-}
-.sia-method-steps h3 {
-  margin: 16px 0 8px;
-}
-.sia-method-steps p {
-  font-size: 14px;
-  color: var(--sia-muted);
-}
-.sia-notes {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 80px;
-}
-.sia-notes-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px 40px;
-}
-.sia-notes-list h3 {
-  font-size: 15px;
-  margin-bottom: 8px;
-}
-.sia-notes-list p {
-  font-size: 14px;
-  color: var(--sia-muted);
-}
-.sia-scope {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-}
-.sia-scope dl > div {
-  border-bottom: 1px solid var(--sia-line);
-  padding: 20px 0;
-}
-.sia-scope dt {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--sia-accent);
-  margin-bottom: 8px;
-}
-.sia-scope dd {
-  font-size: 15px;
-  color: var(--sia-muted);
 }
 .sia-faq {
   display: grid;
@@ -943,34 +781,13 @@ body.sia-landing {
     padding: 56px 0;
   }
   .sia-section-heading,
-  .sia-example,
-  .sia-notes,
-  .sia-faq,
-  .sia-pilot,
-  .sia-scope {
+.sia-example,
+.sia-faq,
+.sia-pilot {
     gap: 40px;
-  }
-  .sia-method-steps li {
-    padding-right: 16px;
-  }
-  .sia-method-steps li + li {
-    padding-left: 16px;
-  }
-  .sia-stats > div {
-    padding: 20px;
   }
   .sia-stat-band {
     padding: 32px 28px;
-  }
-  .sia-roles {
-    gap: 10px;
-  }
-  .sia-roles li + li {
-    padding-left: 10px;
-  }
-  .sia-roles strong,
-  .sia-roles li > span {
-    font-size: 11px;
   }
   .sia-footer {
     padding: 32px 28px;
@@ -1076,40 +893,19 @@ body.sia-landing {
     margin-left: 20px;
     margin-right: 20px;
   }
-  .sia-stats {
-    grid-template-columns: 1fr 1fr;
-  }
-  .sia-stats > div {
-    padding: 20px 12px !important;
-    border-bottom: 0;
-  }
-  .sia-stats > div:nth-child(2) {
-    border-right: 0;
-  }
-  .sia-stats > div:nth-child(3) {
-    border-bottom: 0;
-  }
-  .sia-stats dd {
-    font-size: 2.8rem;
-  }
   .sia-section {
     padding: 40px 0;
   }
   .sia-example,
-  .sia-section-heading,
-  .sia-notes,
-  .sia-faq,
-  .sia-pilot,
-  .sia-scope {
+.sia-section-heading,
+.sia-faq,
+.sia-pilot {
     grid-template-columns: 1fr;
     gap: 24px;
   }
   .sia-section h2 {
     font-size: 2.7rem;
     margin: 12px 0 16px;
-  }
-  .sia-audience {
-    margin-top: 20px !important;
   }
   .sia-sheet-heading {
     padding: 16px 20px;
@@ -1122,56 +918,6 @@ body.sia-landing {
   }
   .sia-comparison > div + div {
     padding-left: 16px;
-  }
-  .sia-alert-row {
-    grid-template-columns: 44px minmax(0, 1fr);
-    gap: 16px;
-    padding: 24px 0;
-  }
-  .sia-alert-row h3 {
-    font-size: 17px;
-  }
-  .sia-alert-count {
-    grid-column: 2;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    text-align: left;
-  }
-  .sia-alert-count strong {
-    font-size: 2rem;
-  }
-  .sia-alert-count span {
-    font-size: 12px;
-  }
-  .sia-method-steps {
-    display: block;
-    margin-top: 24px;
-  }
-  .sia-method-steps li,
-  .sia-method-steps li + li {
-    border: 0;
-    border-bottom: 1px solid var(--sia-line);
-    padding: 20px 0 20px 56px;
-    position: relative;
-  }
-  .sia-method-steps span {
-    position: absolute;
-    top: 22px;
-    left: 0;
-    font-size: 2rem;
-  }
-  .sia-method-steps h3 {
-    margin: 0 0 6px;
-  }
-  .sia-notes-list {
-    gap: 24px;
-  }
-  .sia-notes-list h3 {
-    font-size: 14px;
-  }
-  .sia-notes-list p {
-    font-size: 13px;
   }
   .sia-closing {
     flex-direction: column;
@@ -1248,9 +994,6 @@ body.sia-landing {
   .sia-cover h1 {
     font-size: 3rem;
   }
-  .sia-notes-list {
-    grid-template-columns: 1fr;
-  }
   .sia-footer dl {
     grid-template-columns: 1fr;
   }
@@ -1275,15 +1018,6 @@ body.sia-landing {
     font-size: 9px;
     flex-direction: column;
     gap: 2px;
-  }
-  .sia-roles {
-    gap: 8px;
-  }
-  .sia-roles strong {
-    font-size: 11px;
-  }
-  .sia-roles li > span {
-    font-size: 11px;
   }
   .sia-form-grid {
     grid-template-columns: 1fr;

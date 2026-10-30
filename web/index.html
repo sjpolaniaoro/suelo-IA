@@ -61,32 +61,33 @@
             02
           </p>
           <h1 id="titulo">
-            Detecta posibles diferencias
-            <em>entre el registro y el territorio.</em>
+            El registro dice que no hay nada construido.
+            <em>¿Y si sí lo hay?</em>
           </h1>
+          <dl class="sia-problema" aria-label="El problema en cifras">
+            <div>
+              <dd><span data-stat="ctx_sin_area">14.562</span> de <span data-stat="ctx_hab">76.892</span></dd>
+              <dt>
+                predios urbanos habitacionales de Neiva, sin propiedad horizontal,
+                figuran sin área construida en el Registro 1
+                (<span data-stat="ctx_pct">18,9%</span>). Algunos serán lotes vacíos;
+                otros, construcciones que nadie registró.
+              </dt>
+            </div>
+          </dl>
           <p class="sia-lead">
-            Las fuentes catastrales de Neiva son públicas, pero están separadas.
-            Suelo-IA las cruza y señala qué predios conviene revisar primero,
-            con razones y fuentes, para Gestión Catastral, Hacienda y
-            Planeación.
+            Las fuentes para comprobarlo son públicas, pero están separadas y
+            verificar exige una visita de campo. Suelo-IA las cruza y señala qué
+            predios revisar primero, con razones y fuentes, para Gestión
+            Catastral, Hacienda y Planeación.
           </p>
           <div class="sia-cover-actions">
             <a class="sia-button" href="/app/"
               >Explorar el mapa <span aria-hidden="true">↗</span></a
-            ><a class="sia-text-link" href="#piloto"
-              >Solicitar un piloto <span aria-hidden="true">→</span></a
+            ><a class="sia-text-link" href="#demo"
+              >Ver un predio de ejemplo <span aria-hidden="true">→</span></a
             >
           </div>
-          <dl class="sia-problema" aria-label="El problema en cifras">
-            <div>
-              <dd><span data-stat="sec_sin_area">1.064</span> de <span data-stat="sec_hab">4.111</span></dd>
-              <dt>
-                predios habitacionales del sector catastral 02 figuran sin área construida
-                (<span data-stat="sec_pct">25,9%</span>). Algunos serán lotes vacíos;
-                otros, construcciones no registradas.
-              </dt>
-            </div>
-          </dl>
           <p class="sia-disclaimer">
             Herramienta independiente, no oficial.<br />Alertas para priorizar
             revisión; no son hallazgos confirmados.
@@ -165,15 +166,13 @@
           <dl class="sia-kpis sia-kpis-uno">
             <div>
               <dt>
-                predios urbanos habitacionales, sin propiedad horizontal, figuran
-                sin área construida en el Registro 1
-                (<span data-stat="ctx_pct">18,9%</span>).
-                Algunos serán lotes vacíos; otros, construcciones que existen y no
-                están registradas.
+                predios habitacionales del sector catastral 02, el piloto, figuran
+                sin área construida (<span data-stat="sec_pct">25,9%</span>). Son
+                los que Suelo-IA ayuda a ordenar para revisar.
               </dt>
               <dd>
-                <span data-stat="ctx_sin_area">14.562</span>
-                <small>de <span data-stat="ctx_hab">76.892</span></small>
+                <span data-stat="sec_sin_area">1.064</span>
+                <small>de <span data-stat="sec_hab">4.111</span></small>
               </dd>
             </div>
           </dl>
@@ -256,7 +255,7 @@
           <article>
             <p class="sia-ec-etiqueta">Huellas de edificaciones</p>
             <h3>2. Cruza huellas</h3>
-            <p>Contrasta la evidencia física (Open Buildings v3) con la base documental, predio por predio.</p>
+            <p>Contrasta la evidencia física (Open Buildings v3) y la cartografía oficial de construcciones con la base documental, predio por predio.</p>
           </article>
           <span class="sia-ec-op" aria-hidden="true">=</span>
           <article class="sia-ec-resultado">
@@ -265,69 +264,12 @@
             <p>Puntaje y razones por predio, para que se revise primero lo que más probablemente difiere.</p>
           </article>
         </div>
-        <ul class="sia-diferenciales" aria-label="Qué la hace distinta">
-          <li>
-            <h3>Triangula tres fuentes</h3>
-            <p>
-              Contrasta el registro con la cartografía oficial de construcciones
-              y con las huellas de imagen: de
-              <span data-stat="tri_universo">1.060</span> predios sin área
-              registrada, en <span data-stat="tri_dos_fuentes">733</span> las dos
-              fuentes contradicen al registro.
-            </p>
-          </li>
-          <li>
-            <h3>Cada alerta lleva su razón</h3>
-            <p>
-              La ficha muestra lo registrado frente a lo observado, la confianza
-              y la fuente con su fecha.
-            </p>
-          </li>
-          <li>
-            <h3>La decisión queda trazada</h3>
-            <p>
-              Cada revisión (confirmado, descartado o no concluyente) se
-              registra y se exporta a CSV.
-            </p>
-          </li>
-        </ul>
-        <h3 class="sia-subtitulo">El recorrido de un predio</h3>
-        <ol class="sia-method-steps">
-          <li>
-            <span>01</span><em>Insumo catastral</em>
-            <h3>Reunir</h3>
-            <p>
-              Registro 1, cartografía predial y huellas de edificaciones.
-            </p>
-          </li>
-          <li>
-            <span>02</span><em>Identificación predial</em>
-            <h3>Cruzar</h3>
-            <p>
-              Relacionar cada número predial con su terreno y la evidencia espacial.
-            </p>
-          </li>
-          <li>
-            <span>03</span><em>Priorización</em>
-            <h3>Priorizar</h3>
-            <p>Aplicar las reglas y conservar las razones de cada alerta.</p>
-          </li>
-          <li>
-            <span>04</span><em>Consulta</em>
-            <h3>Consultar</h3>
-            <p>Explorar el mapa y leer lo registrado frente a lo observado.</p>
-          </li>
-          <li>
-            <span>05</span><em>Verificación en campo</em>
-            <h3>Verificar</h3>
-            <p>Contrastar con imagen o visita, registrar una revisión y exportar.</p>
-          </li>
-          <li class="sia-fuera">
-            <span>06</span><em>Actualización catastral</em>
-            <h3>Decide la autoridad</h3>
-            <p>Fuera de Suelo-IA: la actuación corresponde a quien tiene la competencia.</p>
-          </li>
-        </ol>
+        <p class="sia-diferencial">
+          <strong>La diferencia: triangula tres fuentes.</strong> Un predio sin
+          área registrada se contrasta con la cartografía oficial y con la
+          imagen, y la acción sugerida depende de cuántas fuentes contradicen al
+          registro (<a href="#alertas">cómo se decide</a>).
+        </p>
       </section>
       <section class="sia-section sia-ia" id="ia" aria-labelledby="ia-titulo">
         <div class="sia-section-heading">
@@ -360,8 +302,7 @@
               Cruce geoespacial con el registro y la cartografía, reglas
               explícitas y un modelo estadístico de anomalías de avalúo, con
               puntaje de 0 a 100 y razones. No es una red neuronal propia.
-              Las alertas A1, A2, A3 y NR están en los
-              <a href="#alertas">escenarios</a>.
+              Las reglas se detallan <a href="#alertas">más abajo</a>.
             </p>
           </li>
           <li class="sia-capa-3">
@@ -374,145 +315,129 @@
           </li>
         </ol>
       </section>
-      <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo">
+      <section class="sia-stat-band" id="alertas" aria-labelledby="band-titulo" aria-busy="false">
         <div class="sia-band-in">
           <div class="sia-band-heading">
             <div>
-              <p class="sia-label">Escenarios de revisión</p>
+              <p class="sia-label">Cómo se decide qué revisar</p>
               <h2 id="band-titulo">
                 <span data-stat="predios_con_geometria">7.329</span> predios en el
-                mapa.<br /><span>Cada alerta tiene su escenario.</span>
+                mapa.<br /><span>Cuatro reglas y una triangulación.</span>
               </h2>
             </div>
             <p class="sia-band-total">
-              <strong data-stat="predios_con_alerta">1.283</strong> predios con al
-              menos una alerta de vivienda. Un predio puede tener más de una.
+              Cada predio guarda las razones por las que se marcó y una acción
+              sugerida. Un predio puede tener más de una alerta.
             </p>
           </div>
-          <div class="sia-carrusel" role="group" aria-roledescription="carrusel" aria-label="Escenarios de revisión" aria-busy="false">
-            <div class="sia-carrusel-barra" id="escenario-barra" hidden>
-              <p class="sia-carrusel-pos" id="escenario-pos" aria-live="polite">Escenario 1 de 10</p>
-              <div class="sia-carrusel-botones">
-                <button type="button" class="sia-car-btn" id="escenario-ant" aria-label="Escenario anterior">←</button>
-                <button type="button" class="sia-car-btn" id="escenario-sig" aria-label="Escenario siguiente">→</button>
+          <ol class="sia-reglas" aria-label="Reglas de alerta">
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A1</span>
+                <h3>Posible construcción no registrada</h3>
+                <p>Aparece una construcción donde el registro no tiene área.</p>
               </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin propiedad horizontal, con área construida registrada igual a cero y una huella de 20 m² o más (confianza de 0,70 o más).</p>
+              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía también la dibuja; campo si solo la imagen la ve</p>
+              <p class="sia-regla-n"><strong data-stat="A1">805</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A2</span>
+                <h3>Posible área subregistrada</h3>
+                <p>Lo que se ve es bastante más grande que lo registrado.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio sin propiedad horizontal con área construida registrada y una huella mayor a 1,2 veces esa área.</p>
+              <p class="sia-cola mixta"><b>Qué se hace</b>Oficina si la cartografía lo respalda; campo si solo la imagen</p>
+              <p class="sia-regla-n"><strong data-stat="A2">414</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">A3</span>
+                <h3>Avalúo atípico</h3>
+                <p>Una diferencia estadística, no un nuevo avalúo ni un cálculo de impuestos.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>El avalúo se aleja más del doble (o queda por debajo de la mitad) de lo esperado frente a predios comparables de la manzana, con 10 o más predios.</p>
+              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el dato con la autoridad catastral</p>
+              <p class="sia-regla-n"><strong data-stat="A3">90</strong><span>predios</span></p>
+            </li>
+            <li class="sia-regla">
+              <div class="sia-regla-id">
+                <span class="sia-esc-codigo">NR</span>
+                <h3>Uso probablemente no residencial</h3>
+                <p>Es más probable un equipamiento que una vivienda sin registrar; sale del puntaje de vivienda.</p>
+              </div>
+              <p class="sia-regla-cuando"><b>Se activa cuando</b>Predio habitacional sin área construida con una huella de 1.000 m² o más.</p>
+              <p class="sia-cola oficina"><b>Qué se hace</b>Oficina: revisar el destino registrado</p>
+              <p class="sia-regla-n"><strong data-stat="NR">2</strong><span>predios</span></p>
+            </li>
+          </ol>
+          <div class="sia-tri" role="group" aria-labelledby="tri-titulo">
+            <h3 id="tri-titulo">
+              Triangulación de los
+              <span data-stat="tri_universo">1.060</span> predios sin área registrada
+            </h3>
+            <p class="sia-tri-intro">
+              Cada alerta de área se contrasta con la cartografía oficial de
+              construcciones y con las huellas de imagen. Los
+              <span data-stat="tri_universo">1.060</span> predios son los
+              <span data-stat="sec_sin_area">1.064</span> del sector que tienen
+              geometría; el resto no se dibuja en el mapa.
+            </p>
+            <div class="sia-tri-barra" aria-hidden="true" hidden>
+              <i class="sia-tri-dos" data-tri="dos_fuentes"></i>
+              <i class="sia-tri-cart" data-tri="solo_cartografia"></i>
+              <i class="sia-tri-img" data-tri="solo_imagen"></i>
+              <i class="sia-tri-nada" data-tri="sin_evidencia"></i>
             </div>
-            <div class="sia-carrusel-prog" aria-hidden="true"><i id="escenario-prog"></i></div>
-            <ol class="sia-carrusel-pista" id="escenarios" tabindex="0" aria-label="Escenarios. Desliza hacia los lados o usa las flechas del teclado.">
-            <li class="sia-escenario" data-nombre="A1" aria-label="Escenario 1 de 10: A1">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">A1</span><span class="sia-esc-tipo">Alerta de área</span></div>
-              <h3>Posible construcción no registrada</h3>
-              <p class="sia-esc-num"><strong data-stat="A1">805</strong><span>predios</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>Predio habitacional sin propiedad horizontal, con área construida registrada igual a cero y una huella de 20 m² o más (confianza de 0,70 o más).</dd></div>
-                <div><dt>Qué significa</dt><dd>Aparece una construcción donde el registro no tiene área. Con la triangulación se sabe si la cartografía oficial también la dibuja.</dd></div>
-              </dl>
-              <p class="sia-esc-cola variable"><b>Qué se hace</b>Oficina si la cartografía también la dibuja; campo si solo la imagen la ve</p>
-            </li>
-            <li class="sia-escenario" data-nombre="A2" aria-label="Escenario 2 de 10: A2">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">A2</span><span class="sia-esc-tipo">Alerta de área</span></div>
-              <h3>Posible área subregistrada</h3>
-              <p class="sia-esc-num"><strong data-stat="A2">414</strong><span>predios</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>Predio sin propiedad horizontal con área construida registrada y una huella mayor a 1,2 veces esa área.</dd></div>
-                <div><dt>Qué significa</dt><dd>Lo que se ve es bastante más grande que lo registrado. La cartografía respalda la diferencia en pocos casos, así que se valida aparte.</dd></div>
-              </dl>
-              <p class="sia-esc-cola variable"><b>Qué se hace</b>Oficina si la cartografía lo respalda; campo si solo la imagen</p>
-            </li>
-            <li class="sia-escenario" data-nombre="A3" aria-label="Escenario 3 de 10: A3">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">A3</span><span class="sia-esc-tipo">Alerta de avalúo</span></div>
-              <h3>Avalúo atípico</h3>
-              <p class="sia-esc-num"><strong data-stat="A3">90</strong><span>predios</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>El avalúo se aleja más del doble (o queda por debajo de la mitad) de lo esperado frente a predios comparables de la manzana, con 10 o más predios.</dd></div>
-                <div><dt>Qué significa</dt><dd>Una diferencia estadística, no un nuevo avalúo ni un cálculo de impuestos.</dd></div>
-              </dl>
-              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Oficina: revisar el dato con la autoridad catastral</p>
-            </li>
-            <li class="sia-escenario" data-nombre="NR" aria-label="Escenario 4 de 10: NR">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">NR</span><span class="sia-esc-tipo">Alerta de destino</span></div>
-              <h3>Uso probablemente no residencial</h3>
-              <p class="sia-esc-num"><strong data-stat="NR">2</strong><span>predios</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>Predio habitacional sin área construida con una huella de 1.000 m² o más.</dd></div>
-                <div><dt>Qué significa</dt><dd>Es más probable un equipamiento u otro uso que una vivienda sin registrar. Sale del puntaje de vivienda y pide revisar el destino.</dd></div>
-              </dl>
-              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Oficina: revisar el destino registrado</p>
-            </li>
-            <li class="sia-escenario" data-nombre="2 fuentes" aria-label="Escenario 5 de 10: 2 fuentes">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">2 fuentes</span><span class="sia-esc-tipo">Triangulación</span></div>
-              <h3>Cartografía e imagen contradicen el registro</h3>
-              <p class="sia-esc-num"><strong data-stat="tri_dos_fuentes">733</strong><span>de los predios sin área registrada</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m², la cartografía oficial dibuja construcción y la imagen también la detecta.</dd></div>
-                <div><dt>Qué significa</dt><dd>Dos fuentes independientes coinciden entre sí contra el registro: probablemente está desactualizado.</dd></div>
-              </dl>
-              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Conciliar en oficina, sin visita</p>
-            </li>
-            <li class="sia-escenario" data-nombre="Solo imagen" aria-label="Escenario 6 de 10: Solo imagen">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">Solo imagen</span><span class="sia-esc-tipo">Triangulación</span></div>
-              <h3>Solo la imagen contradice el registro</h3>
-              <p class="sia-esc-num"><strong data-stat="tri_solo_imagen">74</strong><span>de los predios sin área registrada</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m², la imagen detecta una huella y la cartografía oficial no dibuja construcción.</dd></div>
-                <div><dt>Qué significa</dt><dd>Puede ser una construcción posterior a la cartografía, o un error de la imagen. No hay segunda fuente.</dd></div>
-              </dl>
-              <p class="sia-esc-cola campo"><b>Qué se hace</b>Verificar en campo</p>
-            </li>
-            <li class="sia-escenario" data-nombre="Solo cartografía" aria-label="Escenario 7 de 10: Solo cartografía">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">Solo cartografía</span><span class="sia-esc-tipo">Triangulación</span></div>
-              <h3>Solo la cartografía contradice el registro</h3>
-              <p class="sia-esc-num"><strong data-stat="tri_solo_cartografia">152</strong><span>de los predios sin área registrada</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m² y la cartografía dibuja construcción, pero la imagen no detecta una huella.</dd></div>
-                <div><dt>Qué significa</dt><dd>Una inconsistencia interna del catastro. Hoy no genera alerta, pero se cuenta para no perderla de vista.</dd></div>
-              </dl>
-              <p class="sia-esc-cola oficina"><b>Qué se hace</b>Conciliar en oficina</p>
-            </li>
-            <li class="sia-escenario" data-nombre="Sin evidencia" aria-label="Escenario 8 de 10: Sin evidencia">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">Sin evidencia</span><span class="sia-esc-tipo">Triangulación</span></div>
-              <h3>Ninguna fuente contradice el registro</h3>
-              <p class="sia-esc-num"><strong data-stat="tri_sin_evidencia">101</strong><span>de los predios sin área registrada</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>El registro dice 0 m² y ni la cartografía ni la imagen muestran construcción.</dd></div>
-                <div><dt>Qué significa</dt><dd>Probablemente un lote vacío. Es el caso que menos urge revisar.</dd></div>
-              </dl>
-              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Sin acción por ahora</p>
-            </li>
-            <li class="sia-escenario" data-nombre="Confianza baja" aria-label="Escenario 9 de 10: Confianza baja">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">Confianza baja</span><span class="sia-esc-tipo">Calidad del dato</span></div>
-              <h3>Ficha con confianza baja</h3>
-              <p class="sia-esc-num"><strong data-stat="confianza_baja">927</strong><span>fichas</span></p>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>La confianza media de las huellas es menor a 0,75, o el terreno mide menos de 30 m².</dd></div>
-                <div><dt>Qué significa</dt><dd>La señal es más frágil: se marca para que la revisión humana lo tenga en cuenta.</dd></div>
-              </dl>
-              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Se revisa con más cuidado; no cambia la cola</p>
-            </li>
-            <li class="sia-escenario" data-nombre="PH" aria-label="Escenario 10 de 10: PH">
-              <div class="sia-esc-cab"><span class="sia-esc-codigo">PH</span><span class="sia-esc-tipo">Exclusión</span></div>
-              <h3>Propiedad horizontal</h3>
-              <dl>
-                <div><dt>Se activa cuando</dt><dd>Predio en propiedad horizontal (condición 9 del número predial).</dd></div>
-                <div><dt>Qué significa</dt><dd>No recibe A1 ni A2 porque el área se registra por unidad y casi no hay geometría de unidades en los datos abiertos.</dd></div>
-              </dl>
-              <p class="sia-esc-cola ninguna"><b>Qué se hace</b>Fuera de estas alertas</p>
-            </li>
-            </ol>
+            <ul class="sia-tri-leyenda">
+              <li>
+                <i class="sia-tri-dos" aria-hidden="true"></i>
+                <strong data-stat="tri_dos_fuentes">733</strong>
+                <div>
+                  <h4>Cartografía e imagen contradicen el registro</h4>
+                  <p>El registro dice 0 m² y las dos fuentes muestran construcción: probablemente el registro está desactualizado.</p>
+                </div>
+                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina, sin visita</p>
+              </li>
+              <li>
+                <i class="sia-tri-cart" aria-hidden="true"></i>
+                <strong data-stat="tri_solo_cartografia">152</strong>
+                <div>
+                  <h4>Solo la cartografía contradice el registro</h4>
+                  <p>La cartografía dibuja construcción y la imagen no detecta huella: una inconsistencia interna del catastro.</p>
+                </div>
+                <p class="sia-cola oficina"><b>Qué se hace</b>Conciliar en oficina</p>
+              </li>
+              <li>
+                <i class="sia-tri-img" aria-hidden="true"></i>
+                <strong data-stat="tri_solo_imagen">74</strong>
+                <div>
+                  <h4>Solo la imagen contradice el registro</h4>
+                  <p>Puede ser una construcción posterior a la cartografía, o un error de la imagen. No hay segunda fuente.</p>
+                </div>
+                <p class="sia-cola campo"><b>Qué se hace</b>Verificar en campo</p>
+              </li>
+              <li>
+                <i class="sia-tri-nada" aria-hidden="true"></i>
+                <strong data-stat="tri_sin_evidencia">101</strong>
+                <div>
+                  <h4>Ninguna fuente contradice el registro</h4>
+                  <p>Probablemente un lote vacío: el caso que menos urge revisar.</p>
+                </div>
+                <p class="sia-cola ninguna"><b>Qué se hace</b>Sin acción por ahora</p>
+              </li>
+            </ul>
           </div>
           <p id="cifras-estado" class="sia-footnote" role="status">
             Cifras del resumen del piloto; se actualizan al cargar la página.
           </p>
           <p class="sia-footnote">
+            Propiedad horizontal no recibe A1 ni A2: el área se registra por
+            unidad y casi no hay geometría de unidades en los datos abiertos.
             Los tipos de alerta pueden solaparse. Procesado:
             <span data-stat="generado">27 de octubre de 2026</span>.
           </p>
-          <noscript
-            ><p class="sia-footnote">
-              Las cifras corresponden al resumen incluido en esta versión.
-              Desliza la lista de escenarios hacia los lados.
-            </p></noscript
-          >
         </div>
       </section>
       <section
@@ -524,8 +449,9 @@
           <p class="sia-label">Demostración · Del territorio a la evidencia</p>
           <h2 id="ficha-titulo">Cada predio,<br />una razón para revisar.</h2>
           <p>
-            Lo que está registrado frente a lo que se observa. Una ficha reúne
-            la señal, sus fuentes y el contexto para que una persona decida.
+            Es la regla A1 aplicada a un predio real: lo que está registrado
+            frente a lo que se observa. Una ficha reúne la señal, sus fuentes y
+            el contexto para que una persona decida.
           </p>
           <ol class="sia-demo-pasos" aria-label="Recorrido de la demostración">
             <li>Filtrar por prioridad, alerta, cola o contraste registro-cartografía</li>
@@ -675,7 +601,8 @@
             <p>
               No modifica avalúos, no calcula impuestos ni genera cobros. Cada
               ficha termina en una persona que confirma, descarta o marca no
-              concluyente.
+              concluyente. La actuación catastral corresponde a la autoridad
+              competente, fuera de Suelo-IA.
             </p>
           </article>
           <article>
@@ -693,77 +620,37 @@
             <p>
               NR evita leer un equipamiento como vivienda sin registrar. Las
               <span data-stat="confianza_baja">927</span> fichas de confianza
-              baja se marcan, y cada decisión se exporta a CSV para trazarla.
+              baja (huellas de confianza media menor a 0,75, o terreno de menos
+              de 30 m²) se marcan, y cada decisión se exporta a CSV para trazarla.
             </p>
-          </article>
-        </div>
-      </section>
-      <section class="sia-section sia-viabilidad" id="viabilidad" aria-labelledby="viabilidad-titulo">
-        <div class="sia-section-heading">
-          <div>
-            <p class="sia-label">Viabilidad y sostenibilidad</p>
-            <h2 id="viabilidad-titulo">Empieza con lo abierto,<br />escala con la institución.</h2>
-          </div>
-          <p>
-            El piloto se sostiene con herramientas abiertas. La continuidad
-            depende de un acuerdo con quien tiene la competencia catastral.
-          </p>
-        </div>
-        <div class="sia-fases">
-          <article>
-            <p class="sia-fase-tag">Hoy · Demostración</p>
-            <ul>
-              <li>
-                <strong>Infraestructura.</strong> Código abierto (licencia MIT);
-                frontend en Vercel y API en Render, ambos en planes gratuitos.
-              </li>
-              <li>
-                <strong>Mantenimiento.</strong> Integración continua en GitHub:
-                revisión de estilo, pruebas del proceso de datos y de la web, y
-                compilación en cada cambio.
-              </li>
-              <li>
-                <strong>Límite conocido.</strong> La API gratuita se suspende y
-                tarda cerca de 50 s en despertar; la demostración funciona sin
-                ella.
-              </li>
-            </ul>
-          </article>
-          <article>
-            <p class="sia-fase-tag">Previsto · Fase institucional</p>
-            <ul>
-              <li>
-                <strong>Sostenibilidad.</strong> Convenio interadministrativo o
-                suscripción con la Alcaldía: implementación, capacitación,
-                soporte y actualización, sujetos a acuerdo.
-              </li>
-              <li>
-                <strong>Actualización anual.</strong> Con imágenes nuevas se
-                marcan construcciones nuevas o modificadas frente al registro.
-              </li>
-              <li>
-                <strong>Ingresos.</strong> Por sectores procesados y servicios;
-                no se comercializan datos de ciudadanos. Hoy no existe un
-                acuerdo de acceso a datos: se solicitaría.
-              </li>
-            </ul>
           </article>
         </div>
       </section>
       <section class="sia-section sia-ruta" id="ruta" aria-labelledby="ruta-titulo">
         <div class="sia-section-heading">
           <div>
-            <p class="sia-label">Plan de implementación</p>
-            <h2 id="ruta-titulo">Hoja de ruta a 12 meses.</h2>
+            <p class="sia-label">Viabilidad y plan de implementación</p>
+            <h2 id="ruta-titulo">Empieza con lo abierto,<br />escala con la institución.</h2>
           </div>
           <p>
-            Lo que sigue está previsto y condicionado a financiación y acceso a
-            datos. No son funciones del piloto actual.
+            El piloto se sostiene con herramientas abiertas. Lo que sigue está
+            previsto y condicionado a financiación y acceso a datos. No son
+            funciones del piloto actual.
           </p>
         </div>
         <ol class="sia-hitos">
+          <li class="sia-hito-hoy">
+            <p class="sia-hito-meses">Hoy · Demostración</p>
+            <h3>Piloto abierto</h3>
+            <p>
+              Código abierto (licencia MIT), frontend en Vercel y API en Render,
+              ambos en planes gratuitos, con integración continua en GitHub. La
+              API gratuita se suspende y tarda cerca de 50 s en despertar; la
+              demostración funciona sin ella.
+            </p>
+          </li>
           <li>
-            <p class="sia-hito-meses">Meses 1 a 3</p>
+            <p class="sia-hito-meses">Previsto · Meses 1 a 3</p>
             <h3>Medir y validar</h3>
             <p>
               Revisar los 240 predios de la muestra con imagen o visita y
@@ -771,7 +658,7 @@
             </p>
           </li>
           <li>
-            <p class="sia-hito-meses">Meses 4 a 6</p>
+            <p class="sia-hito-meses">Previsto · Meses 4 a 6</p>
             <h3>Suelo-IA v2</h3>
             <p>
               Consulta normativa sobre el POT con recuperación de documentos
@@ -780,15 +667,25 @@
             </p>
           </li>
           <li>
-            <p class="sia-hito-meses">Meses 7 a 12</p>
+            <p class="sia-hito-meses">Previsto · Meses 7 a 12</p>
             <h3>Escala municipal</h3>
             <p>
-              Ampliar sector por sector hasta cubrir lo urbano, y sumar la
-              serie temporal 2016-2023 de Open Buildings para trazar la
-              evolución constructiva.
+              Ampliar sector por sector hasta cubrir lo urbano, actualizar cada
+              año con imágenes nuevas y sumar la serie temporal 2016-2023 de
+              Open Buildings.
             </p>
           </li>
         </ol>
+        <div class="sia-sostenibilidad">
+          <h3>Sostenibilidad · previsto</h3>
+          <p>
+            Convenio interadministrativo o suscripción con la Alcaldía:
+            implementación, capacitación, soporte y actualización, sujetos a
+            acuerdo. Los ingresos serían por sectores procesados y servicios; no
+            se comercializan datos de ciudadanos. Hoy no existe un acuerdo de
+            acceso a datos: se solicitaría.
+          </p>
+        </div>
         <div class="sia-incentivo">
           <h3>Uso proyectado del incentivo</h3>
           <p class="sia-footnote">
@@ -822,6 +719,50 @@
               <b>$500.000</b>
             </li>
           </ol>
+        </div>
+      </section>
+      <section class="sia-faq sia-section" id="limites" aria-labelledby="preguntas-titulo">
+        <div>
+          <p class="sia-label">Límites y preguntas</p>
+          <h2 id="preguntas-titulo">Leer también<br />los límites.</h2>
+        </div>
+        <div>
+          <details>
+            <summary>¿Una alerta confirma una diferencia catastral?</summary>
+            <p>
+              No. Es una señal para priorizar una revisión. Debe contrastarse con las fuentes, imágenes o una visita; no sustituye la actuación de la autoridad catastral.
+            </p>
+          </details>
+          <details>
+            <summary>¿Cómo se validan los resultados?</summary>
+            <p>
+              El proyecto tiene una muestra de 240 predios pendiente de revisión humana. Se documentarán las métricas cuando esa revisión permita calcularlas; no se garantiza precisión antes de medirla. <a href="https://github.com/sjpolaniaoro/suelo-IA/tree/main/docs/validacion">Consultar la validación</a>.
+            </p>
+          </details>
+          <details>
+            <summary>¿Y si la imagen se equivoca o es más antigua que el registro?</summary>
+            <p>
+              Puede pasar. Por eso ninguna alerta es un hallazgo: la cartografía oficial funciona como segunda fuente, los casos en que solo la imagen contradice al registro van a verificación en campo y las fichas de confianza baja se marcan. Un producto satelital no acredita por sí solo cambios posteriores a su fecha.
+            </p>
+          </details>
+          <details>
+            <summary>¿Por qué las alturas y las fechas pueden no coincidir?</summary>
+            <p>
+              El registro y las huellas pueden representar momentos diferentes. La vista 3D usa los pisos de la cartografía y puede mostrar alturas ilustrativas; no mide la altura actual desde satélite.
+            </p>
+          </details>
+          <details>
+            <summary>¿Dónde quedan mis revisiones y qué pasa si la API no responde?</summary>
+            <p>
+              Por defecto, las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si el equipo activa la revisión en equipo con su código, también se guardan en una base de datos de solo anexar, con el nombre de quien revisó, y no se pierden. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
+            </p>
+          </details>
+          <details>
+            <summary>¿Qué datos se guardan en la revisión en equipo?</summary>
+            <p>
+              Solo el nombre básico de quien revisa, sin documentos, correos ni teléfonos, junto con el veredicto y la foto de la alerta. Los principios de privacidad y supervisión humana están en la sección de IA responsable.
+            </p>
+          </details>
         </div>
       </section>
       <section
@@ -937,58 +878,18 @@
           >
         </div>
       </section>
-      <section class="sia-faq sia-section" id="limites" aria-labelledby="preguntas-titulo">
-        <div>
-          <p class="sia-label">Límites y preguntas</p>
-          <h2 id="preguntas-titulo">Leer también<br />los límites.</h2>
-        </div>
-        <div>
-          <details>
-            <summary>¿Una alerta confirma una diferencia catastral?</summary>
-            <p>
-              No. Es una señal para priorizar una revisión. Debe contrastarse con las fuentes, imágenes o una visita; no sustituye la actuación de la autoridad catastral.
-            </p>
-          </details>
-          <details>
-            <summary>¿Cómo se validan los resultados?</summary>
-            <p>
-              El proyecto tiene una muestra de 240 predios pendiente de revisión humana. Se documentarán las métricas cuando esa revisión permita calcularlas; no se garantiza precisión antes de medirla. <a href="https://github.com/sjpolaniaoro/suelo-IA/tree/main/docs/validacion">Consultar la validación</a>.
-            </p>
-          </details>
-          <details>
-            <summary>¿Y si la imagen se equivoca o es más antigua que el registro?</summary>
-            <p>
-              Puede pasar. Por eso ninguna alerta es un hallazgo: la cartografía oficial funciona como segunda fuente, los casos en que solo la imagen contradice al registro van a verificación en campo y las fichas de confianza baja se marcan. Un producto satelital no acredita por sí solo cambios posteriores a su fecha.
-            </p>
-          </details>
-          <details>
-            <summary>¿Por qué las alturas y las fechas pueden no coincidir?</summary>
-            <p>
-              El registro y las huellas pueden representar momentos diferentes. La vista 3D usa los pisos de la cartografía y puede mostrar alturas ilustrativas; no mide la altura actual desde satélite.
-            </p>
-          </details>
-          <details>
-            <summary>¿Dónde quedan mis revisiones y qué pasa si la API no responde?</summary>
-            <p>
-              Por defecto, las revisiones se guardan en el almacenamiento de tu navegador y se exportan a CSV. Si el equipo activa la revisión en equipo con su código, también se guardan en una base de datos de solo anexar, con el nombre de quien revisó, y no se pierden. Si la API no responde, el mapa usa los archivos incluidos con la página y lo avisa. Las teselas del mapa base y los enlaces de imágenes sí pueden necesitar internet.
-            </p>
-          </details>
-          <details>
-            <summary>¿Qué datos se guardan en la revisión en equipo?</summary>
-            <p>
-              Solo el nombre básico de quien revisa, sin documentos, correos ni teléfonos, junto con el veredicto y la foto de la alerta. Los principios de privacidad y supervisión humana están en la sección de IA responsable.
-            </p>
-          </details>
-        </div>
-      </section>
       <section class="sia-closing">
         <div>
           <p class="sia-label">El territorio, a la vista</p>
-          <h2>Empieza por el mapa.<br />Continúa con la evidencia.</h2>
+          <h2>Empieza por un predio real.<br />Continúa con el mapa.</h2>
         </div>
-        <a class="sia-button" href="/app/"
-          >Explorar el mapa <span aria-hidden="true">↗</span></a
-        >
+        <div class="sia-closing-actions">
+          <a class="sia-button" id="cierre-ejemplo" href="/app/" data-example-link
+            >Abrir la ficha de ejemplo <span aria-hidden="true">↗</span></a
+          ><a class="sia-text-link" href="/app/"
+            >Explorar el mapa <span aria-hidden="true">→</span></a
+          >
+        </div>
       </section>
     
     </main>
