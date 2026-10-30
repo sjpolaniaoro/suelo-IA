@@ -1,5 +1,7 @@
 # Identidad «Plano catastral»
 
+> **Superado en parte (30-oct-2026).** La paleta vigente es la del tema de Neiva (papel `#f7f1e3`, verde `#1b6b3a`, tinta `#1f2a22`, Fraunces, Barlow e IBM Plex Mono) definida en `web/src/tokens.css`. Los valores de azul acero y papel gris de abajo describen la versión anterior. Las reglas vigentes de paneles, color y portada están en `web/DISENO.md`.
+
 Suelo-IA presenta el territorio y una ficha real antes de explicar el método. La portada usa superficies claras, azul acero, Barlow/Barlow Condensed y divisiones de plano. Sustituye el barrido de radar, los perfiles por pestañas, las maquetas automáticas y las tarjetas de planes. Las preguntas usan `details` nativos y el menú móvil conserva navegación por teclado y Escape.
 
 ## Marca y datos
