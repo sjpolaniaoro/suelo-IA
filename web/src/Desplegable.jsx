@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { esMovil } from "./pantalla.js";
 
 // Botón de la barra superior que abre un panel flotante. Solo uno abierto a la vez (lo controla el padre
 // con `abierto` / `onAbrir`); se cierra con Esc, con clic fuera o al volver a pulsar el botón.
@@ -24,7 +25,7 @@ export default function Desplegable({ id, etiqueta, valor, activo = false, insig
   }, [esAbierto, onAbrir]);
 
   const alternar = () => {
-    if (!esAbierto && window.innerWidth <= 860) {
+    if (!esAbierto && esMovil()) {
       setFijo({ top: Math.round(boton.current.getBoundingClientRect().bottom + 6) });
     } else setFijo(null);
     onAbrir(esAbierto ? null : id);

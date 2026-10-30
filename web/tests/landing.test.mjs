@@ -148,3 +148,9 @@ test("el QR flotante sigue el scroll en pantallas anchas, se puede ampliar y min
   assert.match(css, /@media \(max-width: 1000px\), print\s*\{\s*\.sia-qr-flotante\s*\{\s*display:\s*none/);
   assert.match(js, /iniciarQrFlotante\(\)/);
 });
+
+test("el QR flotante no lleva texto visible: las instrucciones se dan de viva voz", () => {
+  const caja = html.slice(html.indexOf('<aside class="sia-qr-flotante"'), html.indexOf("</aside>") + 8);
+  const visible = caja.replace(/<svg[\s\S]*?<\/svg>/g, "").replace(/<[^>]+>/g, "").replace(/\s+/g, "");
+  assert.equal(visible, "", "el QR flotante no debe mostrar texto");
+});

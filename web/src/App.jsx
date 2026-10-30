@@ -3,6 +3,8 @@ import Mapa, { COLORES, COLORES_ACCION, COLORES_CLASE, COLORES_ESTADO, COLORES_I
 import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, claseSinPrioridad, requiereRevision, tieneAlerta, tipoHallazgo } from "./clases.js";
 import Ficha from "./Ficha.jsx";
 import Desplegable from "./Desplegable.jsx";
+import Identidad from "./Identidad.jsx";
+import { identificado, validarIdentidad } from "./identidad.js";
 import { UMBRALES, enriquecer } from "./consistencia.js";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import {
@@ -71,7 +73,12 @@ export default function App() {
   const [equipo, setEquipo] = useState(leerEquipo);
   const [sync, setSync] = useState({ estado: "local", error: "" });
   const [pendientes, setPendientes] = useState(() => leerCola().length);
-  const [formEquipo, setFormEquipo] = useState({ nombre: "", codigo: "", error: "", ocupado: false });
+  // El formulario de la barra de identidad arranca con lo guardado antes (por ejemplo, un perfil sin grupo).
+  const [formEquipo, setFormEquipo] = useState(() => {
+    const e = leerEquipo();
+    return { nombre: e?.nombre || "", grupo: e?.grupo || "", contacto: e?.contacto || "", codigo: e?.codigo || "", error: "", ocupado: false };
+  });
+  const [editando, setEditando] = useState(false);
   const equipoRef = useRef(equipo);
   const colaRef = useRef(leerCola());
   const enviando = useRef(false);
@@ -87,7 +94,7 @@ export default function App() {
   // Trae lo que el equipo ya revisó y lo une con lo local (lo pendiente de enviar no se pisa).
   const traer = useCallback(async () => {
     const eq = equipoRef.current;
-    if (!eq) return;
+    if (!eq?.codigo) return;
     const filas = await leerNube(eq.codigo);
     const enNube = new Set(filas.map((f) => f.npn));
     setRevisiones((prev) => {
@@ -110,7 +117,7 @@ export default function App() {
 
   const vaciar = useCallback(async () => {
     const eq = equipoRef.current;
-    if (!eq || enviando.current || codigoMalo.current) return;
+    if (!eq?.codigo || enviando.current || codigoMalo.current) return;
     enviando.current = true;
     try {
       if (colaRef.current.length) setSync({ estado: "enviando", error: "" });
@@ -141,7 +148,7 @@ export default function App() {
   }, [fijarCola, traer]);
 
   useEffect(() => {
-    if (!equipo) return undefined;
+    if (!equipo?.codigo) return undefined;
     vaciar();
     const cada = setInterval(vaciar, 30000);
     window.addEventListener("online", vaciar);
@@ -297,6 +304,8 @@ export default function App() {
       estado,
       fecha,
       revisor: equipoRef.current.nombre,
+      grupo: equipoRef.current.grupo || null,
+      contacto: equipoRef.current.contacto || null,
       puntaje: p?.puntaje ?? null,
       alertas: ["A1", "A2", "A3", "NR"].filter((k) => p?.[k]).join("+") || null,
       triangulacion: p?.triangulacion ?? null,
@@ -311,50 +320,64 @@ export default function App() {
   }, [fijarCola, vaciar]);
 
   const decidir = useCallback((npn, estado) => {
+    // Cada revisión lleva a quien la hizo: sin nombre y grupo no se registra (también desde los atajos).
+    if (!identificado(equipo)) {
+      document.querySelector(".barra-identidad input")?.focus();
+      return;
+    }
     const fecha = new Date().toISOString();
-    const sig = { ...revisiones, [npn]: { estado, fecha, ...(equipo ? { revisor: equipo.nombre } : {}) } };
+    const sig = { ...revisiones, [npn]: { estado, fecha, revisor: equipo.nombre, grupo: equipo.grupo } };
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
-    if (equipo) encolar(eventoDe(npn, estado, fecha));
+    if (equipo.codigo) encolar(eventoDe(npn, estado, fecha));
     if (auto) siguientePendiente(npn, sig);
   }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe]);
 
   const quitar = (npn) => {
+    if (!identificado(equipo)) return;
     const sig = { ...revisiones };
     delete sig[npn];
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
-    if (equipo) encolar(eventoDe(npn, "quitada", new Date().toISOString()));
+    if (identificado(equipo) && equipo.codigo) encolar(eventoDe(npn, "quitada", new Date().toISOString()));
   };
 
-  const activarEquipo = async (e) => {
+  const guardarIdentidad = async (e) => {
     e.preventDefault();
-    const nombre = formEquipo.nombre.trim().replace(/\s+/g, " ");
+    const v = validarIdentidad(formEquipo);
+    if (v.error) return setFormEquipo((f) => ({ ...f, error: v.error }));
     const codigo = formEquipo.codigo.trim();
-    if (nombre.length < 2) return setFormEquipo((f) => ({ ...f, error: "Escribe tu nombre (al menos 2 letras)." }));
     setFormEquipo((f) => ({ ...f, ocupado: true, error: "" }));
     try {
-      await leerNube(codigo); // valida el código antes de guardarlo
-      const nuevo = { nombre, codigo };
+      if (codigo) await leerNube(codigo); // valida el código antes de guardarlo
+      const nuevo = { ...v.valores, codigo };
       guardarEquipo(nuevo);
       equipoRef.current = nuevo;
       codigoMalo.current = false;
-      // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre de quien lo activa.
-      const previas = Object.entries(revisiones).filter(([, r]) => !r.nube && r.origen !== "csv");
-      fijarCola([
-        ...leerCola(),
-        ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString())),
-      ]);
+      if (codigo) {
+        // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre y grupo de quien activa el código.
+        const previas = Object.entries(revisiones).filter(([, r]) => !r.nube && r.origen !== "csv");
+        fijarCola([
+          ...leerCola(),
+          ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString())),
+        ]);
+      }
       setRevisiones((prev) => {
-        const sig = Object.fromEntries(Object.entries(prev).map(([k, r]) => [k, r.revisor ? r : { ...r, revisor: nombre }]));
+        const sig = Object.fromEntries(Object.entries(prev).map(([k, r]) => [k, r.revisor ? r : { ...r, revisor: nuevo.nombre, grupo: nuevo.grupo }]));
         guardar(sig);
         return sig;
       });
-      setFormEquipo({ nombre: "", codigo: "", error: "", ocupado: false });
+      setFormEquipo((f) => ({ ...f, codigo, error: "", ocupado: false }));
+      setEditando(false);
       setEquipo(nuevo);
     } catch (err) {
       setFormEquipo((f) => ({ ...f, ocupado: false, error: err.message }));
     }
+  };
+
+  const editarIdentidad = () => {
+    setFormEquipo({ nombre: equipo?.nombre || "", grupo: equipo?.grupo || "", contacto: equipo?.contacto || "", codigo: equipo?.codigo || "", error: "", ocupado: false });
+    setEditando((v) => !v);
   };
 
   const salirDelEquipo = () => {
@@ -362,6 +385,8 @@ export default function App() {
     equipoRef.current = null;
     codigoMalo.current = false;
     setEquipo(null);
+    setEditando(false);
+    setFormEquipo({ nombre: "", grupo: "", contacto: "", codigo: "", error: "", ocupado: false });
     setSync({ estado: "local", error: "" });
   };
 
@@ -384,7 +409,10 @@ export default function App() {
       else if (k === "s") siguientePendiente();
       else {
         const v = { c: "confirmado", d: "descartado", n: "no_concluyente" }[k];
-        if (v) decidir(sel, v);
+        if (v) {
+          e.preventDefault(); // sin identidad el foco pasa a la barra de nombre: la tecla no debe escribirse allí
+          decidir(sel, v);
+        }
       }
     };
     window.addEventListener("keydown", alTecla);
@@ -394,8 +422,8 @@ export default function App() {
   /* ---------- Exportar y cargar ---------- */
   const exportarRevisiones = () => {
     const mapa = new Map(datos.predios.features.map((f) => [f.properties.npn, f.properties]));
-    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor, tipo_hallazgo: mapa.has(npn) ? tipoHallazgo(mapa.get(npn), r.estado) : "" }));
-    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["tipo_hallazgo", "tipo_hallazgo"], ["fecha", "fecha"], ["revisor", "revisor"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"], ...COLUMNAS_EVIDENCIA]));
+    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor, grupo: r.grupo, tipo_hallazgo: mapa.has(npn) ? tipoHallazgo(mapa.get(npn), r.estado) : "" }));
+    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["tipo_hallazgo", "tipo_hallazgo"], ["fecha", "fecha"], ["revisor", "revisor"], ["grupo", "grupo"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"], ...COLUMNAS_EVIDENCIA]));
   };
   const exportarLista = () =>
     descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["triangulacion", "triangulacion"], ["accion", "accion"], ["razones", "razones"], ...COLUMNAS_EVIDENCIA]));
@@ -464,7 +492,7 @@ export default function App() {
     ok: pendientes ? `${pendientes} por enviar` : "Sincronizado con el equipo",
     enviando: "Enviando…",
     red: `Sin conexión: ${pendientes} por enviar. Se reintenta solo.`,
-    codigo: "El código ya no es válido. Sal del equipo y vuelve a activarlo.",
+    codigo: "El código ya no es válido. Edítalo o sal y vuelve a entrar.",
     bloqueo: "Demasiados intentos con el código: se reintenta solo en unos minutos.",
     local: "Conectando…",
   }[sync.estado];
@@ -507,36 +535,6 @@ export default function App() {
           </a>
           <span className="sector">Sector catastral 02 · Neiva</span>
           <div className="barra-acciones">
-            <Desplegable id="equipo" etiqueta="Equipo" valor={equipo ? equipo.nombre : undefined} activo={!!equipo} insignia={equipo && pendientes ? pendientes : undefined} abierto={abierto} onAbrir={setAbierto} alineado="der">
-              <div className="equipo">
-                {!equipo ? (
-                  <form onSubmit={activarEquipo}>
-                    <p>
-                      Guarda las revisiones en la nube para que el equipo las vea y no se pierdan. Se guarda <b>tu nombre</b>{" "}
-                      junto a cada revisión; no se guardan documentos, correos ni teléfonos.
-                    </p>
-                    <label>Tu nombre
-                      <input value={formEquipo.nombre} onChange={(e) => setFormEquipo({ ...formEquipo, nombre: e.target.value })} minLength={2} maxLength={60} autoComplete="name" required />
-                    </label>
-                    <label>Código de equipo
-                      <input type="password" value={formEquipo.codigo} onChange={(e) => setFormEquipo({ ...formEquipo, codigo: e.target.value })} autoComplete="off" required />
-                    </label>
-                    {formEquipo.error && <p className="error-equipo" role="alert">{formEquipo.error}</p>}
-                    <button type="submit" disabled={formEquipo.ocupado}>{formEquipo.ocupado ? "Comprobando…" : "Activar"}</button>
-                    <p className="suave">Sin el código, las revisiones quedan solo en este navegador.</p>
-                  </form>
-                ) : (
-                  <div>
-                    <p className={`estado-sync ${sync.estado}`} role="status">{textoSync}</p>
-                    <div className="acciones">
-                      <button onClick={vaciar}>Sincronizar ahora</button>
-                      <button onClick={salirDelEquipo}>Salir del equipo</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Desplegable>
-
             <Desplegable id="archivo" etiqueta="Exportar y créditos" abierto={abierto} onAbrir={setAbierto} alineado="der">
               <div className="archivo">
                 <div className="acciones">
@@ -555,6 +553,22 @@ export default function App() {
             <a className="inicio" href="/">← Inicio</a>
           </div>
         </div>
+
+        <Identidad
+          equipo={equipo}
+          formulario={formEquipo}
+          onCambio={setFormEquipo}
+          onGuardar={guardarIdentidad}
+          onEditar={editarIdentidad}
+          onSalir={salirDelEquipo}
+          onSincronizar={vaciar}
+          estado={sync.estado}
+          textoEstado={textoSync}
+          pendientes={pendientes}
+          editando={editando}
+          ocupado={formEquipo.ocupado}
+          error={formEquipo.error}
+        />
 
         <div className="barra-filtros" role="group" aria-label="Filtros">
           <span className="filtros-rotulo">Filtrar</span>
@@ -740,6 +754,7 @@ export default function App() {
               p={ficha}
               revision={revisiones[ficha.npn]}
               onDecidir={decidir}
+              puedeDecidir={identificado(equipo)}
               onQuitar={quitar}
               onCerrar={() => setSel(null)}
               onSiguiente={() => siguientePendiente()}

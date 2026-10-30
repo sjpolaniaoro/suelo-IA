@@ -8,9 +8,10 @@ const CLAVE_NUBE = import.meta.env?.VITE_SUPABASE_KEY || "sb_publishable_sAxKTNI
 // tipo: "codigo" (código incorrecto), "bloqueo" (demasiados intentos), "datos" (rechazó el evento),
 // "config" (acceso o configuración; se reintenta) o "red".
 export class ErrorNube extends Error {
-  constructor(mensaje, tipo) {
+  constructor(mensaje, tipo, estado) {
     super(mensaje);
     this.tipo = tipo;
+    this.estado = estado; // código HTTP, cuando lo hay (404 = la función no existe con esos parámetros)
   }
 }
 
@@ -47,7 +48,7 @@ async function rpc(nombre, cuerpo, ms = 8000) {
   // Solo un rechazo por los datos (400, 409, 422) permite descartar el evento; un 401, 403 o 404 es de
   // configuración (clave rotada, función ausente) y el evento debe seguir en la cola.
   if ([400, 409, 422].includes(r.status)) throw new ErrorNube(detalle.message || "El servidor rechazó la revisión.", "datos");
-  throw new ErrorNube("El servidor de revisiones rechazó la solicitud (acceso o configuración).", "config");
+  throw new ErrorNube("El servidor de revisiones rechazó la solicitud (acceso o configuración).", "config", r.status);
 }
 
 // Desde la migración 0003 las funciones no lanzan error ante un código malo (un error revertiría el
@@ -68,12 +69,24 @@ export const leerNube = async (codigo) => {
   return Array.isArray(r) ? r : r.filas;
 };
 
-export const enviarNube = async (ev, codigo) =>
-  interpretar(await rpc("registrar_revision", {
+// Nombre y grupo en un solo texto de hasta 60 caracteres, para la base sin la migración 0005.
+export function revisorPlano(ev) {
+  const g = ev.grupo ? ` (${ev.grupo.slice(0, 25)})` : "";
+  return ev.revisor.slice(0, 60 - g.length) + g;
+}
+
+// Con la migración 0005 la función recibe grupo y contacto. Si la base aún no la tiene (PostgREST responde 404
+// porque no existe una función con esos parámetros), se envía como antes, con el grupo dentro del nombre del
+// revisor: así ninguna revisión se queda sin enviar mientras se aplica la migración. El contacto solo se guarda
+// con la migración.
+let conGrupo = true;
+export const reiniciarRespaldo = () => { conGrupo = true; };
+
+export async function enviarNube(ev, codigo) {
+  const base = {
     p_id: ev.id,
     p_npn: ev.npn,
     p_estado: ev.estado,
-    p_revisor: ev.revisor,
     p_codigo: codigo,
     p_fecha: ev.fecha,
     p_puntaje: ev.puntaje ?? null,
@@ -81,4 +94,19 @@ export const enviarNube = async (ev, codigo) =>
     p_triangulacion: ev.triangulacion ?? null,
     p_accion: ev.accion ?? null,
     p_version: ev.version ?? null,
-  }));
+  };
+  if (conGrupo) {
+    try {
+      return interpretar(await rpc("registrar_revision", {
+        ...base,
+        p_revisor: ev.revisor,
+        p_grupo: ev.grupo ?? null,
+        p_contacto: ev.contacto ?? null,
+      }));
+    } catch (e) {
+      if (!(e instanceof ErrorNube && e.tipo === "config" && e.estado === 404)) throw e;
+      conGrupo = false;
+    }
+  }
+  return interpretar(await rpc("registrar_revision", { ...base, p_revisor: revisorPlano(ev) }));
+}
