@@ -33,10 +33,19 @@ export const TEXTO_CLASE = {
   cartografia: "Sin alerta de imagen · la cartografía contradice el registro",
 };
 
+// «Alerta del sistema»: lo que el sistema puso en una cola de revisión. Además de A1 a A3 y NR, cuenta el predio
+// sin alerta de imagen cuya cartografía contradice el registro (cola «Conciliar en oficina»).
+export const esAlertaDelSistema = (p) => tieneAlerta(p) || claseSinAlerta(p) === "cartografia";
+
 // Árbol de decisión de la revisión: cruza lo que dijo el sistema con lo que encontró la persona.
 // Alimenta las métricas: precisión = acierto / (acierto + falso_positivo); exhaustividad = acierto / (acierto + omision).
+//   * «Hay error» (confirmado) y «Está OK» (descartado) se leen igual en todos los predios.
+//   * Propiedad horizontal sin alerta no se evalúa: se registra, pero queda fuera de las métricas.
+//   * No concluyente (insuficiente o no ubicado) queda fuera de las tasas y se cuenta aparte.
 export function tipoHallazgo(p, estado) {
   if (estado === "no_concluyente") return "no_concluyente";
-  if (tieneAlerta(p)) return estado === "confirmado" ? "acierto" : estado === "descartado" ? "falso_positivo" : "";
-  return estado === "confirmado" ? "omision" : estado === "descartado" ? "conforme" : "";
+  if (estado !== "confirmado" && estado !== "descartado") return "";
+  if (!tieneAlerta(p) && p.ph) return "ph_sin_evaluar";
+  if (esAlertaDelSistema(p)) return estado === "confirmado" ? "acierto" : "falso_positivo";
+  return estado === "confirmado" ? "omision" : "conforme";
 }

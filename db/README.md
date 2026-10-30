@@ -9,7 +9,8 @@ fila nueva; «quitar» una revisión es otro evento. Nada se actualiza ni se bor
   [`migrations/0002_endurecer.sql`](migrations/0002_endurecer.sql),
   [`migrations/0003_limite_de_intentos.sql`](migrations/0003_limite_de_intentos.sql),
   [`migrations/0004_endurecer_ciclo2.sql`](migrations/0004_endurecer_ciclo2.sql),
-  [`migrations/0005_grupo_y_contacto.sql`](migrations/0005_grupo_y_contacto.sql). Se aplican en ese orden.
+  [`migrations/0005_grupo_y_contacto.sql`](migrations/0005_grupo_y_contacto.sql),
+  [`migrations/0006_roles_y_decisiones.sql`](migrations/0006_roles_y_decisiones.sql). Se aplican en ese orden.
 - Pruebas de la 0003: [`pruebas/0003_limite_de_intentos.sql`](pruebas/0003_limite_de_intentos.sql). Se corren
   después de aplicar la migración y terminan con un `RAISE EXCEPTION` que revierte todo (la tabla es de solo anexar).
 
@@ -50,6 +51,30 @@ ejecutarlo; luego, opcionalmente, correr `pruebas/0005_grupo_y_contacto.sql` con
 `RAISE EXCEPTION` que revierte todo y muestra el informe). Hasta que se aplique, el frontend sigue enviando: ante
 un 404 de la función nueva reenvía con la firma anterior y el grupo dentro del nombre del revisor (`Ana (Grupo 3)`),
 y el contacto no se guarda. Aplicarla cuanto antes evita ese respaldo.
+
+## Roles, equipos y decisiones (migración 0006)
+- **Invitado** (sin código): `registrar_revision_v2` con `p_codigo` vacío. El servidor fija `rol = 'invitado'`, el grupo
+  «Invitado», descarta el contacto y cuenta el envío: **300 por cliente y día y 3.000 en total** (`demasiados_envios`).
+  No puede leer: `leer_revisiones_v2` exige un código válido.
+- **Funcionario**: el código identifica el equipo (tabla `equipos`, un hash por equipo). El rol, el equipo y `es_prueba`
+  salen del código, no del cliente. Puede leer lo del equipo y **ratificar** (`ratificar_revision`) una decisión de
+  invitado; las ratificaciones son de solo anexar y una de un equipo de prueba no cuenta.
+- **Equipo `testing`**: la migración copia el hash del código único anterior a `equipos` como `testing`, `es_prueba`.
+  Sus revisiones se ven solo entre equipos de prueba y no entran a las métricas. **Para cambiar su código o agregar
+  equipos** (el código no se escribe en el repositorio; se hace desde el editor SQL):
+  ```sql
+  update public.equipos set codigo_hash = extensions.crypt('NUEVO-CODIGO', extensions.gen_salt('bf')) where nombre = 'testing';
+  insert into public.equipos (nombre, codigo_hash, es_prueba)
+  values ('catastro', extensions.crypt('CODIGO-DEL-EQUIPO', extensions.gen_salt('bf')), false);
+  ```
+  La lista que muestra el selector de equipo está en `web/src/identidad.js` (`EQUIPOS`); el servidor es quien valida.
+- **Métricas oficiales**: leer de la vista `revisiones_validas` (funcionarios fuera de prueba, más invitados ratificados
+  por un equipo real, más lo anterior a la 0006). La vista no es accesible para `anon` ni `authenticated`.
+- **Decisiones**: `motivo` (`insuficiente` | `no_ubicado`, solo con `no_concluyente`) y `fuente_error` (`registro` |
+  `cartografia` | `imagen` | `ninguna`), ambos opcionales. Las filas anteriores quedan con `rol` nulo.
+- Compatibilidad: `registrar_revision` (13 argumentos) y `leer_revisiones` siguen funcionando para el frontend anterior.
+- Pruebas: [`pruebas/0006_roles_y_decisiones.sql`](pruebas/0006_roles_y_decisiones.sql) (sustituir `CODIGO_REAL` por el
+  código de `testing`; termina con un `RAISE EXCEPTION` que revierte todo).
 
 ## Cómo se protege
 - Las tablas están cerradas a todos los roles (RLS sin políticas). El navegador no las lee ni las escribe.

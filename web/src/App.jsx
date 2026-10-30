@@ -4,13 +4,16 @@ import { CLASES_SIN_ALERTA, ETIQUETA_CLASE, TEXTO_CLASE, claseSinAlerta, claseSi
 import Ficha from "./Ficha.jsx";
 import Desplegable from "./Desplegable.jsx";
 import Identidad from "./Identidad.jsx";
-import { identificado, validarIdentidad } from "./identidad.js";
+import TarjetaMovil from "./TarjetaMovil.jsx";
+import { conNube, esFuncionario, identificado, normalizarPerfil, validarIdentidad } from "./identidad.js";
+import { decisionDeTecla, etiquetaDecision } from "./decisiones.js";
+import { CONSULTA_APAISADO, CONSULTA_MOVIL, esApaisado, esMovil } from "./pantalla.js";
 import { UMBRALES, enriquecer } from "./consistencia.js";
 import { apiDisponible, cargarSector, fichaDesdeApi, limites } from "./datos.js";
 import {
   aCsv, borrarEquipo, desdeCsv, descargar, guardar, guardarCola, guardarEquipo, leer, leerCola, leerEquipo,
 } from "./revisiones.js";
-import { enviarNube, leerNube, uuid } from "./nube.js";
+import { enviarNube, leerEquipoNube, ratificarNube, uuid } from "./nube.js";
 import { LIMITE_BYTES, validarGeojson } from "./validar.js";
 
 const NIVELES = [["rojo", "Alta"], ["naranja", "Media"], ["amarillo", "Baja"]];
@@ -27,12 +30,26 @@ const COLUMNAS_EVIDENCIA = [
   ["area_registrada_m2", "area_construida_reg"], ["area_cartografia_m2", "area_cart"], ["area_imagen_m2", "area_huella"],
   ["confianza_imagen", "confianza_media"], ["registro_vs_cartografia", "cons"],
 ];
+// Cómo se decidió: texto de la decisión, motivo del «no concluyente», fuente con error y quién la registró.
+const COLUMNAS_DECISION = [["decision", "decision"], ["motivo", "motivo"], ["fuente_error", "fuente"], ["rol", "rol"]];
 const MAX_LISTA = 400;
 const ANCHO_FICHA = { min: 320, max: 640, inicial: 400 };
 
 const n = (x) => (x ?? 0).toLocaleString("es-CO");
 const rgb = (c) => `rgb(${c.join(",")})`;
-const ICONO = { confirmado: "✓", descartado: "✕", no_concluyente: "?" };
+const ICONO = { confirmado: "!", descartado: "✓", no_concluyente: "?" };
+const PAUSA_LIMITE_MS = 30 * 60 * 1000; // tras el tope diario de invitado no se insiste en media hora
+
+function useConsulta(consulta) {
+  const [coincide, setCoincide] = useState(() => window.matchMedia(consulta).matches);
+  useEffect(() => {
+    const q = window.matchMedia(consulta);
+    const alCambiar = () => setCoincide(q.matches);
+    q.addEventListener("change", alCambiar);
+    return () => q.removeEventListener("change", alCambiar);
+  }, [consulta]);
+  return coincide;
+}
 
 const umbralesDe = (resumen) => ({ ...UMBRALES, ...(resumen?.umbrales_consistencia || {}) });
 
@@ -64,25 +81,33 @@ export default function App() {
   const [ficha, setFicha] = useState(null);
   const [revisiones, setRevisiones] = useState(leer);
   const [guardadoOk, setGuardadoOk] = useState(true);
-  const [panel, setPanel] = useState(true);
+  const movil = useConsulta(CONSULTA_MOVIL);
+  const apaisado = useConsulta(CONSULTA_APAISADO);
+  // Celular en vertical: el mapa va primero; la lista, la tarjeta corta y la ficha completa se abren encima.
+  const vertical = movil && !apaisado;
+  const [panel, setPanel] = useState(() => !(esMovil() && !esApaisado()));
+  const [fichaCompleta, setFichaCompleta] = useState(false);
+  const [filtrosMovil, setFiltrosMovil] = useState(false);
+  const [fuenteBorrador, setFuenteBorrador] = useState(null); // fuente elegida antes de decidir
   const [auto, setAuto] = useState(leerAuto);
   const [mostrar, setMostrar] = useState(MAX_LISTA);
   const entrada = useRef(null);
 
   /* ---------- Revisión en equipo (Supabase): nombre, código y cola de envío ---------- */
-  const [equipo, setEquipo] = useState(leerEquipo);
+  const [equipo, setEquipo] = useState(() => normalizarPerfil(leerEquipo()));
   const [sync, setSync] = useState({ estado: "local", error: "" });
   const [pendientes, setPendientes] = useState(() => leerCola().length);
   // El formulario de la barra de identidad arranca con lo guardado antes (por ejemplo, un perfil sin grupo).
   const [formEquipo, setFormEquipo] = useState(() => {
-    const e = leerEquipo();
-    return { nombre: e?.nombre || "", grupo: e?.grupo || "", contacto: e?.contacto || "", codigo: e?.codigo || "", error: "", ocupado: false };
+    const e = normalizarPerfil(leerEquipo());
+    return { nombre: e?.nombre || "", rol: e?.rol || "invitado", equipo: e?.equipo || "", contacto: e?.contacto || "", codigo: e?.codigo || "", error: "", ocupado: false };
   });
   const [editando, setEditando] = useState(false);
   const equipoRef = useRef(equipo);
   const colaRef = useRef(leerCola());
   const enviando = useRef(false);
   const codigoMalo = useRef(false); // con un código rechazado no se reintenta: cada intento cuenta como fallo
+  const pausaHasta = useRef(0); // tope diario de invitado alcanzado: no se reintenta hasta esta hora
   equipoRef.current = equipo;
 
   const fijarCola = useCallback((nueva) => {
@@ -92,10 +117,11 @@ export default function App() {
   }, []);
 
   // Trae lo que el equipo ya revisó y lo une con lo local (lo pendiente de enviar no se pisa).
+  // Solo los funcionarios leen: el invitado envía, pero no ve las revisiones del equipo.
   const traer = useCallback(async () => {
     const eq = equipoRef.current;
-    if (!eq?.codigo) return;
-    const filas = await leerNube(eq.codigo);
+    if (!esFuncionario(eq)) return;
+    const { filas } = await leerEquipoNube(eq.codigo);
     const enNube = new Set(filas.map((f) => f.npn));
     setRevisiones((prev) => {
       const sig = { ...prev };
@@ -103,7 +129,12 @@ export default function App() {
         if (colaRef.current.some((e) => e.npn === f.npn)) continue;
         const local = sig[f.npn];
         if (!local || (local.fecha || "") <= f.fecha_cliente) {
-          sig[f.npn] = { estado: f.estado, fecha: f.fecha_cliente, revisor: f.revisor, nube: true };
+          sig[f.npn] = {
+            estado: f.estado, fecha: f.fecha_cliente, revisor: f.revisor, nube: true, id: f.id,
+            ...(f.grupo ? { grupo: f.grupo } : {}), ...(f.rol ? { rol: f.rol } : {}),
+            ...(f.motivo ? { motivo: f.motivo } : {}), ...(f.fuente_error ? { fuente: f.fuente_error } : {}),
+            ...(f.ratificada ? { ratificada: true } : {}),
+          };
         }
       }
       // Lo que alguien quitó en la nube y aquí ya estaba sincronizado se retira también.
@@ -117,7 +148,7 @@ export default function App() {
 
   const vaciar = useCallback(async () => {
     const eq = equipoRef.current;
-    if (!eq?.codigo || enviando.current || codigoMalo.current) return;
+    if (!conNube(eq) || enviando.current || codigoMalo.current || Date.now() < pausaHasta.current) return;
     enviando.current = true;
     try {
       if (colaRef.current.length) setSync({ estado: "enviando", error: "" });
@@ -127,7 +158,7 @@ export default function App() {
         if (!colaRef.current.length) break;
         const ev = colaRef.current[0];
         try {
-          await enviarNube(ev, eq.codigo);
+          await enviarNube(ev, eq.codigo || "");
         } catch (e) {
           if (e.tipo !== "datos") throw e;
           // Solo un rechazo por los datos descarta el evento para no bloquear a los demás.
@@ -141,14 +172,15 @@ export default function App() {
       setSync({ estado: "ok", error: "" });
     } catch (e) {
       if (e.tipo === "codigo") codigoMalo.current = true;
-      setSync({ estado: e.tipo === "codigo" ? "codigo" : e.tipo === "bloqueo" ? "bloqueo" : "red", error: e.message });
+      if (e.tipo === "limite") pausaHasta.current = Date.now() + PAUSA_LIMITE_MS;
+      setSync({ estado: ["codigo", "bloqueo", "limite"].includes(e.tipo) ? e.tipo : "red", error: e.message });
     } finally {
       enviando.current = false;
     }
   }, [fijarCola, traer]);
 
   useEffect(() => {
-    if (!equipo?.codigo) return undefined;
+    if (!conNube(equipo)) return undefined;
     vaciar();
     const cada = setInterval(vaciar, 30000);
     window.addEventListener("online", vaciar);
@@ -243,6 +275,13 @@ export default function App() {
 
   const elegir = useCallback((npn) => setSel(npn), []);
 
+  // Celular en vertical: al elegir un predio la lista se cierra y aparece la tarjeta corta sobre el mapa.
+  useEffect(() => {
+    setFichaCompleta(false);
+    setFuenteBorrador(null);
+    if (vertical && sel) setPanel(false);
+  }, [sel, vertical]);
+
   // Enlace compartible: ?predio=número abre la ficha directamente.
   useEffect(() => {
     const u = new URL(window.location.href);
@@ -296,7 +335,7 @@ export default function App() {
 
   /* ---------- Decidir ---------- */
   // Foto de la alerta al revisar: sirve después para medir la precisión por tipo de evidencia.
-  const eventoDe = useCallback((npn, estado, fecha) => {
+  const eventoDe = useCallback((npn, estado, fecha, extra = {}) => {
     const p = porNpn.get(npn);
     return {
       id: uuid(),
@@ -306,6 +345,8 @@ export default function App() {
       revisor: equipoRef.current.nombre,
       grupo: equipoRef.current.grupo || null,
       contacto: equipoRef.current.contacto || null,
+      motivo: extra.motivo ?? null,
+      fuente: extra.fuente ?? null,
       puntaje: p?.puntaje ?? null,
       alertas: ["A1", "A2", "A3", "NR"].filter((k) => p?.[k]).join("+") || null,
       triangulacion: p?.triangulacion ?? null,
@@ -319,19 +360,36 @@ export default function App() {
     vaciar();
   }, [fijarCola, vaciar]);
 
-  const decidir = useCallback((npn, estado) => {
+  // d = { estado, motivo?, fuente? }. Sin `fuente`, se usa la elegida antes de decidir o la que ya tenía la revisión.
+  const decidir = useCallback((npn, d, { avanzar = true } = {}) => {
     // Cada revisión lleva a quien la hizo: sin nombre y grupo no se registra (también desde los atajos).
     if (!identificado(equipo)) {
-      document.querySelector(".barra-identidad input")?.focus();
+      document.querySelector(".barra-identidad input, .barra-identidad .id-abrir")?.focus();
       return;
     }
     const fecha = new Date().toISOString();
-    const sig = { ...revisiones, [npn]: { estado, fecha, revisor: equipo.nombre, grupo: equipo.grupo } };
+    const motivo = d.estado === "no_concluyente" ? d.motivo ?? null : null;
+    const fuente = "fuente" in d ? d.fuente : fuenteBorrador ?? revisiones[npn]?.fuente ?? null;
+    const nueva = {
+      estado: d.estado, fecha, revisor: equipo.nombre, grupo: equipo.grupo, rol: equipo.rol,
+      ...(motivo ? { motivo } : {}), ...(fuente ? { fuente } : {}),
+    };
+    const sig = { ...revisiones, [npn]: nueva };
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
-    if (equipo.codigo) encolar(eventoDe(npn, estado, fecha));
-    if (auto) siguientePendiente(npn, sig);
-  }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe]);
+    setFuenteBorrador(null);
+    if (conNube(equipo)) encolar(eventoDe(npn, d.estado, fecha, { motivo, fuente }));
+    if (auto && avanzar) siguientePendiente(npn, sig);
+  }, [revisiones, auto, siguientePendiente, equipo, encolar, eventoDe, fuenteBorrador]);
+
+  // Elegir la fuente con error: antes de decidir queda de borrador; con una decisión ya tomada, la actualiza.
+  const elegirFuente = (k) => {
+    const actual = revisiones[sel]?.fuente ?? fuenteBorrador;
+    const nueva = actual === k ? null : k;
+    const r = revisiones[sel];
+    if (r && identificado(equipo)) decidir(sel, { estado: r.estado, motivo: r.motivo ?? null, fuente: nueva }, { avanzar: false });
+    else setFuenteBorrador(nueva);
+  };
 
   const quitar = (npn) => {
     if (!identificado(equipo)) return;
@@ -339,31 +397,52 @@ export default function App() {
     delete sig[npn];
     setRevisiones(sig);
     setGuardadoOk(guardar(sig));
-    if (identificado(equipo) && equipo.codigo) encolar(eventoDe(npn, "quitada", new Date().toISOString()));
+    if (conNube(equipo)) encolar(eventoDe(npn, "quitada", new Date().toISOString()));
+  };
+
+  // Un funcionario respalda la decisión de un invitado: desde ahí cuenta en las métricas.
+  const ratificar = async (npn) => {
+    const r = revisiones[npn];
+    if (!esFuncionario(equipo) || !r?.id) return;
+    try {
+      await ratificarNube(r.id, equipo.codigo, equipo.nombre);
+      setRevisiones((prev) => {
+        const sig = { ...prev, [npn]: { ...prev[npn], ratificada: true } };
+        guardar(sig);
+        return sig;
+      });
+    } catch (err) {
+      setSync({ estado: err.tipo === "codigo" ? "codigo" : "red", error: err.message });
+    }
   };
 
   const guardarIdentidad = async (e) => {
     e.preventDefault();
     const v = validarIdentidad(formEquipo);
     if (v.error) return setFormEquipo((f) => ({ ...f, error: v.error }));
-    const codigo = formEquipo.codigo.trim();
+    const codigo = v.valores.rol === "funcionario" ? formEquipo.codigo.trim() : "";
     setFormEquipo((f) => ({ ...f, ocupado: true, error: "" }));
     try {
-      if (codigo) await leerNube(codigo); // valida el código antes de guardarlo
+      if (codigo) {
+        // Valida el código antes de guardarlo y comprueba que sea el del equipo elegido.
+        const { equipo: deCodigo } = await leerEquipoNube(codigo);
+        if (deCodigo && deCodigo !== v.valores.equipo) throw new Error("Ese código no corresponde al equipo elegido.");
+      }
       const nuevo = { ...v.valores, codigo };
       guardarEquipo(nuevo);
       equipoRef.current = nuevo;
       codigoMalo.current = false;
-      if (codigo) {
-        // Lo que ya se revisó solo en este navegador pasa al equipo con el nombre y grupo de quien activa el código.
+      pausaHasta.current = 0;
+      if (conNube(nuevo)) {
+        // Lo que ya se revisó solo en este navegador pasa a la nube con el nombre y grupo de quien se identifica.
         const previas = Object.entries(revisiones).filter(([, r]) => !r.nube && r.origen !== "csv");
         fijarCola([
           ...leerCola(),
-          ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString())),
+          ...previas.map(([npn, r]) => eventoDe(npn, r.estado, r.fecha || new Date().toISOString(), { motivo: r.motivo, fuente: r.fuente })),
         ]);
       }
       setRevisiones((prev) => {
-        const sig = Object.fromEntries(Object.entries(prev).map(([k, r]) => [k, r.revisor ? r : { ...r, revisor: nuevo.nombre, grupo: nuevo.grupo }]));
+        const sig = Object.fromEntries(Object.entries(prev).map(([k, r]) => [k, r.revisor ? r : { ...r, revisor: nuevo.nombre, grupo: nuevo.grupo, rol: nuevo.rol }]));
         guardar(sig);
         return sig;
       });
@@ -376,7 +455,7 @@ export default function App() {
   };
 
   const editarIdentidad = () => {
-    setFormEquipo({ nombre: equipo?.nombre || "", grupo: equipo?.grupo || "", contacto: equipo?.contacto || "", codigo: equipo?.codigo || "", error: "", ocupado: false });
+    setFormEquipo({ nombre: equipo?.nombre || "", rol: equipo?.rol || "invitado", equipo: equipo?.equipo || "", contacto: equipo?.contacto || "", codigo: equipo?.codigo || "", error: "", ocupado: false });
     setEditando((v) => !v);
   };
 
@@ -384,9 +463,10 @@ export default function App() {
     borrarEquipo();
     equipoRef.current = null;
     codigoMalo.current = false;
+    pausaHasta.current = 0;
     setEquipo(null);
     setEditando(false);
-    setFormEquipo({ nombre: "", grupo: "", contacto: "", codigo: "", error: "", ocupado: false });
+    setFormEquipo({ nombre: "", rol: "invitado", equipo: "", contacto: "", codigo: "", error: "", ocupado: false });
     setSync({ estado: "local", error: "" });
   };
 
@@ -408,10 +488,10 @@ export default function App() {
       else if (k === "k" || k === "arrowup") { e.preventDefault(); mover(-1); }
       else if (k === "s") siguientePendiente();
       else {
-        const v = { c: "confirmado", d: "descartado", n: "no_concluyente" }[k];
-        if (v) {
+        const d = decisionDeTecla(k);
+        if (d) {
           e.preventDefault(); // sin identidad el foco pasa a la barra de nombre: la tecla no debe escribirse allí
-          decidir(sel, v);
+          decidir(sel, { estado: d.k, motivo: d.motivo ?? null });
         }
       }
     };
@@ -422,8 +502,8 @@ export default function App() {
   /* ---------- Exportar y cargar ---------- */
   const exportarRevisiones = () => {
     const mapa = new Map(datos.predios.features.map((f) => [f.properties.npn, f.properties]));
-    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor, grupo: r.grupo, tipo_hallazgo: mapa.has(npn) ? tipoHallazgo(mapa.get(npn), r.estado) : "" }));
-    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["tipo_hallazgo", "tipo_hallazgo"], ["fecha", "fecha"], ["revisor", "revisor"], ["grupo", "grupo"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"], ...COLUMNAS_EVIDENCIA]));
+    const filas = Object.entries(revisiones).map(([npn, r]) => ({ ...(mapa.get(npn) || {}), npn, estado: r.estado, fecha: r.fecha, revisor: r.revisor, grupo: r.grupo, rol: r.rol, decision: etiquetaDecision(r), motivo: r.motivo, fuente: r.fuente, tipo_hallazgo: mapa.has(npn) ? tipoHallazgo(mapa.get(npn), r.estado) : "" }));
+    descargar("revisiones_suelo_ia.csv", aCsv(filas, [["npn", "npn"], ["estado", "estado"], ["tipo_hallazgo", "tipo_hallazgo"], ["fecha", "fecha"], ["revisor", "revisor"], ["grupo", "grupo"], ...COLUMNAS_DECISION, ["direccion", "direccion"], ["puntaje", "puntaje"], ["triangulacion", "triangulacion"], ...COLUMNAS_EVIDENCIA]));
   };
   const exportarLista = () =>
     descargar("lista_priorizada_suelo_ia.csv", aCsv(lista, [["npn", "npn"], ["direccion", "direccion"], ["puntaje", "puntaje"], ["nivel", "nivel"], ["confianza", "confianza"], ["triangulacion", "triangulacion"], ["accion", "accion"], ["razones", "razones"], ...COLUMNAS_EVIDENCIA]));
@@ -489,11 +569,12 @@ export default function App() {
     : NIVELES_UI.filter(([k]) => niveles.has(k)).map(([, t]) => t).join(", ");
   const valorTipo = tipo === "todas" ? "Todas" : tipo === "ninguna" ? "Ninguna" : tipo;
   const textoSync = {
-    ok: pendientes ? `${pendientes} por enviar` : "Sincronizado con el equipo",
+    ok: pendientes ? `${pendientes} por enviar` : equipo?.rol === "invitado" ? "Tus revisiones se envían al equipo" : "Sincronizado con el equipo",
     enviando: "Enviando…",
     red: `Sin conexión: ${pendientes} por enviar. Se reintenta solo.`,
     codigo: "El código ya no es válido. Edítalo o sal y vuelve a entrar.",
     bloqueo: "Demasiados intentos con el código: se reintenta solo en unos minutos.",
+    limite: "Tope diario de envíos de invitado: se reintenta más tarde.",
     local: "Conectando…",
   }[sync.estado];
 
@@ -524,7 +605,7 @@ export default function App() {
   };
 
   return (
-    <div className={`app ${sel ? "con-ficha" : ""}`} style={{ "--ancho-ficha": `${anchoFicha}px` }}>
+    <div className={`app ${sel ? "con-ficha" : ""} ${vertical ? "vertical" : ""}`} style={{ "--ancho-ficha": `${anchoFicha}px` }}>
       <div className="franja" aria-hidden="true"><i /><i /><i /></div>
 
       <header className="barra-sup">
@@ -535,6 +616,11 @@ export default function App() {
           </a>
           <span className="sector">Sector catastral 02 · Neiva</span>
           <div className="barra-acciones">
+            {vertical && (
+              <button type="button" className={`filtros-toggle ${filtrosMovil ? "on" : ""}`} aria-expanded={filtrosMovil} onClick={() => setFiltrosMovil((v) => !v)}>
+                Filtros{hayFiltros ? " ●" : ""} ▾
+              </button>
+            )}
             <Desplegable id="archivo" etiqueta="Exportar y créditos" abierto={abierto} onAbrir={setAbierto} alineado="der">
               <div className="archivo">
                 <div className="acciones">
@@ -568,9 +654,10 @@ export default function App() {
           editando={editando}
           ocupado={formEquipo.ocupado}
           error={formEquipo.error}
+          movil={vertical}
         />
 
-        <div className="barra-filtros" role="group" aria-label="Filtros">
+        <div className={`barra-filtros ${vertical && !filtrosMovil ? "plegada" : ""}`} role="group" aria-label="Filtros">
           <span className="filtros-rotulo">Filtrar</span>
 
           <Desplegable id="prioridad" etiqueta="Prioridad" valor={valorPrioridad} activo={niveles.size !== TODOS_NIVELES.size} abierto={abierto} onAbrir={setAbierto}>
@@ -641,15 +728,15 @@ export default function App() {
 
           <Desplegable id="leyenda" etiqueta="Leyenda" abierto={abierto} onAbrir={setAbierto}>
             <div className="leyenda" aria-label="Colores del mapa">
-              <span><i style={{ background: rgb(COLORES_ESTADO.confirmado) }} />Confirmado</span>
-              <span><i style={{ background: rgb(COLORES_ESTADO.descartado) }} />Descartado</span>
-              <span><i style={{ background: rgb(COLORES_ESTADO.no_concluyente) }} />No concluyente</span>
+              <span><i style={{ background: rgb(COLORES_ESTADO.confirmado) }} />Hay error (revisado)</span>
+              <span><i style={{ background: rgb(COLORES_ESTADO.descartado) }} />Está OK en un predio con alerta (revisado)</span>
+              <span><i style={{ background: rgb(COLORES_ESTADO.no_concluyente) }} />Evidencia insuficiente / no se pudo ubicar</span>
               <span><i style={{ background: rgb(COLORES.no_residencial) }} />Revisar destino (NR)</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.oficina) }} />Contorno: oficina</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_ACCION.campo) }} />Contorno: campo</span>
               <span><i className="borde" style={{ borderColor: rgb(COLORES_INCONSISTENCIA) }} />Contorno ancho: registro ≠ cartografía</span>
               <span><i style={{ background: rgb(COLORES_CLASE.ok) }} />Sin alerta · OK</span>
-              <span><i style={{ background: rgb(COLORES_VERIFICADO_OK) }} />Verificado OK (revisado)</span>
+              <span><i style={{ background: rgb(COLORES_VERIFICADO_OK) }} />Está OK en un predio sin alerta (revisado)</span>
               <span><i style={{ background: rgb(COLORES_CLASE.ph) }} />PH sin evaluar</span>
               <span><i style={{ background: rgb(COLORES_CLASE.cartografia) }} />Solo cartografía</span>
               <span><i style={{ background: rgb(COLORES.sin_alerta) }} />Sin alerta (oculto por el filtro)</span>
@@ -664,16 +751,17 @@ export default function App() {
       </header>
 
       <div className="cuerpo">
-        <button className="menu" onClick={() => setPanel(!panel)} aria-label="Mostrar u ocultar la lista de predios" aria-expanded={panel}>☰</button>
+        <button className="menu" hidden={vertical} onClick={() => setPanel(!panel)} aria-label="Mostrar u ocultar la lista de predios" aria-expanded={panel}>☰</button>
 
         <section className={`panel ${panel ? "" : "oculto"}`} aria-label="Lista de predios">
+          {vertical && <button type="button" className="ver-mapa" onClick={() => setPanel(false)}>← Ver mapa</button>}
           <section className="proceso" aria-label="Proceso de revisión">
             <ol className="etapas">
               {[
                 ["todos", "Predios", etapas.todos],
                 ["pendientes", "Por revisar", etapas.pendientes],
                 ["revisados", "Revisados", etapas.revisados],
-                ["confirmado", "Confirmados", etapas.confirmado],
+                ["confirmado", "Con error", etapas.confirmado],
               ].map(([k, t, c], i) => (
                 <li key={k}>
                   <button className={etapa === k ? "on" : ""} aria-pressed={etapa === k} onClick={() => setEtapa(k)}>
@@ -713,7 +801,7 @@ export default function App() {
                     <span className="dir">{p.direccion || p.npn}</span>
                     <span className="meta">{tipos}{fuentes}{incons}{p.area_huella ? ` · ${n(Math.round(p.area_huella))} m²` : ""}{p.confianza === "baja" ? " · conf. baja" : ""}</span>
                     <b className="pt">{clase ? ETIQUETA_CLASE[clase] : p.NR ? "NR" : p.puntaje}</b>
-                    {rev && <em className={`est ${clase && rev.estado === "descartado" ? "verificado_ok" : rev.estado}`} title={clase && rev.estado === "descartado" ? "verificado OK" : rev.estado}>{clase && rev.estado === "descartado" ? "✓" : ICONO[rev.estado]}</em>}
+                    {rev && <em className={`est ${clase && rev.estado === "descartado" ? "verificado_ok" : rev.estado}`} title={etiquetaDecision(rev)}>{clase && rev.estado === "descartado" ? "✓" : ICONO[rev.estado]}</em>}
                   </button>
                 </li>
               );
@@ -731,10 +819,29 @@ export default function App() {
 
         <main>
           {!datos && <div className="cargando">Cargando sector…</div>}
-          <Mapa predios={datos?.predios} huellas={datos?.huellas} filtros={filtros} estados={revisiones} seleccionado={sel} onSeleccion={elegir} resaltar={resaltar || cons === "inconsistente"} onResaltar={setResaltar} />
+          <Mapa predios={datos?.predios} huellas={datos?.huellas} filtros={filtros} estados={revisiones} seleccionado={sel} onSeleccion={elegir} resaltar={resaltar || cons === "inconsistente"} onResaltar={setResaltar}
+            tapa={vertical ? (sel ? (fichaCompleta ? "completa" : "corta") : "barra") : null} />
+          {vertical && !panel && !sel && (
+            <button type="button" className="barra-movil" onClick={() => setPanel(true)}>
+              <b>{n(etapas.pendientes)}</b> por revisar <span>· Ver lista ▲</span>
+            </button>
+          )}
         </main>
 
-        {ficha && (
+        {vertical && ficha && !fichaCompleta && (
+          <TarjetaMovil
+            p={ficha}
+            revision={revisiones[ficha.npn]}
+            puedeDecidir={identificado(equipo)}
+            onDecidir={decidir}
+            onExpandir={() => setFichaCompleta(true)}
+            onCerrar={() => setSel(null)}
+            onMover={mover}
+            posicion={posicion}
+          />
+        )}
+
+        {ficha && (!vertical || fichaCompleta) && (
           <div className="ficha-col">
             <div
               className="asa"
@@ -755,6 +862,11 @@ export default function App() {
               revision={revisiones[ficha.npn]}
               onDecidir={decidir}
               puedeDecidir={identificado(equipo)}
+              fuente={revisiones[ficha.npn]?.fuente ?? fuenteBorrador}
+              onFuente={elegirFuente}
+              puedeRatificar={esFuncionario(equipo)}
+              onRatificar={ratificar}
+              onMinimizar={vertical ? () => setFichaCompleta(false) : undefined}
               onQuitar={quitar}
               onCerrar={() => setSel(null)}
               onSiguiente={() => siguientePendiente()}

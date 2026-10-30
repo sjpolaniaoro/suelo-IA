@@ -68,25 +68,31 @@ function aplicarTema(m) {
 // En vertical lo tapan desde abajo; en horizontal, la ficha o la lista desde un lado.
 const movil = esMovil;
 // Relleno al centrar un predio: siempre con los cuatro lados, porque MapLibre conserva los que no se nombran.
-const paddingFicha = () => {
+// En vertical, `tapa` dice qué cubre la parte baja: la barra «Ver lista» (poco), la tarjeta corta o la ficha completa.
+const BAJO_TARJETA = 250;
+const BAJO_BARRA = 70;
+const bajoVertical = (tapa) => (tapa === "completa" ? Math.round(window.innerHeight * 0.5) : tapa === "corta" ? BAJO_TARJETA : tapa === "barra" ? BAJO_BARRA : 0);
+const paddingFicha = (tapa) => {
   const p = { top: 0, left: 0, right: 0, bottom: 0 };
   if (!movil()) return p;
   if (esApaisado()) return { ...p, right: Math.round(Math.min(440, window.innerWidth * 0.56)) };
-  return { ...p, bottom: Math.round(window.innerHeight * 0.5) };
+  return { ...p, bottom: bajoVertical(tapa) };
 };
-const relleno = () => {
+const relleno = (tapa) => {
   if (!movil()) return 60;
   if (esApaisado()) return { top: 20, bottom: 20, left: 20, right: Math.round(Math.min(440, window.innerWidth * 0.56)) + 20 };
-  return { top: 70, left: 20, right: 20, bottom: Math.round(window.innerHeight * 0.6) };
+  return { top: 70, left: 20, right: 20, bottom: bajoVertical(tapa) + 20 };
 };
 
 export { SIN_PRIORIDAD, nivelDe, pasaAccion, pasaFiltros };
 
-export default function Mapa({ predios, huellas, filtros, estados, seleccionado, onSeleccion, resaltar = false, onResaltar }) {
+export default function Mapa({ predios, huellas, filtros, estados, seleccionado, onSeleccion, resaltar = false, onResaltar, tapa = null }) {
   const contenedor = useRef(null);
   const mapa = useRef(null);
   const overlay = useRef(null);
   const limitesSector = useRef(null);
+  const tapaRef = useRef(tapa);
+  tapaRef.current = tapa;
   const [vista, setVista] = useState("3d");
   // Verdadero cuando el control de deck.gl ya está en el mapa: recién entonces se pueden poner capas.
   const [listo, setListo] = useState(false);
@@ -155,7 +161,7 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
   useEffect(() => {
     if (!predios || !mapa.current || limitesSector.current) return;
     limitesSector.current = limites(predios);
-    mapa.current.fitBounds(limitesSector.current, { padding: relleno(), pitch: 55, bearing: -20, duration: 0 });
+    mapa.current.fitBounds(limitesSector.current, { padding: relleno(tapaRef.current), pitch: 55, bearing: -20, duration: 0 });
   }, [predios]);
 
   useEffect(() => {
@@ -241,15 +247,15 @@ export default function Mapa({ predios, huellas, filtros, estados, seleccionado,
     const f = predios.features.find((x) => x.properties.npn === seleccionado);
     if (!f?.geometry) return;
     const [[x0, y0], [x1, y1]] = limites({ features: [f] });
-    mapa.current.easeTo({ center: [(x0 + x1) / 2, (y0 + y1) / 2], zoom: 18, duration: 800, padding: paddingFicha() });
-  }, [seleccionado, predios, orientacion]);
+    mapa.current.easeTo({ center: [(x0 + x1) / 2, (y0 + y1) / 2], zoom: 18, duration: 800, padding: paddingFicha(tapaRef.current) });
+  }, [seleccionado, predios, orientacion, tapa]);
 
   const cambiarVista = (v) => {
     setVista(v);
     mapa.current?.easeTo({ pitch: v === "3d" ? 55 : 0, bearing: v === "3d" ? -20 : 0, duration: 600 });
   };
   const recentrar = () => {
-    if (limitesSector.current) mapa.current?.fitBounds(limitesSector.current, { padding: relleno(), pitch: vista === "3d" ? 55 : 0, bearing: vista === "3d" ? -20 : 0, duration: 700 });
+    if (limitesSector.current) mapa.current?.fitBounds(limitesSector.current, { padding: relleno(tapaRef.current), pitch: vista === "3d" ? 55 : 0, bearing: vista === "3d" ? -20 : 0, duration: 700 });
   };
 
   return (

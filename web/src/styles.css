@@ -700,7 +700,7 @@ main {
 }
 .veredictos {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
 }
 .veredictos button {
@@ -1562,4 +1562,251 @@ main {
   .id-nota {
     font-size: 10px;
   }
+}
+
+/* ---------- Decisiones explícitas y fuente con error ---------- */
+.veredictos .confirmado {
+  border-left: 4px solid var(--confirmado);
+}
+.veredictos .no_concluyente {
+  border-left: 4px solid var(--morado);
+}
+.veredictos button {
+  min-height: 52px;
+}
+.fuente-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+.fuente-rotulo {
+  flex: 1 1 100%;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sia-muted);
+}
+.fuente-rotulo em {
+  font-style: normal;
+  font-weight: 400;
+}
+.fuente-error button {
+  min-height: 34px;
+  padding: 4px 10px;
+  border: 1px solid var(--sia-control);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
+}
+.fuente-error button.on {
+  background: var(--sia-accent);
+  border-color: var(--sia-accent);
+  color: #fff;
+}
+.fuente-error button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ratificada {
+  color: var(--sia-accent);
+  font-weight: 600;
+}
+
+/* ---------- Identidad: invitado o funcionario ---------- */
+.id-rol {
+  display: inline-flex;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  overflow: hidden;
+  align-self: flex-end;
+}
+.barra-identidad .id-rol button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 0;
+  background: var(--sia-surface);
+}
+.barra-identidad .id-rol button.on {
+  background: var(--sia-accent);
+  color: #fff;
+}
+.barra-identidad select {
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  background: #fff;
+  font: 14px var(--sia-body);
+  color: var(--sia-ink);
+}
+.id-estado.limite,
+.id-punto.limite {
+  color: var(--naranja);
+}
+.id-punto.limite {
+  background: var(--naranja);
+}
+.barra-identidad.plegada {
+  padding: 4px 10px;
+}
+.barra-identidad .id-abrir {
+  width: 100%;
+  min-height: 40px;
+  border-color: var(--sia-accent);
+  color: var(--sia-accent);
+}
+
+/* ---------- Celular en vertical: mapa primero; lista, tarjeta y ficha se abren encima ---------- */
+.filtros-toggle,
+.ver-mapa,
+.barra-movil,
+.tarjeta-movil {
+  display: none;
+}
+.barra-filtros.plegada {
+  display: none;
+}
+.app.vertical .filtros-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 4px 10px;
+  border: 1px solid var(--sia-control);
+  border-radius: var(--sia-radius);
+  background: var(--sia-surface);
+  font-size: 12px;
+  font-weight: 600;
+}
+.app.vertical .filtros-toggle.on {
+  background: var(--sia-soft);
+}
+.app.vertical .panel {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  border-top: 0;
+  z-index: 6;
+}
+.app.vertical .ver-mapa {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--sia-control);
+  background: var(--sia-accent);
+  color: #fff;
+  text-align: left;
+  font: 600 14px var(--sia-body);
+}
+.app.vertical .barra-movil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: absolute;
+  z-index: 3;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--sia-radius);
+  background: var(--sia-accent);
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 2px 12px #1d1f2040;
+}
+.app.vertical .barra-movil b {
+  font: 600 18px var(--sia-heading);
+}
+.app.vertical .barra-movil span {
+  opacity: 0.85;
+}
+.app.vertical .tarjeta-movil {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 52%;
+  overflow: auto;
+  padding: 0 14px 12px;
+  background: #fff;
+  border-top: 4px solid var(--gris);
+  box-shadow: 0 -4px 20px #1d1f201a;
+  overscroll-behavior: contain;
+}
+.tarjeta-movil.nivel-rojo { border-top-color: var(--rojo); }
+.tarjeta-movil.nivel-naranja { border-top-color: var(--naranja); }
+.tarjeta-movil.nivel-amarillo { border-top-color: var(--amarillo); }
+.tarjeta-movil.nivel-no_residencial { border-top-color: var(--no-residencial); }
+.tarjeta-asa {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0 4px;
+  border: 0;
+  background: none;
+}
+.tarjeta-asa i {
+  width: 44px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--sia-line-strong);
+}
+.tarjeta-cab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--sia-muted);
+}
+.tarjeta-cab button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+}
+.tarjeta-pos {
+  flex: 1;
+  text-align: center;
+}
+.tarjeta-dir {
+  margin: 6px 0;
+  font: 600 1.25rem/1.15 var(--sia-mono);
+}
+.tarjeta-razon {
+  margin: 8px 0 10px;
+  font-size: 13px;
+}
+.tarjeta-mas {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  border: 1px solid var(--sia-control);
+  border-radius: 3px;
+  background: var(--sia-surface);
+  font-weight: 600;
+  color: var(--sia-accent);
+}
+.app.vertical .ficha-col {
+  height: 88%;
+}
+.ficha-nav .minimizar {
+  display: none;
+}
+.app.vertical .ficha-nav .minimizar {
+  display: inline-block;
+}
+.app.vertical .menu {
+  display: none;
 }
