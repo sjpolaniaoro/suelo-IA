@@ -35,3 +35,6 @@ Codifica la URL de la ficha de ejemplo. Se generó sin dependencias del proyecto
 npx --yes qrcode -t svg --margin 4 -d '#12342a' -l '#ffffff' -o qr-demo.svg "https://suelo-ia-knwnic.vercel.app/app/?predio=<npn>"
 ```
 Se verificó con un lector (jsQR) a 112, 132, 140, 164 y 620 px. Margen de 4 módulos y 164 px en escritorio (140 px en celular), unos 4 px por módulo. Para proyectarlo en sala conviene abrir `/img/qr-demo.svg` a pantalla completa.
+
+## QR flotante
+`#qr-flotante` (`aside` al final de `index.html`, lógica en `iniciarQrFlotante()` de `landing.js`, estilos al final de `pitch.css`) deja el QR a la vista mientras se expone: el público lo escanea y prueba la herramienta mientras se habla. Es una tarjeta fija abajo a la derecha (panel «plano») con tres estados: normal (184 px), **Ampliar** (hasta 400 px, para escanear desde lejos) y minimizado (una pestaña de «QR»). El estado se recuerda en `sessionStorage`. Solo aparece en pantallas de más de 1000 px, que es la proyección; en el celular ya se está en la herramienta, y se oculta al imprimir. Se oculta también mientras el QR de `#demo` está a la vista, para no repetirlo. Sin JavaScript no se muestra; el QR de `#demo` sigue ahí. El código es el mismo de `public/img/qr-demo.svg`.

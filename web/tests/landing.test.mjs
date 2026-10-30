@@ -136,3 +136,15 @@ test("el QR de #demo abre la ficha del predio de ejemplo", () => {
   const ejemplo = JSON.parse(leer("../src/landing/ejemplo.json"));
   assert.match(ejemplo.npn, /^\d{30}$/);
 });
+
+test("el QR flotante sigue el scroll en pantallas anchas, se puede ampliar y minimizar", () => {
+  const caja = html.slice(html.indexOf('id="qr-flotante"'), html.indexOf("</aside>"));
+  assert.match(caja, /id="qr-ampliar"/);
+  assert.match(caja, /id="qr-minimizar"/);
+  assert.match(caja, /\/img\/qr-demo\.svg/);
+  assert.match(caja, /alt="[^"]{10,}"/);
+  const css = leer("../src/landing/pitch.css");
+  assert.match(css, /\.sia-qr-flotante\s*\{[^}]*position:\s*fixed/);
+  assert.match(css, /@media \(max-width: 1000px\), print\s*\{\s*\.sia-qr-flotante\s*\{\s*display:\s*none/);
+  assert.match(js, /iniciarQrFlotante\(\)/);
+});

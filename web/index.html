@@ -939,6 +939,24 @@
         revisión humana. No sustituye los actos de la autoridad catastral.
       </p>
     </footer>
+    <aside class="sia-qr-flotante" id="qr-flotante" aria-label="Código QR para probar la herramienta" hidden>
+      <div class="sia-qrf-barra">
+        <p id="qr-flotante-titulo">Pruébalo en tu celular</p>
+        <button type="button" class="sia-qrf-btn" id="qr-ampliar" aria-pressed="false" aria-controls="qr-flotante-cuerpo">Ampliar</button>
+        <button type="button" class="sia-qrf-btn" id="qr-minimizar" aria-expanded="true" aria-controls="qr-flotante-cuerpo" aria-label="Minimizar el código QR">
+          <span aria-hidden="true">–</span>
+        </button>
+      </div>
+      <div class="sia-qrf-cuerpo" id="qr-flotante-cuerpo">
+        <img
+          src="/img/qr-demo.svg"
+          width="184"
+          height="184"
+          alt="Código QR que abre en el celular la ficha del predio de ejemplo en el mapa 3D de Suelo-IA"
+        />
+        <p>Escanéalo y explora la ficha de un predio mientras seguimos.</p>
+      </div>
+    </aside>
     <script type="module" src="/src/landing/landing.js"></script>
   </body>
 </html>
