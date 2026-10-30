@@ -206,6 +206,11 @@ def main(argv=None) -> int:
         "predios_con_alerta": int((geo["puntaje"] > 0).sum()),
         "predios_uso_no_residencial": int(geo["NR"].sum()),
         "triangulacion": consistencia.resumen(geo) if hay_huellas else None,
+        # Umbrales con los que la web compara registro, cartografía e imagen (vienen de config.yaml).
+        "umbrales_consistencia": {
+            "factor_area": cfg["alertas"]["A2"]["factor_area"],
+            "cartografia_min_m2": cfg["consistencia"]["cartografia_min_m2"],
+        },
         "predios_rojos": int((geo["nivel"] == "rojo").sum()),
         "confianza_baja": int((geo["confianza"] == "baja").sum()),
         "huellas_sin_registro": n_vol,

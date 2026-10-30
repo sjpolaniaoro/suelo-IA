@@ -4,6 +4,7 @@ import { claseSinAlerta, tieneAlerta } from "./clases.js";
 //   prioridad: alta / media / baja / «ninguna» (sin prioridad: sin alerta, o NR, que no tiene puntaje de vivienda)
 //   tipo de alerta: A1, A2, A3, NR o «ninguna» (sin alerta)
 //   cola de trabajo: oficina, campo o ninguna
+//   registro vs cartografía: inconsistente, coincide o no aplica (propiedad horizontal)
 // Los predios sin prioridad solo pasan con «Sin prioridad» activo y con tipo «Todas» o «Ninguna» (no tienen tipo de alerta).
 export const SIN_PRIORIDAD = "ninguna";
 export const nivelDe = (p) => (tieneAlerta(p) && !p.NR ? p.nivel : SIN_PRIORIDAD);
@@ -14,7 +15,12 @@ export const pasaAccion = (p, filtros) => {
   return a === "ninguna" ? !p.accion : p.accion === a;
 };
 
-export function pasaFiltros(p, filtros) {
+// Registro vs cartografía: «todas» no filtra; si no, coincide con el estado de consistencia.js.
+export const pasaCons = (p, filtros) => !filtros.cons || filtros.cons === "todas" || (p.cons ?? "no_aplica") === filtros.cons;
+
+export const pasaFiltros = (p, filtros) => pasaCons(p, filtros) && pasaPrioridad(p, filtros);
+
+function pasaPrioridad(p, filtros) {
   const sinPrioridad = filtros.niveles.has(SIN_PRIORIDAD);
   if (!tieneAlerta(p)) {
     return sinPrioridad && (filtros.tipo === "todas" || filtros.tipo === "ninguna") && !!filtros.sinAlerta?.has(claseSinAlerta(p)) && pasaAccion(p, filtros);
