@@ -253,8 +253,8 @@ dl.sia-kpis-tres {
 }
 .sia-qr img {
   flex: none;
-  width: 132px;
-  height: 132px;
+  width: 164px;
+  height: 164px;
   background: #fff;
   border: 1px solid var(--sia-panel-linea);
   padding: 4px;
@@ -498,7 +498,7 @@ dl.sia-kpis-tres {
     align-items: flex-start;
   }
   .sia-qr img {
-    width: 112px;
-    height: 112px;
+    width: 140px;
+    height: 140px;
   }
 }

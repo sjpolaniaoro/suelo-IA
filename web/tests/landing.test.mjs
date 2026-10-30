@@ -126,3 +126,13 @@ test("la barra de triangulación toma sus anchos del resumen", () => {
     .reduce((a, b) => a + b, 0);
   assert.equal(suma, resumen.triangulacion.universo_sin_area);
 });
+
+test("el QR de #demo abre la ficha del predio de ejemplo", () => {
+  const demo = html.slice(html.indexOf('id="demo"'), html.indexOf('id="impacto"'));
+  assert.match(demo, /abre en el celular la ficha del predio de ejemplo/);
+  const svg = leer("../public/img/qr-demo.svg");
+  assert.match(svg, /^<svg /);
+  // La URL codificada se comprueba al regenerar el QR (ver DISENO.md); aquí, que el NPN del ejemplo exista.
+  const ejemplo = JSON.parse(leer("../src/landing/ejemplo.json"));
+  assert.match(ejemplo.npn, /^\d{30}$/);
+});
