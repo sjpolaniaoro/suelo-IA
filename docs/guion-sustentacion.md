@@ -16,10 +16,11 @@ Supuesto: 10 minutos en total. Si incluyen las preguntas, recortar la demo a 1:1
 | `#responsable` | 7. IA responsable y datos | IA responsable (10) | 0:30 |
 | `#viabilidad` | 8. Viabilidad y sostenibilidad | Viabilidad (8) y sostenibilidad (8) | 0:30 |
 | `#ruta` | 9. Plan de implementación | Plan de implementación (Anexo 8, 4) | 0:45 |
-| `#equipo` | 10. Equipo y contacto | Dominio técnico (Anexo 8, 4) | 0:15 |
-| `#limites` | — | Respuestas al jurado (Anexo 8, 4) | preguntas |
+| `#limites` | — | Respuestas al jurado, dominio técnico (Anexo 8, 4) | preguntas |
 
-Total del recorrido: 7:30. Quedan 2:30 de margen y preguntas. La Guía suma 6:00; los 90 s de más van a la demo porque pesa 12 de 30 puntos en la planilla de sustentación.
+Equipo y contacto (diapositiva 10) no está en esta portada: lo cubre la sección «Socios» del sitio corporativo de Knwbic.
+
+Total del recorrido: 7:15. Quedan 2:45 de margen y preguntas. La Guía suma 6:00; los 90 s de más van a la demo porque pesa 12 de 30 puntos en la planilla de sustentación.
 
 ## Qué decir de lo propio y de lo de terceros
 - De terceros: la detección de edificaciones (Google Open Buildings v3). No se entrena ni se ajusta.
@@ -39,7 +40,7 @@ La portada sigue al repositorio y a `web/public/data/resumen.json`. Para alinear
 | Deck | Repositorio | Decisión |
 |---|---|---|
 | «1.285 predios con alerta» | 1.283 con alerta de vivienda + 2 NR | La portada muestra 1.283 y menciona los 2 NR. |
-| «15 pruebas activas» | `pytest` corre 26; el README dice 25 | La portada solo dice «integración continua»; actualizar el README y el deck. |
+| «15 pruebas activas» | Son las 15 pruebas de la web (`npm test` antes de la portada nueva); `pytest` corre otras 26 | La portada solo dice «integración continua». Si se cita un número, decir «26 de Python y 15 de la web» (la portada nueva suma 9 web). |
 | «Expansión urbana del 35 % requiere actualización catastral a 12 años» | Sin fuente en la spec, el Anexo 2 ni el pipeline | Se omite. El contexto sale del Decreto 892 de 2023 (Anexo 2). |
 | «Crecimiento por comunas» | El sector 02 es un sector catastral, no una comuna | Se escribe «sector por sector». |
 | Maqueta con «Aprobar», «Descartar», «Visitar terreno» y confianza de 92 % | La interfaz usa confirmado, descartado, no concluyente y confianza normal o baja | La portada usa la captura y la ficha reales. |

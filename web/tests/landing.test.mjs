@@ -21,7 +21,6 @@ test("las secciones siguen el orden de la guía de presentación", () => {
     "responsable",
     "viabilidad",
     "ruta",
-    "equipo",
     "piloto",
     "limites",
   ];
@@ -73,14 +72,14 @@ test("no hay cifras de conteo escritas a mano que contradigan el resumen", () =>
 });
 
 test("lo previsto se rotula como previsto y no como función del piloto", () => {
-  const ruta = html.slice(html.indexOf('id="ruta"'), html.indexOf('id="equipo"'));
+  const ruta = html.slice(html.indexOf('id="ruta"'), html.indexOf('id="piloto"'));
   assert.match(ruta, /No son funciones del piloto actual/);
   const viabilidad = html.slice(html.indexOf('id="viabilidad"'), html.indexOf('id="ruta"'));
   assert.match(viabilidad, /Previsto/);
 });
 
 test("el reparto del incentivo suma 100 % y $5.000.000", () => {
-  const bloque = html.slice(html.indexOf('class="sia-incentivo"'), html.indexOf('id="equipo"'));
+  const bloque = html.slice(html.indexOf('class="sia-incentivo"'), html.indexOf('id="piloto"'));
   const porcentajes = [...bloque.matchAll(/<strong>(\d+) %<\/strong>/g)].map((m) => Number(m[1]));
   assert.equal(porcentajes.reduce((a, b) => a + b, 0), 100);
   const montos = [...bloque.matchAll(/<b>\$([\d.]+)<\/b>/g)].map((m) => Number(m[1].replaceAll(".", "")));
@@ -88,7 +87,7 @@ test("el reparto del incentivo suma 100 % y $5.000.000", () => {
 });
 
 test("las imágenes de los QR existen y tienen texto alternativo", () => {
-  for (const archivo of ["qr-demo.svg", "qr-repo.svg"]) {
+  for (const archivo of ["qr-demo.svg"]) {
     assert.ok(html.includes("/img/" + archivo));
     assert.match(leer("../public/img/" + archivo), /^<svg /);
   }

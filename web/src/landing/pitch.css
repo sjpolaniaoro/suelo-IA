@@ -1,4 +1,4 @@
-/* Secciones de la sustentación: problema, solución, IA, impacto, IA responsable, viabilidad, ruta y equipo. */
+/* Secciones de la sustentación: problema, solución, IA, impacto, IA responsable, viabilidad, y ruta. */
 .sia-autoria {
   margin-top: 16px;
   font-size: 12px;
@@ -418,49 +418,9 @@ h3.sia-subtitulo + .sia-method-steps {
   color: var(--sia-ink);
 }
 
-/* Equipo */
-.sia-equipo-grid {
-  display: grid;
-  grid-template-columns: 2.2fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-.sia-personas {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-.sia-personas li {
-  padding: 20px 22px;
-  background: var(--sia-surface);
-  border: 1px solid var(--sia-line-strong);
-  border-top: 6px solid var(--sia-accent);
-  min-width: 0;
-}
-.sia-personas h3 {
-  font: 600 1.35rem/1.2 var(--sia-heading);
-  margin-bottom: 6px;
-}
-.sia-personas p {
-  font-size: 14px;
-  color: var(--sia-muted);
-  margin-bottom: 10px;
-}
-.sia-personas a {
-  font-size: 12px;
-  color: var(--sia-accent);
-  overflow-wrap: anywhere;
-}
-.sia-qr-repo {
-  margin-top: 0;
-}
 
 @media (max-width: 1000px) {
-  .sia-problem-grid,
-  .sia-equipo-grid {
+  .sia-problem-grid {
     grid-template-columns: 1fr;
     gap: 28px;
   }
@@ -483,8 +443,7 @@ h3.sia-subtitulo + .sia-method-steps {
   }
   .sia-diferenciales,
   .sia-benef,
-  .sia-metas ul,
-  .sia-personas {
+  .sia-metas ul {
     grid-template-columns: 1fr;
     gap: 20px;
   }
